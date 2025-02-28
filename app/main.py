@@ -7,7 +7,7 @@ app = FastAPI(title="Gestión de Candidatos - Backend")
 
 app.include_router(test_db.router, prefix="/test", tags=["Test"])
 
-
+#Comprobar la conexión a la Base de Datos
 @app.get("/check-db")
 def check_db():
     try:

@@ -3,6 +3,8 @@ from sqlalchemy.orm import relationship
 from app.core.database import Base
 from sqlalchemy import UniqueConstraint
 
+
+# Modelo para definir el nivel de Educación 
 class NivelEducacion(Base):
     __tablename__ = "nivel_educacion"
 
@@ -14,9 +16,7 @@ class NivelEducacion(Base):
     titulos = relationship("TituloObtenido", back_populates="nivel_educacion")
 
 
-# 📜 Modelo para la tabla de Títulos Obtenidos
-
-
+# Modelo para la tabla de Títulos Obtenidos
 class TituloObtenido(Base):
     __tablename__ = "titulos_obtenidos"
 
@@ -30,7 +30,7 @@ class TituloObtenido(Base):
     __table_args__ = (UniqueConstraint("nombre_titulo", "id_nivel_educacion", name="uq_titulo_nivel"),)
 
 
-# 🏫 Modelo para la tabla de Instituciones Académicas
+#  Modelo para la tabla de Instituciones Académicas
 class InstitucionAcademica(Base):
     __tablename__ = "instituciones_academicas"
 
@@ -38,7 +38,7 @@ class InstitucionAcademica(Base):
     nombre_institucion = Column(String(150), nullable=False, unique=True)
 
 
-# 🗣 Modelo para la tabla de Nivel de Inglés
+#  Modelo para la tabla de Nivel de Inglés
 class NivelIngles(Base):
     __tablename__ = "nivel_ingles"
 
@@ -49,7 +49,7 @@ class NivelIngles(Base):
     educaciones = relationship("Educacion", back_populates="nivel_ingles")
 
 
-# 📚 Modelo para la tabla de Educación
+#  Modelo para la tabla de Educación
 class Educacion(Base):
     __tablename__ = "educacion"
 

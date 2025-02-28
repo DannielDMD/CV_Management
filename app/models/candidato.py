@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.core.database import Base
 
-# 🌍 Modelo para la tabla de Ciudades
+# Modelo para la tabla de Ciudades
 class Ciudad(Base):
     __tablename__ = "ciudades"
 
@@ -14,7 +14,7 @@ class Ciudad(Base):
     candidatos = relationship("Candidato", back_populates="ciudad")
 
 
-# 💼 Modelo para la tabla de Categoría de Cargos
+# Modelo para la tabla de Categoría de Cargos
 class CategoriaCargo(Base):
     __tablename__ = "categoria_cargos"
 
@@ -26,7 +26,7 @@ class CategoriaCargo(Base):
     candidatos = relationship("Candidato", back_populates="categoria_cargo")
 
 
-# 🏗 Modelo para la tabla de Cargos Ofrecidos
+#  Modelo para la tabla de Cargos Ofrecidos
 class CargoOfrecido(Base):
     __tablename__ = "cargos_ofrecidos"
 
@@ -39,7 +39,7 @@ class CargoOfrecido(Base):
     candidatos = relationship("Candidato", back_populates="cargo")
 
 
-# 🧑‍💻 Modelo para la tabla de Candidatos
+#  Modelo para la tabla de Candidatos
 class Candidato(Base):
     __tablename__ = "candidatos"
 

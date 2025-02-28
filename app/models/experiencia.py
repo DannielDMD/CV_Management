@@ -16,7 +16,7 @@ class RangoExperiencia(Base):
     experiencias = relationship("ExperienciaLaboral", back_populates="rango_experiencia")
 
 
-# 🏢 Modelo para la tabla de Experiencia Laboral
+# Modelo para la tabla de Experiencia Laboral
 class ExperienciaLaboral(Base):
     __tablename__ = "experiencia_laboral"
 

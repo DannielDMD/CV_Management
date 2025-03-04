@@ -26,7 +26,7 @@ class CargoOfrecidoResponse(BaseModel):
 
 class MotivoSalidaResponse(BaseModel):
     id_motivo_salida: Optional[int]
-    nombre_motivo: Optional[str]
+    descripcion_motivo: Optional[str]
 
     class Config:
         from_attributes = True

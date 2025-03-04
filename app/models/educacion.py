@@ -66,12 +66,7 @@ class Educacion(Base):
     titulo = relationship("TituloObtenido")
     institucion = relationship("InstitucionAcademica")
     nivel_ingles = relationship("NivelIngles", back_populates="educaciones")
-    
+
     # Relación inversa con candidatos
     candidato = relationship ("Candidato", back_populates="educaciones")
-    
-    
-    
-    
-    
-    
+

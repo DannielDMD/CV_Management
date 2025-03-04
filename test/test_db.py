@@ -5,7 +5,9 @@ from app.models.candidato import Ciudad, CargoOfrecido, CategoriaCargo, Candidat
 from app.models.educacion import Educacion, NivelEducacion, TituloObtenido, InstitucionAcademica, NivelIngles
 from app.models.experiencia import ExperienciaLaboral, RangoExperiencia
 from app.models.preferencias import RangoSalarial, Disponibilidad, MotivoSalida
-from app.models.skill_and_soft import *
+from app.models.habilidades_blandas import *
+from app.models.habilidades_tecnicas import *
+from app.models. herramientas import *
 router = APIRouter()
 
 

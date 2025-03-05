@@ -13,8 +13,9 @@ from app.routes import candidato
 from app.routes import educacion
 from app.routes import experiencia
 from app.routes import habilidades_blandas
-
-
+from app.routes import habilidades_tecnicas
+from app.routes import herramientas
+from app.routes import preferencias
 app = FastAPI(title="Gestión de Candidatos - Backend")
 
 
@@ -23,6 +24,10 @@ app.include_router(candidato.router)
 app.include_router (educacion.router)
 app.include_router (experiencia.router)
 app.include_router (habilidades_blandas.router)
+app.include_router (habilidades_tecnicas.router)
+app.include_router (herramientas.router)
+app.include_router (preferencias.router)
+
 
 """"
 PRUEBA DE LA BASE DE DATOS

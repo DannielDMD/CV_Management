@@ -25,6 +25,16 @@ def get_experiencia_by_id(db: Session, id_experiencia: int):
     
     return experiencia
 
+# Obtener todas las experiencias laborales de un candidato por su ID
+def get_experiencias_by_candidato(db: Session, id_candidato: int):
+    experiencias = db.query(ExperienciaLaboral).filter(ExperienciaLaboral.id_candidato == id_candidato).all()
+    
+    if not experiencias:
+        raise HTTPException(status_code=404, detail="No se encontraron experiencias laborales para este candidato")
+    
+    return experiencias
+
+
 # Obtener todas las experiencias laborales
 def get_all_experiencias(db: Session):
     return db.query(ExperienciaLaboral).all()

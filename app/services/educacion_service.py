@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from app.models.educacion import Educacion
 from app.schemas.educacion import EducacionCreate, EducacionUpdate
 
-# ✅ Crear una educación para un candidato
+#  Crear una educación para un candidato
 def create_educacion(db: Session, educacion_data: EducacionCreate):
     nueva_educacion = Educacion(**educacion_data.model_dump())
     try:
@@ -16,7 +16,7 @@ def create_educacion(db: Session, educacion_data: EducacionCreate):
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al insertar la educación en la base de datos")
 
-# ✅ Obtener una educación por ID
+#  Obtener una educación por ID
 def get_educacion_by_id(db: Session, id_educacion: int):
     educacion = db.query(Educacion).filter(Educacion.id_educacion == id_educacion).first()
     
@@ -25,11 +25,21 @@ def get_educacion_by_id(db: Session, id_educacion: int):
     
     return educacion
 
-# ✅ Obtener todas las educaciones
+#  Obtener todas las educaciones
 def get_all_educaciones(db: Session):
     return db.query(Educacion).all()
 
-# ✅ Actualizar una educación
+
+# Obtener todas las educaciones de un candidato por su ID
+def get_educaciones_by_candidato(db: Session, id_candidato: int):
+    educaciones = db.query(Educacion).filter(Educacion.id_candidato == id_candidato).all()
+    
+    if not educaciones:
+        raise HTTPException(status_code=404, detail="No se encontraron educaciones para este candidato")
+    
+    return educaciones
+
+#  Actualizar una educación
 def update_educacion(db: Session, id_educacion: int, educacion_data: EducacionUpdate):
     educacion = db.query(Educacion).filter(Educacion.id_educacion == id_educacion).first()
     
@@ -44,7 +54,7 @@ def update_educacion(db: Session, id_educacion: int, educacion_data: EducacionUp
     
     return educacion
 
-# ✅ Eliminar una educación
+#  Eliminar una educación
 def delete_educacion(db: Session, id_educacion: int):
     educacion = db.query(Educacion).filter(Educacion.id_educacion == id_educacion).first()
     

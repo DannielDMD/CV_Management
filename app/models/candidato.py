@@ -2,44 +2,12 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, Date,
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.core.database import Base
+#from app.models.catalogs.ciudad import *
+#from app.schemas.catalogs.cargo_ofrecido import *
+#from app.schemas.catalogs.categoria_cargo import *
+#from app.models.catalogs.categoria_cargo import *
+#from app.models.catalogs.cargo_ofrecido import *
 
-# Modelo para la tabla de Ciudades
-class Ciudad(Base):
-    __tablename__ = "ciudades"
-
-    id_ciudad = Column(Integer, primary_key=True, index=True)
-    nombre_ciudad = Column(String(100), nullable=False, unique=True)
-
-    # Relación inversa con Candidatos
-    candidatos = relationship("Candidato", back_populates="ciudad")
-
-
-# Modelo para la tabla de Categoría de Cargos
-class CategoriaCargo(Base):
-    __tablename__ = "categoria_cargos"
-
-    id_categoria = Column(Integer, primary_key=True, index=True)
-    nombre_categoria = Column(String(100), nullable=False, unique=True)
-
-    # Relación inversa con Cargos
-    cargos = relationship("CargoOfrecido", back_populates="categoria")
-    candidatos = relationship("Candidato", back_populates="categoria_cargo")
-
-
-#  Modelo para la tabla de Cargos Ofrecidos
-class CargoOfrecido(Base):
-    __tablename__ = "cargos_ofrecidos"
-
-    id_cargo = Column(Integer, primary_key=True, index=True)
-    nombre_cargo = Column(String(100), nullable=False, unique=True)
-    id_categoria = Column(Integer, ForeignKey("categoria_cargos.id_categoria"), nullable=False)
-
-    # Relación con Categoría de Cargos
-    categoria = relationship("CategoriaCargo", back_populates="cargos")
-    candidatos = relationship("Candidato", back_populates="cargo")
-
-
-#  Modelo para la tabla de Candidatos
 class Candidato(Base):
     __tablename__ = "candidatos"
 

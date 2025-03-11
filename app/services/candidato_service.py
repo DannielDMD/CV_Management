@@ -4,6 +4,9 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 from app.models.candidato import Candidato
 from app.schemas.candidato import CandidatoCreate, CandidatoUpdate
+#from app.schemas.catalogs.ciudad import *
+#from app.schemas.catalogs.categoria_cargo import *
+#from app.schemas.catalogs.cargo_ofrecido import *
 
 # Configurar logging
 logger = logging.getLogger(__name__)

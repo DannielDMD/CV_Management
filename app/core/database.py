@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
+#from core.config import settings
 import os
 
 #  Cargar variables de entorno del archivo .env

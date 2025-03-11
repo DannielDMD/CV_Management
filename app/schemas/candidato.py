@@ -1,28 +1,12 @@
 from typing import Optional
 from datetime import date, datetime
 from pydantic import BaseModel
+#Imports de los catalogos
+from app.schemas.catalogs.ciudad import *
+from app.schemas.catalogs.cargo_ofrecido import *
+from app.schemas.catalogs.categoria_cargo import *
 
-# Schema para representar los catálogos relacionados con Candidato
-class CiudadResponse(BaseModel):
-    id_ciudad: int
-    nombre_ciudad: str
 
-    class Config:
-        from_attributes = True
-
-class CategoriaCargoResponse(BaseModel):
-    id_categoria: int
-    nombre_categoria: str
-
-    class Config:
-        from_attributes = True
-
-class CargoOfrecidoResponse(BaseModel):
-    id_cargo: int
-    nombre_cargo: str
-
-    class Config:
-        from_attributes = True
 
 class MotivoSalidaResponse(BaseModel):
     id_motivo_salida: Optional[int]

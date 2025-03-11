@@ -4,8 +4,12 @@ from app.services.candidato_service import (
     create_candidato, get_candidato_by_id, get_all_candidatos, update_candidato, delete_candidato
 )
 from app.schemas.candidato import CandidatoCreate, CandidatoUpdate, CandidatoResponse
+from app.schemas.catalogs.ciudad import *
 from app.core.database import get_db
 from typing import List
+#from app.services.catalogs.ciudades_service import get_ciudades
+from app.services.catalogs.cargos_ofrecidos_service import *
+
 
 router = APIRouter(prefix="/candidatos", tags=["Candidatos"])
 

@@ -1,0 +1,40 @@
+
+{
+  "nombre_completo": "Kurt Cobain",
+  "correo_electronico": "kurt.cobain@gmail.com",
+  "cc": "2357654",
+  "fecha_nacimiento": "1998-08-27",
+  "telefono": "3452728",
+  "id_ciudad": 5,
+  "descripcion_perfil": "Guitarrista",
+  "id_categoria_cargo": 3,
+  "id_cargo": 35,
+  "trabaja_actualmente_joyco": true,
+  "ha_trabajado_joyco": false,
+  "id_motivo_salida": null,
+  "tiene_referido": false,
+  "nombre_referido": null
+}
+
+#EDUCACION
+
+{
+  "id_candidato": 4,
+  "id_nivel_educacion": 3,
+  "id_titulo": 6,
+  "id_institucion": 9,
+  "anio_graduacion": 2025,
+  "id_nivel_ingles": 2
+}
+
+#Experiencia
+
+{
+  "id_candidato": 4,
+  "id_rango_experiencia": 3,
+  "ultima_empresa": "Working Projects",
+  "ultimo_cargo": "Asesor",
+  "funciones": "Hablar mucho, servir tintos, lavaperros",
+  "fecha_inicio": "2022-03-06",
+  "fecha_fin": "2025-03-06"
+}

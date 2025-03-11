@@ -19,11 +19,17 @@ from app.routes import habilidades_tecnicas
 from app.routes import herramientas
 from app.routes import preferencias
 #Rutas de los catalogos
-from app.routes.catalogs import categorias_cargos, ciudades, cargos_ofrecidos
+from app.routes.catalogs import categorias_cargos, ciudades, cargos_ofrecidos,nivel_educacion, titulo, instituciones, nivel_ingles
 #Imports de los catalogos
 from app.schemas.catalogs.ciudad import *
 from app.schemas.catalogs.cargo_ofrecido import *
 from app.schemas.catalogs.categoria_cargo import *
+#imports de erutas de ducacion
+from app.schemas.catalogs.nivel_educacion import *
+from app.schemas.catalogs.titulo import *
+from app.schemas.catalogs.instituciones import *
+from app.schemas.catalogs.nivel_ingles import *
+
 #from app.routes import auth
 #from fastapi.middleware.cors import CORSMiddleware
 
@@ -36,6 +42,11 @@ app = FastAPI(title="Gestión de Candidatos - Backend")
 app.include_router (ciudades.router)
 app.include_router (categorias_cargos.router)
 app.include_router (cargos_ofrecidos.router)
+#Educacion
+app.include_router (nivel_educacion.router)
+app.include_router (titulo.router)
+app.include_router (instituciones.router)
+app.include_router (nivel_ingles.router)
 #Rutas Generales
 app.include_router(candidato.router)
 app.include_router (educacion.router)

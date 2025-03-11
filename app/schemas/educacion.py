@@ -1,36 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel
-
-# Schema para representar los catálogos relacionados con Educación
-class NivelEducacionResponse(BaseModel):
-    id_nivel_educacion: int
-    descripcion_nivel: str
-
-    class Config:
-        from_attributes = True
-
-class TituloObtenidoResponse(BaseModel):
-    id_titulo: int
-    nombre_titulo: str
-    id_nivel_educacion: int
-
-    class Config:
-        from_attributes = True
-
-class InstitucionAcademicaResponse(BaseModel):
-    id_institucion: int
-    nombre_institucion: str
-
-    class Config:
-        from_attributes = True
-
-class NivelInglesResponse(BaseModel):
-    id_nivel_ingles: int
-    nivel: str
-
-    class Config:
-        from_attributes = True
-
+from app.schemas.catalogs.nivel_educacion import *
+from app.schemas.catalogs.titulo import *
+from app.schemas.catalogs.instituciones import *
+from app.schemas.catalogs.nivel_ingles import *
 # Schema para crear una educación
 class EducacionCreate(BaseModel):
     id_candidato: int

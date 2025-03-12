@@ -1,14 +1,8 @@
 from typing import Optional
 from datetime import date
 from pydantic import BaseModel
+from app.schemas.catalogs.rango_experiencia import *
 
-# Schema para representar los catálogos relacionados con Experiencia Laboral
-class RangoExperienciaResponse(BaseModel):
-    id_rango_experiencia: int
-    descripcion_rango: str
-
-    class Config:
-        from_attributes = True
 
 # Schema para crear una experiencia laboral
 class ExperienciaLaboralCreate(BaseModel):

@@ -7,7 +7,7 @@ from app.services.catalogs.herramientas_service import (
 from app.schemas.herramientas import CategoriaHerramientaCreate, CategoriaHerramientaResponse, HerramientaCreate, HerramientaResponse
 from app.core.database import get_db
 
-router = APIRouter()
+router = APIRouter(prefix="/herramientas", tags=["Herramientas"])
 
 # Rutas para Categorías de Herramientas
 @router.get("/categorias_herramientas/", response_model=list[CategoriaHerramientaResponse])

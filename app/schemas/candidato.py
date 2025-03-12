@@ -5,15 +5,7 @@ from pydantic import BaseModel
 from app.schemas.catalogs.ciudad import *
 from app.schemas.catalogs.cargo_ofrecido import *
 from app.schemas.catalogs.categoria_cargo import *
-
-
-
-class MotivoSalidaResponse(BaseModel):
-    id_motivo_salida: Optional[int]
-    descripcion_motivo: Optional[str]
-
-    class Config:
-        from_attributes = True
+from app.schemas.catalogs.motivo_salida import *
 
 # Schema para crear un candidato
 class CandidatoCreate(BaseModel):

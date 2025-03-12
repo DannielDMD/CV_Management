@@ -1,6 +1,16 @@
 from typing import Optional
 from pydantic import BaseModel
+from app.schemas.catalogs.motivo_salida import *
 
+
+# Schema para crear una nueva disponibilidad
+class DisponibilidadCreate(BaseModel):
+    descripcion_disponibilidad: str
+
+# Schema para actualizar disponibilidad (parcialmente)
+class DisponibilidadUpdate(BaseModel):
+    descripcion_disponibilidad: Optional[str] = None
+    
 # Schema para representar la disponibilidad
 class DisponibilidadResponse(BaseModel):
     id_disponibilidad: int
@@ -9,18 +19,19 @@ class DisponibilidadResponse(BaseModel):
     class Config:
         from_attributes = True
 
+# Schema para crear un nuevo rango salarial
+class RangoSalarialCreate(BaseModel):
+    descripcion_rango: str
+    
+
+# Schema para actualizar rango salarial (parcialmente)
+class RangoSalarialUpdate(BaseModel):
+    descripcion_rango: Optional[str] = None
+    
 # Schema para representar el rango salarial
 class RangoSalarialResponse(BaseModel):
     id_rango_salarial: int
     descripcion_rango: str
-
-    class Config:
-        from_attributes = True
-
-# Schema para representar los motivos de salida
-class MotivoSalidaResponse(BaseModel):
-    id_motivo_salida: Optional[int]
-    descripcion_motivo: Optional[str]
 
     class Config:
         from_attributes = True

@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.services.habilidades_blandas_service import (
-    get_all_habilidades_blandas,
+from app.services.habilidades_blandas_candidato_service import (
     assign_habilidad_blanda,
     get_habilidades_blandas_by_candidato,
     remove_habilidad_blanda
@@ -9,11 +8,11 @@ from app.services.habilidades_blandas_service import (
 from app.schemas.habilidades_blandas import HabilidadBlandaCandidatoCreate, HabilidadBlandaCandidatoResponse, HabilidadBlandaResponse
 from app.core.database import get_db
 
-router = APIRouter(prefix="/habilidades-blandas", tags=["Habilidades Blandas"])
+router = APIRouter(prefix="/habilidades-blandas-candidato", tags=["Habilidades Blandas Candidato"])
 
-@router.get("/", response_model=list[HabilidadBlandaResponse])
+"""@router.get("/", response_model=list[HabilidadBlandaResponse])
 def get_all_soft_skills(db: Session = Depends(get_db)):
-    return get_all_habilidades_blandas(db)
+    return get_all_habilidades_blandas(db)"""
 
 @router.post("/asignar", response_model=HabilidadBlandaCandidatoResponse)
 def assign_soft_skill(habilidad_data: HabilidadBlandaCandidatoCreate, db: Session = Depends(get_db)):

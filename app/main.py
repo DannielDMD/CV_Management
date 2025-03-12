@@ -14,12 +14,13 @@ from app.schemas.preferencias import *
 from app.routes import candidato
 from app.routes import educacion
 from app.routes import experiencia
-from app.routes import habilidades_blandas
+from app.routes import habilidades_blandas_candidato
 from app.routes import habilidades_tecnicas
 from app.routes import herramientas
 from app.routes import preferencias
 #Rutas de los catalogos
 from app.routes.catalogs import categorias_cargos, ciudades, cargos_ofrecidos,nivel_educacion, titulo, instituciones, nivel_ingles, rangos_experiencia
+from app.routes.catalogs import habilidades_blandas
 #Imports de rutas de candidato
 from app.schemas.catalogs.ciudad import *
 from app.schemas.catalogs.cargo_ofrecido import *
@@ -31,7 +32,7 @@ from app.schemas.catalogs.instituciones import *
 from app.schemas.catalogs.nivel_ingles import *
 #Imports de rutas de Experiencia
 from app.schemas.catalogs.rango_experiencia import *
-
+#Imports de catalogos de Habilidades Blandas
 #from app.routes import auth
 #from fastapi.middleware.cors import CORSMiddleware
 
@@ -52,6 +53,7 @@ app.include_router (nivel_ingles.router)
 #Experiencia
 app.include_router (rangos_experiencia.router)
 #Habilidades Blandas
+app.include_router (habilidades_blandas.router)
 #Habilidades Tecnicas
 #Herramientas
 #Preferencias
@@ -59,7 +61,7 @@ app.include_router (rangos_experiencia.router)
 app.include_router(candidato.router)
 app.include_router (educacion.router)
 app.include_router (experiencia.router)
-app.include_router (habilidades_blandas.router)
+app.include_router (habilidades_blandas_candidato.router)
 app.include_router (habilidades_tecnicas.router)
 app.include_router (herramientas.router)
 app.include_router (preferencias.router)

@@ -1,4 +1,3 @@
-from typing import List
 from pydantic import BaseModel
 
 # Schema para representar las habilidades blandas
@@ -8,6 +7,14 @@ class HabilidadBlandaResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+# Schema para crear una nueva habilidad blanda
+class HabilidadBlandaCreate(BaseModel):
+    nombre_habilidad: str
+
+# Schema para actualizar una habilidad blanda existente
+class HabilidadBlandaUpdate(BaseModel):
+    nombre_habilidad: str
 
 # Schema para asignar una habilidad blanda a un candidato
 class HabilidadBlandaCandidatoCreate(BaseModel):

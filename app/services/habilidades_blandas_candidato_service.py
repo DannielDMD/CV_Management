@@ -3,9 +3,9 @@ from fastapi import HTTPException
 from app.models.habilidades_blandas import HabilidadBlanda, HabilidadBlandaCandidato
 from app.schemas.habilidades_blandas import HabilidadBlandaCandidatoCreate
 
-# Obtener todas las habilidades blandas (catálogo)
+"""# Obtener todas las habilidades blandas (catálogo)
 def get_all_habilidades_blandas(db: Session):
-    return db.query(HabilidadBlanda).all()
+    return db.query(HabilidadBlanda).all()"""
 
 # Asignar una habilidad blanda a un candidato
 def assign_habilidad_blanda(db: Session, habilidad_data: HabilidadBlandaCandidatoCreate):

@@ -3,11 +3,11 @@ from app.models.habilidades_tecnicas import CategoriaHabilidadTecnica, Habilidad
 from app.schemas.habilidades_tecnicas import HabilidadTecnicaCandidatoCreate
 from fastapi import HTTPException
 
-def get_all_categorias_habilidades_tecnicas(db: Session):
+"""def get_all_categorias_habilidades_tecnicas(db: Session):
     return db.query(CategoriaHabilidadTecnica).all()
 
 def get_all_habilidades_tecnicas(db: Session):
-    return db.query(HabilidadTecnica).all()
+    return db.query(HabilidadTecnica).all()"""
 
 def assign_habilidad_tecnica(db: Session, habilidad_data: HabilidadTecnicaCandidatoCreate):
     # Verificar si la habilidad técnica ya está asignada al candidato

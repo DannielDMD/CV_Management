@@ -20,7 +20,7 @@ from app.routes import herramientas_candidatos
 from app.routes import preferencias
 #Rutas de los catalogos
 from app.routes.catalogs import categorias_cargos, ciudades, cargos_ofrecidos,nivel_educacion, titulo, instituciones, nivel_ingles, rangos_experiencia
-from app.routes.catalogs import habilidades_blandas
+from app.routes.catalogs import habilidades_blandas, habilidades_tecnicas
 #Imports de rutas de candidato
 from app.schemas.catalogs.ciudad import *
 from app.schemas.catalogs.cargo_ofrecido import *
@@ -55,6 +55,7 @@ app.include_router (rangos_experiencia.router)
 #Habilidades Blandas
 app.include_router (habilidades_blandas.router)
 #Habilidades Tecnicas
+app.include_router (habilidades_tecnicas.router)
 #Herramientas
 #Preferencias
 #Rutas Generales

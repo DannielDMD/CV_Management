@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.services.herramientas_service import (
+from app.services.herramientas_candidato_service import (
     obtener_categorias_herramientas,
     obtener_herramientas_por_categoria,
     obtener_herramientas_candidato,

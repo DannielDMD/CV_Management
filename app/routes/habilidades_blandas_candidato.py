@@ -10,10 +10,6 @@ from app.core.database import get_db
 
 router = APIRouter(prefix="/habilidades-blandas-candidato", tags=["Habilidades Blandas Candidato"])
 
-"""@router.get("/", response_model=list[HabilidadBlandaResponse])
-def get_all_soft_skills(db: Session = Depends(get_db)):
-    return get_all_habilidades_blandas(db)"""
-
 @router.post("/asignar", response_model=HabilidadBlandaCandidatoResponse)
 def assign_soft_skill(habilidad_data: HabilidadBlandaCandidatoCreate, db: Session = Depends(get_db)):
     return assign_habilidad_blanda(db, habilidad_data)

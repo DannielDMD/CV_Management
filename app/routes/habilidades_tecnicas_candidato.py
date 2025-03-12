@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.services.habilidades_tecnicas_service import (
+from app.services.habilidades_tecnicas_candidato_service import (
     get_all_categorias_habilidades_tecnicas,
     get_all_habilidades_tecnicas,
     assign_habilidad_tecnica,

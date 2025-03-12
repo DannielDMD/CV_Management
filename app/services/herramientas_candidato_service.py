@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 from app.models.herramientas import CategoriaHerramienta, Herramienta, HerramientaCandidato
 from app.schemas.herramientas import CategoriaHerramientaResponse, HerramientaResponse, HerramientaCandidatoCreate, HerramientaCandidatoResponse
-
+"""
 def obtener_categorias_herramientas(db: Session):
     categorias = db.query(CategoriaHerramienta).all()
     if not categorias:
@@ -14,7 +14,7 @@ def obtener_herramientas_por_categoria(db: Session, id_categoria: int):
     herramientas = db.query(Herramienta).filter(Herramienta.id_categoria_herramienta == id_categoria).all()
     if not herramientas:
         raise HTTPException(status_code=404, detail=f"No se encontraron herramientas para la categoría {id_categoria}")
-    return herramientas
+    return herramientas"""
 
 def obtener_herramientas_candidato(db: Session, id_candidato: int):
     herramientas_candidato = db.query(HerramientaCandidato).filter(HerramientaCandidato.id_candidato == id_candidato).all()

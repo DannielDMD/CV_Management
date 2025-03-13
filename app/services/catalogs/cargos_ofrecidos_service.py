@@ -12,6 +12,12 @@ def obtener_cargo_ofrecido_por_id(db: Session, id_cargo: int):
         raise HTTPException(status_code=404, detail="Cargo no encontrado")
     return cargo
 
+def obtener_cargos_por_categoria(db: Session, id_categoria: int):
+    cargos = db.query(CargoOfrecido).filter(CargoOfrecido.id_categoria == id_categoria).all()
+    if not cargos:
+        raise HTTPException(status_code=404, detail="No hay cargos en esta categoría")
+    return cargos
+
 def crear_cargo_ofrecido(db: Session, cargo_data: CargoOfrecidoCreate):
     # Verificar si ya existe un cargo con el mismo nombre
     existing_cargo = db.query(CargoOfrecido).filter(CargoOfrecido.nombre_cargo == cargo_data.nombre_cargo).first()

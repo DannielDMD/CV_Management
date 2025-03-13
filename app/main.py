@@ -34,7 +34,7 @@ from app.schemas.catalogs.nivel_ingles import *
 from app.schemas.catalogs.rango_experiencia import *
 #Imports de catalogos de Habilidades Blandas
 #from app.routes import auth
-#from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(title="Gestión de Candidatos - Backend")
@@ -72,8 +72,15 @@ app.include_router (herramientas_candidatos.router)
 app.include_router (preferencias.router)
 
 
-#app.include_router(auth.router)
-#PRUEBA DE LA BASE DE DATOS
+#Cores para el fetch en el frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permitir cualquier origen. Puedes restringirlo a ['http://127.0.0.1:5500']
+    allow_credentials=True,
+    allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Permitir todos los encabezados
+)
+
 #Comprobar la conexión a la Base de Datos
 @app.get("/check-db")
 def check_db():

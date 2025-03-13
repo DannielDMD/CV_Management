@@ -17,6 +17,12 @@ def crear_cargo(cargo_data: CargoOfrecidoCreate, db: Session = Depends(get_db)):
 def listar_cargos(db: Session = Depends(get_db)):
     return obtener_cargos_ofrecidos(db)
 
+
+@router.get("/categoria/{id_categoria}", response_model=list[CargoOfrecidoResponse])
+def listar_cargos_por_categoria(id_categoria: int, db: Session = Depends(get_db)):
+    return obtener_cargos_por_categoria(db, id_categoria)
+
+
 @router.get("/{id_cargo}", response_model=CargoOfrecidoResponse)
 def obtener_cargo(id_cargo: int, db: Session = Depends(get_db)):
     return obtener_cargo_ofrecido_por_id(db, id_cargo)

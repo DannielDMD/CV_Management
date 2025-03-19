@@ -8,7 +8,7 @@ from app.schemas.catalogs.ciudad import *
 from app.core.database import get_db
 from typing import List
 #from app.services.catalogs.ciudades_service import get_ciudades
-from app.services.catalogs.cargos_ofrecidos_service import *
+#from app.services.catalogs.cargos_ofrecidos_service import *
 
 
 router = APIRouter(prefix="/candidatos", tags=["Candidatos"])

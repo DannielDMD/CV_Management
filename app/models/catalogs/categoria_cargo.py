@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+"""from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -11,3 +11,4 @@ class CategoriaCargo(Base):
      # Relación inversa con Cargos
     cargos = relationship("CargoOfrecido", back_populates="categoria")
     candidatos = relationship("Candidato", back_populates="categoria_cargo")
+"""

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+"""from pydantic import BaseModel
 
 class CategoriaCargoBase(BaseModel):
     nombre_categoria: str
@@ -11,3 +11,4 @@ class CategoriaCargoResponse(CategoriaCargoBase):
 
     class Config:
         from_attributes = True
+"""

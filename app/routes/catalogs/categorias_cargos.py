@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+"""from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.services.catalogs.categorias_cargos_service import (
@@ -39,3 +39,4 @@ def put_categoria_cargo(id_categoria: int, categoria_data: CategoriaCargoCreate,
 @router.delete("/{id_categoria}")
 def delete_categoria_cargo(id_categoria: int, db: Session = Depends(get_db)):
     return eliminar_categoria_cargo(db, id_categoria)
+"""

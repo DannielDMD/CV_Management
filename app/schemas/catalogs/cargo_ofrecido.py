@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class CargoOfrecidoBase(BaseModel):
     nombre_cargo: str
-    id_categoria: int
+    """id_categoria: int"""
 
 class CargoOfrecidoCreate(CargoOfrecidoBase):
     pass

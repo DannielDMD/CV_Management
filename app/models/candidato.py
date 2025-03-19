@@ -19,7 +19,7 @@ class Candidato(Base):
     telefono = Column(String(20), nullable=False)
     id_ciudad = Column(Integer, ForeignKey("ciudades.id_ciudad"), nullable=False)
     descripcion_perfil = Column(Text, nullable=True)
-    id_categoria_cargo = Column(Integer, ForeignKey("categoria_cargos.id_categoria"), nullable=False)
+    #id_categoria_cargo = Column(Integer, ForeignKey("categoria_cargos.id_categoria"), nullable=False)
     id_cargo = Column(Integer, ForeignKey("cargos_ofrecidos.id_cargo"), nullable=False)
     trabaja_actualmente_joyco = Column(Boolean, nullable=False)
     ha_trabajado_joyco = Column(Boolean, nullable=False)
@@ -30,7 +30,7 @@ class Candidato(Base):
 
     # Relaciones con otras tablas
     ciudad = relationship("Ciudad", back_populates="candidatos")
-    categoria_cargo = relationship("CategoriaCargo", back_populates="candidatos")
+    #categoria_cargo = relationship("CategoriaCargo", back_populates="candidatos")
     cargo = relationship("CargoOfrecido", back_populates="candidatos")
     motivo_salida = relationship("MotivoSalida", back_populates="candidato")
     

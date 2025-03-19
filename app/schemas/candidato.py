@@ -4,7 +4,7 @@ from pydantic import BaseModel
 #Imports de los catalogos
 from app.schemas.catalogs.ciudad import *
 from app.schemas.catalogs.cargo_ofrecido import *
-from app.schemas.catalogs.categoria_cargo import *
+#from app.schemas.catalogs.categoria_cargo import *
 from app.schemas.catalogs.motivo_salida import *
 
 # Schema para crear un candidato
@@ -16,7 +16,7 @@ class CandidatoCreate(BaseModel):
     telefono: str
     id_ciudad: int
     descripcion_perfil: Optional[str] = None
-    id_categoria_cargo: int
+    #id_categoria_cargo: int
     id_cargo: int
     trabaja_actualmente_joyco: bool
     ha_trabajado_joyco: bool
@@ -33,7 +33,7 @@ class CandidatoUpdate(BaseModel):
     telefono: Optional[str] = None
     id_ciudad: Optional[int] = None
     descripcion_perfil: Optional[str] = None
-    id_categoria_cargo: Optional[int] = None
+    #id_categoria_cargo: Optional[int] = None
     id_cargo: Optional[int] = None
     trabaja_actualmente_joyco: Optional[bool] = None
     ha_trabajado_joyco: Optional[bool] = None
@@ -51,7 +51,7 @@ class CandidatoResponse(BaseModel):
     telefono: str
     ciudad: CiudadResponse
     descripcion_perfil: Optional[str]
-    categoria_cargo: CategoriaCargoResponse
+    #categoria_cargo: CategoriaCargoResponse
     cargo: CargoOfrecidoResponse
     motivo_salida: Optional[MotivoSalidaResponse]
     trabaja_actualmente_joyco: bool

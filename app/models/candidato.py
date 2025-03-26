@@ -2,11 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, Date,
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.core.database import Base
-#from app.models.catalogs.ciudad import *
-#from app.schemas.catalogs.cargo_ofrecido import *
-#from app.schemas.catalogs.categoria_cargo import *
-#from app.models.catalogs.categoria_cargo import *
-#from app.models.catalogs.cargo_ofrecido import *
+
 
 class Candidato(Base):
     __tablename__ = "candidatos"

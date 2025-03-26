@@ -10,7 +10,7 @@ from app.services.catalogs.nivel_educacion_service import (
 from app.schemas.catalogs.nivel_educacion import NivelEducacionCreate, NivelEducacionUpdate, NivelEducacionResponse
 from app.core.database import get_db
 
-router = APIRouter(prefix="/nivel_educacion", tags=["Nivel Educación"])
+router = APIRouter(prefix="/nivel-educacion", tags=["Nivel Educación"])
 
 # Obtener todos los niveles de educación
 @router.get("/", response_model=list[NivelEducacionResponse])

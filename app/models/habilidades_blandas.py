@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 
-# 🧠 Modelo para la tabla de Habilidades Blandas
+#  Modelo para la tabla de Habilidades Blandas
 class HabilidadBlanda(Base):
     __tablename__ = "habilidades_blandas"
 
@@ -14,7 +14,7 @@ class HabilidadBlanda(Base):
     habilidades_candidatos = relationship("HabilidadBlandaCandidato", back_populates="habilidad_blanda")
 
 
-# 🤝 Modelo para la tabla de Habilidades Blandas por Candidato
+#  Modelo para la tabla de Habilidades Blandas por Candidato
 class HabilidadBlandaCandidato(Base):
     __tablename__ = "habilidades_blandas_candidato"
 

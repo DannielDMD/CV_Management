@@ -10,7 +10,7 @@ from app.services.catalogs.motivo_salida_service import (
     delete_motivo_salida
 )
 
-router = APIRouter(prefix="/motivos_salida", tags=["Motivos de Salida"])
+router = APIRouter(prefix="/motivos-salida", tags=["Motivos de Salida"])
 
 @router.get("/", response_model=list[MotivoSalidaResponse])
 def obtener_motivos_salida(db: Session = Depends(get_db)):

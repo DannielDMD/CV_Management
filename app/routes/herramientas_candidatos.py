@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+"""from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.services.herramientas_candidato_service import (
@@ -37,3 +37,4 @@ def eliminar_herramienta(
     id_candidato: int, id_herramienta: int, db: Session = Depends(get_db)
 ):
     return eliminar_herramienta_de_candidato(db, id_candidato, id_herramienta)
+"""

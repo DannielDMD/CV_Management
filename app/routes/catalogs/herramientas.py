@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+"""from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.services.catalogs.herramientas_service import (
     get_categorias_herramientas, create_categoria_herramienta, update_categoria_herramienta,
@@ -42,3 +42,4 @@ def actualizar_herramienta(herramienta_id: int, herramienta: HerramientaCreate, 
 @router.delete("/herramientas/{herramienta_id}")
 def eliminar_herramienta(herramienta_id: int, db: Session = Depends(get_db)):
     return delete_herramienta(db, herramienta_id)
+"""

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+"""from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.services.catalogs.habilidades_blandas_service import (
     get_all_habilidades_blandas,
@@ -36,3 +36,4 @@ def update(id_habilidad_blanda: int, habilidad_data: HabilidadBlandaUpdate, db: 
 @router.delete("/{id_habilidad_blanda}")
 def delete(id_habilidad_blanda: int, db: Session = Depends(get_db)):
     return delete_habilidad_blanda(db, id_habilidad_blanda)
+"""

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from app.schemas.conocimientos_schema import CandidatoConocimientoCreate, CandidatoConocimientoResponse
+from app.schemas.conocimientos_candidato_schema import CandidatoConocimientoCreate, CandidatoConocimientoResponse
 from app.services.conocimientos_candidato_service import (
     get_conocimiento,
     create_conocimiento,

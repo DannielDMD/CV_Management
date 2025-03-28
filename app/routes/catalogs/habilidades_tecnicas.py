@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+"""from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.services.catalogs.habilidades_tecnicas_service import (
@@ -61,3 +61,4 @@ def actualizar_habilidad_tecnica(habilidad_id: int, habilidad_data: HabilidadTec
 @router.delete("/{habilidad_id}")
 def eliminar_habilidad_tecnica(habilidad_id: int, db: Session = Depends(get_db)):
     return delete_habilidad_tecnica(db, habilidad_id)
+"""

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+"""from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.services.habilidades_blandas_candidato_service import (
     assign_habilidades_blandas,
@@ -24,3 +24,4 @@ def get_soft_skills_by_candidate(id_candidato: int, db: Session = Depends(get_db
 @router.delete("/candidato/{id_candidato}/{id_habilidad}")
 def delete_soft_skill(id_candidato: int, id_habilidad: int, db: Session = Depends(get_db)):
     return remove_habilidad_blanda(db, id_candidato, id_habilidad)
+"""

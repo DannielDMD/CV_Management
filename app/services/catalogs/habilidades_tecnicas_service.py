@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+"""from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.habilidades_tecnicas import CategoriaHabilidadTecnica, HabilidadTecnica
 from app.schemas.habilidades_tecnicas import HabilidadTecnicaCreate, CategoriaHabilidadTecnicaCreate
@@ -122,3 +122,4 @@ def delete_habilidad_tecnica(db: Session, habilidad_id: int):
     db.delete(habilidad)
     db.commit()
     return {"message": "Habilidad técnica eliminada correctamente"}
+"""

@@ -1,4 +1,4 @@
-from typing import List, Optional
+"""from typing import List, Optional
 from pydantic import BaseModel
 
 # Schema para crear una categoría de herramientas
@@ -48,3 +48,4 @@ class HerramientaCandidatoResponse(BaseModel):
 
     class Config:
         from_attributes = True
+"""

@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+"""from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.models.catalogs.categoria_cargo import CategoriaCargo
 from app.schemas.catalogs.categoria_cargo import CategoriaCargoCreate, CategoriaCargoResponse
@@ -50,3 +50,4 @@ def eliminar_categoria_cargo(db: Session, id_categoria: int):
     db.delete(categoria)
     db.commit()
     return {"detail": "Categoría eliminada correctamente"}
+"""

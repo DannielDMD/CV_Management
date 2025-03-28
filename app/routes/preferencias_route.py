@@ -6,7 +6,7 @@ from app.services.preferencias_service import (
     actualizar_preferencia,
     eliminar_preferencia
 )
-from app.schemas.preferencias import PreferenciaDisponibilidadCreate, PreferenciaDisponibilidadUpdate, PreferenciaDisponibilidadResponse
+from app.schemas.preferencias_schema import PreferenciaDisponibilidadCreate, PreferenciaDisponibilidadUpdate, PreferenciaDisponibilidadResponse
 from app.core.database import get_db
 
 router = APIRouter(prefix="/preferencias", tags=["Preferencias"])

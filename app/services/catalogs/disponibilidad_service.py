@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from app.models.preferencias import Disponibilidad
-from app.schemas.preferencias import DisponibilidadCreate, DisponibilidadUpdate
+from app.schemas.preferencias_schema import DisponibilidadCreate, DisponibilidadUpdate
 
 def get_all_disponibilidades(db: Session):
     return db.query(Disponibilidad).all()

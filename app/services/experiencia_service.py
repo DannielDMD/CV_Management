@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from app.models.experiencia import ExperienciaLaboral
-from app.schemas.experiencia import ExperienciaLaboralCreate, ExperienciaLaboralUpdate
+from app.models.experiencia_model import ExperienciaLaboral
+from app.schemas.experiencia_schema import ExperienciaLaboralCreate, ExperienciaLaboralUpdate
 
 # Crear una experiencia laboral
 def create_experiencia(db: Session, experiencia_data: ExperienciaLaboralCreate):

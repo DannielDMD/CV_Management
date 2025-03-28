@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+"""from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.habilidades_blandas import HabilidadBlanda
 from app.schemas.habilidades_blandas import HabilidadBlandaCreate, HabilidadBlandaUpdate
@@ -46,3 +46,4 @@ def delete_habilidad_blanda(db: Session, id_habilidad_blanda: int):
     db.delete(habilidad)
     db.commit()
     return {"message": "Habilidad blanda eliminada correctamente"}
+"""

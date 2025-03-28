@@ -1,13 +1,8 @@
-from sqlalchemy.orm import Session
+"""from sqlalchemy.orm import Session
 from app.models.habilidades_tecnicas import CategoriaHabilidadTecnica, HabilidadTecnica, HabilidadTecnicaCandidato
 from app.schemas.habilidades_tecnicas import HabilidadTecnicaCandidatoCreate
 from fastapi import HTTPException
 
-"""def get_all_categorias_habilidades_tecnicas(db: Session):
-    return db.query(CategoriaHabilidadTecnica).all()
-
-def get_all_habilidades_tecnicas(db: Session):
-    return db.query(HabilidadTecnica).all()"""
 
 def assign_habilidad_tecnica(db: Session, habilidad_data: HabilidadTecnicaCandidatoCreate):
     # Verificar si la habilidad técnica ya está asignada al candidato
@@ -47,3 +42,4 @@ def remove_habilidad_tecnica(db: Session, id_candidato: int, id_habilidad: int):
     db.delete(habilidad)
     db.commit()
     return {"message": "Habilidad técnica eliminada correctamente"}
+"""

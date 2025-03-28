@@ -8,7 +8,7 @@ from app.services.experiencia_service import (
     update_experiencia,
     delete_experiencia
 )
-from app.schemas.experiencia import ExperienciaLaboralCreate, ExperienciaLaboralUpdate, ExperienciaLaboralResponse
+from app.schemas.experiencia_schema import ExperienciaLaboralCreate, ExperienciaLaboralUpdate, ExperienciaLaboralResponse
 from app.core.database import get_db
 from typing import List
 

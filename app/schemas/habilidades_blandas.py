@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+"""from pydantic import BaseModel
+from typing import List
 
-# Schema para representar las habilidades blandas
+# Schema para representar una habilidad blanda
 class HabilidadBlandaResponse(BaseModel):
     id_habilidad_blanda: int
     nombre_habilidad: str
@@ -16,15 +17,16 @@ class HabilidadBlandaCreate(BaseModel):
 class HabilidadBlandaUpdate(BaseModel):
     nombre_habilidad: str
 
-# Schema para asignar una habilidad blanda a un candidato
+# Schema para asignar múltiples habilidades blandas a un candidato
 class HabilidadBlandaCandidatoCreate(BaseModel):
     id_candidato: int
-    id_habilidad_blanda: int
+    id_habilidades_blandas: List[int]  # Lista de IDs de habilidades blandas
 
-# Schema para devolver la relación entre candidato y habilidades blandas
-class HabilidadBlandaCandidatoResponse(BaseModel):
-    id: int
-    habilidad_blanda: HabilidadBlandaResponse
+# Schema para devolver todas las habilidades blandas de un candidato
+class HabilidadBlandaCandidatoListResponse(BaseModel):
+    id_candidato: int
+    habilidades_blandas: List[HabilidadBlandaResponse]  # Lista de habilidades blandas
 
     class Config:
         from_attributes = True
+"""

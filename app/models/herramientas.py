@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+"""from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -50,3 +50,4 @@ class HerramientaCandidato(Base):
 
     # Relación con Herramienta
     herramienta = relationship("Herramienta", back_populates="candidatos")
+"""

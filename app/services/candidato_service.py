@@ -1,12 +1,10 @@
 import logging
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from fastapi import HTTPException
-from app.models.candidato import Candidato
-from app.schemas.candidato import CandidatoCreate, CandidatoUpdate
-#from app.schemas.catalogs.ciudad import *
-#from app.schemas.catalogs.categoria_cargo import *
-#from app.schemas.catalogs.cargo_ofrecido import *
+from fastapi import HTTPException, status
+from app.models.candidato_model import Candidato
+from app.schemas.candidato_schema import CandidatoCreate, CandidatoResponse, CandidatoUpdate
+
 
 # Configurar logging
 logger = logging.getLogger(__name__)
@@ -14,7 +12,7 @@ logger = logging.getLogger(__name__)
 # Crear un candidato
 def create_candidato(db: Session, candidato_data: CandidatoCreate):
     # Verificar si el correo ya existe
-    if db.query(Candidato).filter(Candidato.correo_electronico == candidato_data.correo_electronico).first():
+    if db.query(Candidato).filter(Candidato.correo == candidato_data.correo).first():
         raise HTTPException(status_code=400, detail="El correo electrónico ya está registrado")
     
     nuevo_candidato = Candidato(**candidato_data.model_dump())

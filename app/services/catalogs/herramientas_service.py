@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+"""from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.herramientas import CategoriaHerramienta, Herramienta
 from app.schemas.herramientas import CategoriaHerramientaCreate, CategoriaHerramientaUpdate, HerramientaCreate, HerramientaUpdate
@@ -92,4 +92,4 @@ def delete_herramienta(db: Session, herramienta_id: int):
     
     db.delete(herramienta)
     db.commit()
-    return {"message": "Herramienta eliminada exitosamente."}
+    return {"message": "Herramienta eliminada exitosamente."}"""

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+"""from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -28,4 +28,4 @@ class HabilidadBlandaCandidato(Base):
     # Relacion Inversa con Candidatos
     candidato = relationship ("Candidato", back_populates="habilidades_blandas")  
     
-    
+    """

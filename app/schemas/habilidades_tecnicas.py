@@ -1,4 +1,4 @@
-from typing import List, Optional
+"""from typing import List, Optional
 from pydantic import BaseModel
 
 # Schema para crear una nueva categoría de habilidades técnicas
@@ -39,10 +39,11 @@ class HabilidadTecnicaCandidatoCreate(BaseModel):
     id_candidato: int
     id_habilidad_tecnica: int
 
-# Schema para devolver la relación entre candidato y habilidades técnicas
+# Schema para devolver la reEzlación entre candidato y habilidades técnicas
 class HabilidadTecnicaCandidatoResponse(BaseModel):
     id: int
     habilidad_tecnica: HabilidadTecnicaResponse
     
     class Config:
         from_attributes = True
+"""

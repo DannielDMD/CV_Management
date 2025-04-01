@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from app.models.educacion import Educacion
-from app.schemas.educacion import EducacionCreate, EducacionUpdate
+from app.models.educacion_model import Educacion
+from app.schemas.educacion_schema import EducacionCreate, EducacionUpdate
 
 #  Crear una educación para un candidato
 def create_educacion(db: Session, educacion_data: EducacionCreate):

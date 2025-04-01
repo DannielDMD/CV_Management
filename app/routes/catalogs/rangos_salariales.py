@@ -8,7 +8,7 @@ from app.services.catalogs.rangos_salariales_service import (
     update_rango_salarial,
     delete_rango_salarial
 )
-from app.schemas.preferencias import RangoSalarialCreate, RangoSalarialUpdate, RangoSalarialResponse
+from app.schemas.preferencias_schema import RangoSalarialCreate, RangoSalarialUpdate, RangoSalarialResponse
 from app.core.database import get_db
 
 router = APIRouter(prefix="/rangos-salariales", tags=["Rangos Salariales"])

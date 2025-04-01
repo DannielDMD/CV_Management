@@ -8,7 +8,7 @@ from app.services.educacion_service import (
     update_educacion,
     delete_educacion
 )
-from app.schemas.educacion import EducacionCreate, EducacionUpdate, EducacionResponse
+from app.schemas.educacion_schema import EducacionCreate, EducacionUpdate, EducacionResponse
 from app.core.database import get_db
 from typing import List
 

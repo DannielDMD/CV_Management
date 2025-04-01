@@ -12,6 +12,10 @@ def get_titulo(db: Session, titulo_id: int):
 def get_titulos(db: Session, skip: int = 0, limit: int = 100):
     return db.query(TituloObtenido).offset(skip).limit(limit).all()
 
+def get_titulos_por_nivel(db: Session, id_nivel_educacion: int, skip: int = 0, limit: int = 100):
+    return db.query(TituloObtenido).filter(TituloObtenido.id_nivel_educacion == id_nivel_educacion).offset(skip).limit(limit).all()
+
+
 def create_titulo(db: Session, titulo: TituloObtenidoCreate):
     try:
         db_titulo = TituloObtenido(**titulo.model_dump())

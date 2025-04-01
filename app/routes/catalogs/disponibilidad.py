@@ -8,7 +8,7 @@ from app.services.catalogs.disponibilidad_service import (
     update_disponibilidad,
     delete_disponibilidad,
 )
-from app.schemas.preferencias import (
+from app.schemas.preferencias_schema import (
     DisponibilidadCreate,
     DisponibilidadUpdate,
     DisponibilidadResponse,

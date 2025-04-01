@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from app.models.preferencias import RangoSalarial
-from app.schemas.preferencias import RangoSalarialCreate, RangoSalarialUpdate
+from app.schemas.preferencias_schema import RangoSalarialCreate, RangoSalarialUpdate
 
 def get_all_rangos_salariales(db: Session):
     return db.query(RangoSalarial).all()

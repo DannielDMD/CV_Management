@@ -12,7 +12,7 @@ def get_nivel_educacion(db: Session, id_nivel_educacion: int):
 
 # Crear un nuevo nivel de educación
 def create_nivel_educacion(db: Session, nivel_educacion_data: NivelEducacionCreate):
-    nuevo_nivel = NivelEducacion(**nivel_educacion_data.dict())
+    nuevo_nivel = NivelEducacion(**nivel_educacion_data.model_dump())
     db.add(nuevo_nivel)
     db.commit()
     db.refresh(nuevo_nivel)
@@ -23,7 +23,7 @@ def update_nivel_educacion(db: Session, id_nivel_educacion: int, nivel_educacion
     nivel = db.query(NivelEducacion).filter(NivelEducacion.id_nivel_educacion == id_nivel_educacion).first()
     if not nivel:
         return None
-    for key, value in nivel_educacion_data.dict(exclude_unset=True).items():
+    for key, value in nivel_educacion_data.model_dump(exclude_unset=True).items():
         setattr(nivel, key, value)
     db.commit()
     db.refresh(nivel)

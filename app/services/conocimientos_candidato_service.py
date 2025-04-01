@@ -12,7 +12,7 @@ def create_conocimiento(db: Session, conocimiento_data: CandidatoConocimientoCre
         if not candidato:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidato no encontrado")
 
-        nuevo_conocimiento = CandidatoConocimiento(**conocimiento_data.dict())
+        nuevo_conocimiento = CandidatoConocimiento(**conocimiento_data.model_dump())
         db.add(nuevo_conocimiento)
         db.commit()
         db.refresh(nuevo_conocimiento)
@@ -23,6 +23,7 @@ def create_conocimiento(db: Session, conocimiento_data: CandidatoConocimientoCre
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error interno: {str(e)}")
+
 
 def get_conocimiento(db: Session, id_conocimiento: int):
     """Obtiene un conocimiento específico por su ID."""

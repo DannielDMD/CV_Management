@@ -11,8 +11,7 @@ logger = logging.getLogger(__name__)
 
 # Crear un candidato
 def create_candidato(db: Session, candidato_data: CandidatoCreate):
-    # Verificar si el correo ya existe
-    if db.query(Candidato).filter(Candidato.correo == candidato_data.correo).first():
+    if db.query(Candidato).filter(Candidato.correo_electronico == candidato_data.correo_electronico).first():
         raise HTTPException(status_code=400, detail="El correo electrónico ya está registrado")
     
     nuevo_candidato = Candidato(**candidato_data.model_dump())
@@ -20,12 +19,16 @@ def create_candidato(db: Session, candidato_data: CandidatoCreate):
     try:
         db.add(nuevo_candidato)
         db.commit()
-        db.refresh(nuevo_candidato)
+        db.refresh(nuevo_candidato)  # 🔥 Esto recupera el ID generado
+        print(f"Nuevo ID generado: {nuevo_candidato.id_candidato}")  # ✅ Debug
         return nuevo_candidato
     except IntegrityError as e:
         logger.error(f"Error de integridad al insertar candidato: {e}")
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al insertar el candidato en la base de datos")
+
+
+
 
 # Obtener un candidato por ID
 def get_candidato_by_id(db: Session, id_candidato: int):

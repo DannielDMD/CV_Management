@@ -1,3 +1,5 @@
+from typing import List
+from fastapi.responses import JSONResponse
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from app.schemas.conocimientos_candidato_schema import CandidatoConocimientoCreate, CandidatoConocimientoResponse
@@ -13,9 +15,21 @@ router = APIRouter(
     tags=["Conocimientos Candidato"]
 )
 
-@router.post("/", response_model=CandidatoConocimientoResponse, status_code=201)
-def create_conocimiento_endpoint(conocimiento: CandidatoConocimientoCreate, db: Session = Depends(get_db)):
-    return create_conocimiento(db, conocimiento)
+
+
+@router.post("/", status_code=201)
+def create_conocimientos_endpoint(
+    conocimientos: List[CandidatoConocimientoCreate],
+    db: Session = Depends(get_db)
+):
+    creados = []
+    for conocimiento in conocimientos:
+        nuevo = create_conocimiento(db, conocimiento)
+        creados.append(nuevo)
+    return JSONResponse(content={"detalles": f"{len(creados)} conocimientos creados con éxito"})
+
+
+
 
 @router.get("/{conocimiento_id}", response_model=CandidatoConocimientoResponse)
 def get_conocimiento_endpoint(conocimiento_id: int, db: Session = Depends(get_db)):

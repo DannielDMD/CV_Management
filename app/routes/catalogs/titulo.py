@@ -2,17 +2,22 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schemas.catalogs.titulo import TituloObtenidoCreate, TituloObtenidoUpdate, TituloObtenidoResponse
-from app.services.catalogs.titulo_service import get_titulo, get_titulos, create_titulo, update_titulo, delete_titulo
+from app.services.catalogs.titulo_service import get_titulo, get_titulos, create_titulo, get_titulos_por_nivel, update_titulo, delete_titulo
 
 router = APIRouter(prefix="/titulos", tags=["Títulos Obtenidos"])
 
 @router.get("/", response_model=list[TituloObtenidoResponse])
-def read_titulos(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_titulos(skip: int = 0, limit: int = 300, db: Session = Depends(get_db)):
     return get_titulos(db, skip, limit)
 
 @router.get("/{titulo_id}", response_model=TituloObtenidoResponse)
 def read_titulo(titulo_id: int, db: Session = Depends(get_db)):
     return get_titulo(db, titulo_id)
+
+@router.get("/nivel/{id_nivel_educacion}", response_model=list[TituloObtenidoResponse])
+def read_titulos_por_nivel(id_nivel_educacion: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return get_titulos_por_nivel(db, id_nivel_educacion, skip, limit)
+
 
 @router.post("/", response_model=TituloObtenidoResponse, status_code=201)
 def create_titulo_endpoint(titulo: TituloObtenidoCreate, db: Session = Depends(get_db)):

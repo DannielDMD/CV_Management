@@ -50,10 +50,25 @@ from app.schemas.catalogs.rango_experiencia import *
 # from app.routes import auth
 from fastapi.middleware.cors import CORSMiddleware
 
+#from app.routes.Dashboard import dashboard_routes
+
+from app.routes.Dashboard import stats_general
+
+from app.routes.Dashboard import stats_educacion
+
+
+
+
 print(engine.url)
 
 
 app = FastAPI(title="Gestión de Candidatos - Backend")
+
+#app.include_router(dashboard_routes.router)
+
+app.include_router(stats_general.router)
+
+app.include_router(stats_educacion.router)
 
 # Rutas de los catalogos
 app.include_router(ciudades.router)

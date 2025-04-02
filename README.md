@@ -76,7 +76,7 @@ README.md                   # Este archivo
 1. Clona el repositorio:
 
 ```bash
-git clone https://github.com/tu_usuario/backend-candidatos.git
+git clone https://github.com/DannielDMD/CV_Management.git
 cd backend-candidatos
 ```
 

@@ -1,5 +1,3 @@
-¡Claro! Recuerdo tu proyecto de **Gestión de Candidatos**, donde tienes modelos como `Candidato`, `Educacion`, `Experiencia`, `Habilidad`, `Preferencia`, etc., todos relacionados, y ya hemos hablado de endpoints como la distribución de niveles educativos, y del flujo del formulario multi-paso. Basado en eso, aquí tienes un ejemplo de README bien estructurado para tu backend (puedes modificarlo según el stack que estés usando: FastAPI, Django, Laravel, etc.):
-
 ---
 
 # 📂 Backend - Gestión de Candidatos

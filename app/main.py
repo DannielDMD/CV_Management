@@ -58,13 +58,19 @@ from app.routes.Dashboard import stats_educacion
 
 
 
-
+    
 print(engine.url)
 
 
 app = FastAPI(title="Gestión de Candidatos - Backend")
 
 #app.include_router(dashboard_routes.router)
+
+from app.routes import usuario_route
+
+app.include_router(usuario_route.router)
+
+
 
 app.include_router(stats_general.router)
 

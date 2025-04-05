@@ -9,7 +9,7 @@ Este es el backend del sistema de **Gestión de Candidatos**, una aplicación di
 - Python 3.10+
 - FastAPI
 - SQLAlchemy
-- PostgreSQL
+- PostgreSQL 17
 - Alembic (migraciones)
 - Pydantic
 - Uvicorn

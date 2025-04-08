@@ -27,9 +27,6 @@ def create_candidato(db: Session, candidato_data: CandidatoCreate):
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al insertar el candidato en la base de datos")
 
-
-
-
 # Obtener un candidato por ID
 def get_candidato_by_id(db: Session, id_candidato: int):
     candidato = db.get(Candidato, id_candidato)

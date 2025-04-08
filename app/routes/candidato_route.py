@@ -14,7 +14,6 @@ from app.core.database import get_db
 
 router = APIRouter(prefix="/candidatos", tags=["Candidatos"])
 
-
 # Crear un candidato
 @router.post("/", response_model=CandidatoResponse, status_code=status.HTTP_201_CREATED)
 def create_candidato_endpoint(candidato_data: CandidatoCreate, db: Session = Depends(get_db)):

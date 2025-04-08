@@ -59,6 +59,7 @@ class CandidatoResponse(BaseModel):
     tiene_referido: bool
     nombre_referido: Optional[str]
     fecha_registro: datetime
+    estado: str  # ✅ nuevo campo
 
     class Config:
         from_attributes = True

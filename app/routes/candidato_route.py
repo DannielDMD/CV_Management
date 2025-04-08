@@ -9,6 +9,8 @@ from app.services.candidato_service import (
 )
 from app.schemas.candidato_schema import CandidatoCreate, CandidatoUpdate, CandidatoResponse
 from app.core.database import get_db
+from app.services.candidato_service import get_candidatos_resumen
+from app.schemas.candidato_schema import CandidatoResumenResponse
 
 
 
@@ -18,6 +20,14 @@ router = APIRouter(prefix="/candidatos", tags=["Candidatos"])
 @router.post("/", response_model=CandidatoResponse, status_code=status.HTTP_201_CREATED)
 def create_candidato_endpoint(candidato_data: CandidatoCreate, db: Session = Depends(get_db)):
     return create_candidato(db, candidato_data)
+
+
+# Obtener resumen de candidatos (para dashboard)
+@router.get("/resumen", response_model=list[CandidatoResumenResponse])
+def obtener_resumen_candidatos(db: Session = Depends(get_db)):
+    return get_candidatos_resumen(db)
+
+
 
 # Obtener un candidato por ID
 @router.get("/{id_candidato}", response_model=CandidatoResponse)

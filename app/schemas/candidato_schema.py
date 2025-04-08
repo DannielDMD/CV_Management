@@ -63,3 +63,25 @@ class CandidatoResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        
+# ───────────── SCHEMA RESUMIDO PARA DASHBOARD ─────────────
+
+class CandidatoResumenResponse(BaseModel):
+    id_candidato: int
+    nombre_completo: str
+    correo_electronico: str
+    telefono: str
+    ciudad: str
+    cargo_ofrecido: str
+    nivel_educativo: Optional[str] = None
+    titulo_obtenido: Optional[str] = None
+    rango_experiencia: Optional[str] = None
+    habilidades_blandas: list[str] = []
+    habilidades_tecnicas: list[str] = []
+    herramientas: list[str] = []
+    disponibilidad_inicio: Optional[str] = None
+    fecha_postulacion: datetime
+    estado: str
+
+    class Config:
+        from_attributes = True

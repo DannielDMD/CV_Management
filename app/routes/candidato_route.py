@@ -1,13 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.services.candidato_service import (
     create_candidato,
     get_candidato_by_id,
     get_all_candidatos,
+    get_candidato_detalle,
     update_candidato,
     delete_candidato,
 )
-from app.schemas.candidato_schema import CandidatoCreate, CandidatoUpdate, CandidatoResponse
+from app.schemas.candidato_schema import CandidatoCreate, CandidatoDetalleResponse, CandidatoUpdate, CandidatoResponse
 from app.core.database import get_db
 from app.services.candidato_service import get_candidatos_resumen
 from app.schemas.candidato_schema import CandidatoResumenResponse
@@ -21,12 +22,41 @@ router = APIRouter(prefix="/candidatos", tags=["Candidatos"])
 def create_candidato_endpoint(candidato_data: CandidatoCreate, db: Session = Depends(get_db)):
     return create_candidato(db, candidato_data)
 
-
-# Obtener resumen de candidatos (para dashboard)
 @router.get("/resumen", response_model=list[CandidatoResumenResponse])
-def obtener_resumen_candidatos(db: Session = Depends(get_db)):
-    return get_candidatos_resumen(db)
+def obtener_resumen_candidatos(
+    db: Session = Depends(get_db),
+    search: str = Query(None),
+    estado: str = Query(None),
+    id_disponibilidad: int = Query(None),
+    id_cargo: int = Query(None),
+    id_ciudad: int = Query(None),
+    id_herramienta: int = Query(None),
+    id_habilidad_tecnica: int = Query(None),
+    id_nivel_ingles: int = Query(None),
+    id_experiencia: int = Query(None),
+    id_titulo: int = Query(None),
+    trabaja_joyco: bool = Query(None),
+):
+    return get_candidatos_resumen(
+        db=db,
+        search=search,
+        estado=estado,
+        id_disponibilidad=id_disponibilidad,
+        id_cargo=id_cargo,
+        id_ciudad=id_ciudad,
+        id_herramienta=id_herramienta,
+        id_habilidad_tecnica=id_habilidad_tecnica,
+        id_nivel_ingles=id_nivel_ingles,
+        id_experiencia=id_experiencia,
+        id_titulo=id_titulo,
+        trabaja_joyco=trabaja_joyco
+    )
 
+
+# Obtener las generalidades de un candidato
+@router.get("/{id_candidato}/detalle", response_model=CandidatoDetalleResponse)
+def obtener_candidato_detalle(id_candidato: int, db: Session = Depends(get_db)):
+    return get_candidato_detalle(db, id_candidato)
 
 
 # Obtener un candidato por ID

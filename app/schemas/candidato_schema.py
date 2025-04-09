@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from datetime import date, datetime
 from pydantic import BaseModel
 
@@ -86,3 +86,53 @@ class CandidatoResumenResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        
+# ───────────── SCHEMA Completo PARA DASHBOARD ─────────────
+class CandidatoDetalleResponse(BaseModel):
+    # Información Personal
+    nombre_completo: str
+    correo_electronico: str
+    cc: str
+    fecha_nacimiento: date
+    telefono: str
+    ciudad: str
+    descripcion_perfil: Optional[str]
+    cargo: str
+    trabaja_actualmente_joyco: bool
+    ha_trabajado_joyco: bool
+    motivo_salida: Optional[str] = None
+    tiene_referido: bool
+    nombre_referido: Optional[str] = None
+    fecha_registro: datetime
+    estado: str
+
+    # Educación
+    nivel_educacion: Optional[str] = None
+    titulo: Optional[str] = None
+    institucion: Optional[str] = None
+    anio_graduacion: Optional[int] = None
+    nivel_ingles: Optional[str] = None
+
+    # Experiencia Laboral
+    rango_experiencia: Optional[str] = None
+    ultima_empresa: Optional[str] = None
+    ultimo_cargo: Optional[str] = None
+    funciones: Optional[str] = None
+    fecha_inicio: Optional[date] = None
+    fecha_fin: Optional[date] = None
+
+    # Conocimientos
+    habilidades_blandas: List[str]
+    habilidades_tecnicas: List[str]
+    herramientas: List[str]
+
+    # Preferencias y Disponibilidad
+    disponibilidad_viajar: Optional[bool] = None
+    disponibilidad_inicio: Optional[str] = None
+    rango_salarial: Optional[str] = None
+    trabaja_actualmente: Optional[bool] = None
+    motivo_salida_laboral: Optional[str] = None
+    razon_trabajar_joyco: Optional[str] = None
+
+    class Config:
+        orm_mode = True

@@ -40,6 +40,7 @@ class CandidatoUpdate(BaseModel):
     id_motivo_salida: Optional[int] = None
     tiene_referido: Optional[bool] = None
     nombre_referido: Optional[str] = None
+    estado: Optional[str] = None
 
 
 # Schema para devolver información de un candidato

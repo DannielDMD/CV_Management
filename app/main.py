@@ -104,12 +104,10 @@ app.include_router(preferencias_route.router)
 # Cores para el fetch en el frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "*"
-    ],  # Permitir cualquier origen. Puedes restringirlo a ['http://127.0.0.1:5500']
+    allow_origins=["http://localhost:5173"],  # Puedes usar ["*"] solo para desarrollo
     allow_credentials=True,
-    allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
-    allow_headers=["*"],  # Permitir todos los encabezados
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

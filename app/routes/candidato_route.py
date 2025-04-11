@@ -12,7 +12,7 @@ from app.schemas.candidato_schema import CandidatoCreate, CandidatoDetalleRespon
 from app.core.database import get_db
 from app.services.candidato_service import get_candidatos_resumen
 from app.schemas.candidato_schema import CandidatoResumenResponse
-
+from app.schemas.candidato_schema import CandidatoResumenPaginatedResponse  
 
 
 router = APIRouter(prefix="/candidatos", tags=["Candidatos"])
@@ -22,7 +22,8 @@ router = APIRouter(prefix="/candidatos", tags=["Candidatos"])
 def create_candidato_endpoint(candidato_data: CandidatoCreate, db: Session = Depends(get_db)):
     return create_candidato(db, candidato_data)
 
-@router.get("/resumen", response_model=list[CandidatoResumenResponse])
+
+@router.get("/resumen", response_model=CandidatoResumenPaginatedResponse)
 def obtener_resumen_candidatos(
     db: Session = Depends(get_db),
     search: str = Query(None),
@@ -36,6 +37,8 @@ def obtener_resumen_candidatos(
     id_experiencia: int = Query(None),
     id_titulo: int = Query(None),
     trabaja_joyco: bool = Query(None),
+    skip: int = Query(0),
+    limit: int = Query(10),
 ):
     return get_candidatos_resumen(
         db=db,
@@ -49,9 +52,10 @@ def obtener_resumen_candidatos(
         id_nivel_ingles=id_nivel_ingles,
         id_experiencia=id_experiencia,
         id_titulo=id_titulo,
-        trabaja_joyco=trabaja_joyco
+        trabaja_joyco=trabaja_joyco,
+        skip=skip,
+        limit=limit
     )
-
 
 # Obtener las generalidades de un candidato
 @router.get("/{id_candidato}/detalle", response_model=CandidatoDetalleResponse)

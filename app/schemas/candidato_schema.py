@@ -64,8 +64,10 @@ class CandidatoResponse(BaseModel):
 
     class Config:
         from_attributes = True
-        
+
+
 # ───────────── SCHEMA RESUMIDO PARA DASHBOARD ─────────────
+
 
 class CandidatoResumenResponse(BaseModel):
     id_candidato: int
@@ -81,13 +83,21 @@ class CandidatoResumenResponse(BaseModel):
     habilidades_tecnicas: list[str] = []
     herramientas: list[str] = []
     disponibilidad_inicio: Optional[str] = None
+    trabaja_actualmente_joyco: bool
     fecha_postulacion: datetime
     estado: str
+    
 
     class Config:
         from_attributes = True
-        
-# ───────────── SCHEMA Completo PARA DASHBOARD ─────────────
+
+
+
+class CandidatoResumenPaginatedResponse(BaseModel):
+    data: List[CandidatoResumenResponse]
+    total: int
+
+# ───────────── SCHEMA Completo PARA DASHBOAR   D ─────────────
 class CandidatoDetalleResponse(BaseModel):
     # Información Personal
     nombre_completo: str

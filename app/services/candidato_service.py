@@ -107,9 +107,8 @@ def delete_candidato(db: Session, id_candidato: int):
         logger.error(f"Error al eliminar candidato: {e}")
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al eliminar el candidato")
-
-    # RESUMEN DE CANDIDATO
-
+    
+    
 def get_candidatos_resumen(
     db: Session,
     search: str = None,
@@ -122,9 +121,10 @@ def get_candidatos_resumen(
     id_nivel_ingles: int = None,
     id_experiencia: int = None,
     id_titulo: int = None,
-    trabaja_joyco: bool = None
-) -> list[CandidatoResumenResponse]:
-    
+    trabaja_joyco: bool = None,
+    skip: int = 0,
+    limit: int = 10
+):
     query = db.query(Candidato).options(
         joinedload(Candidato.ciudad),
         joinedload(Candidato.cargo),
@@ -137,6 +137,7 @@ def get_candidatos_resumen(
         joinedload(Candidato.preferencias).joinedload(PreferenciaDisponibilidad.disponibilidad),
     )
 
+    # 👇 tus filtros
     if search:
         query = query.join(Candidato.cargo).filter(
             or_(
@@ -145,7 +146,6 @@ def get_candidatos_resumen(
                 CargoOfrecido.nombre_cargo.ilike(f"%{search}%"),
             )
         )
-
     if estado:
         query = query.filter(Candidato.estado == estado)
     if id_disponibilidad:
@@ -179,9 +179,13 @@ def get_candidatos_resumen(
             ExperienciaLaboral.id_rango_experiencia == id_experiencia
         )
 
+    # ✅ calculamos total antes del paginado
+    total = query.count()
 
-    candidatos = query.all()
+    # ✅ aplicamos paginación
+    candidatos = query.offset(skip).limit(limit).all()
 
+    # 👇 tu lógica para armar el resumen
     resumen = []
     for candidato in candidatos:
         educacion = candidato.educaciones[0] if candidato.educaciones else None
@@ -215,12 +219,15 @@ def get_candidatos_resumen(
                 habilidades_tecnicas=habilidades_tecnicas,
                 herramientas=herramientas,
                 disponibilidad_inicio=(preferencias.disponibilidad.descripcion_disponibilidad if preferencias else None),
+                trabaja_actualmente_joyco=candidato.trabaja_actualmente_joyco,
                 fecha_postulacion=candidato.fecha_registro,
                 estado=candidato.estado,
             )
         )
 
-    return resumen
+    # ✅ devolvemos también el total
+    return {"data": resumen, "total": total}
+
 
 
 # -------------Detalle de un Candidato -----------------#

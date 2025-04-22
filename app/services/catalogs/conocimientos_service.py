@@ -3,30 +3,34 @@ from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
 from app.models.conocimientos_model import HabilidadBlanda, HabilidadTecnica, Herramienta
 from app.schemas.catalogs.conocimientos_schema import HabilidadBlandaResponse, HabilidadTecnicaResponse, HerramientaResponse
+from app.utils.orden_catalogos import ordenar_por_nombre
 
 def get_habilidades_blandas(db: Session):
     try:
-        habilidades = db.query(HabilidadBlanda).all()
-        if not habilidades:
+        query = db.query(HabilidadBlanda)
+        ordenado = ordenar_por_nombre(query, "nombre_habilidad_blanda").all()
+        if not ordenado:
             raise HTTPException(status_code=404, detail="No se encontraron habilidades blandas")
-        return [HabilidadBlandaResponse.model_validate(habilidad) for habilidad in habilidades]
+        return [HabilidadBlandaResponse.model_validate(h) for h in ordenado]
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener habilidades blandas: {str(e)}")
 
 def get_habilidades_tecnicas(db: Session):
     try:
-        habilidades = db.query(HabilidadTecnica).all()
-        if not habilidades:
+        query = db.query(HabilidadTecnica)
+        ordenado = ordenar_por_nombre(query, "nombre_habilidad_tecnica").all()
+        if not ordenado:
             raise HTTPException(status_code=404, detail="No se encontraron habilidades técnicas")
-        return [HabilidadTecnicaResponse.model_validate(habilidad) for habilidad in habilidades]
+        return [HabilidadTecnicaResponse.model_validate(h) for h in ordenado]
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener habilidades técnicas: {str(e)}")
 
 def get_herramientas(db: Session):
     try:
-        herramientas = db.query(Herramienta).all()
-        if not herramientas:
+        query = db.query(Herramienta)
+        ordenado = ordenar_por_nombre(query, "nombre_herramienta").all()
+        if not ordenado:
             raise HTTPException(status_code=404, detail="No se encontraron herramientas")
-        return [HerramientaResponse.model_validate(herramienta) for herramienta in herramientas]
+        return [HerramientaResponse.model_validate(h) for h in ordenado]
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener herramientas: {str(e)}")

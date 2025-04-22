@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 from app.models.conocimientos_model import CandidatoConocimiento
 from app.schemas.conocimientos_candidato_schema import CandidatoConocimientoCreate
 from app.models.candidato_model import Candidato
+from app.utils.orden_catalogos import ordenar_por_nombre
 
 def create_conocimiento(db: Session, conocimiento_data: CandidatoConocimientoCreate):
     """Crea un nuevo conocimiento asociado a un candidato."""

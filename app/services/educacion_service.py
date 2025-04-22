@@ -3,6 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 from app.models.educacion_model import Educacion
 from app.schemas.educacion_schema import EducacionCreate, EducacionUpdate
+from app.utils.orden_catalogos import ordenar_por_nombre
 
 #  Crear una educación para un candidato
 def create_educacion(db: Session, educacion_data: EducacionCreate):

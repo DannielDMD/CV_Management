@@ -3,8 +3,12 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 from app.models.preferencias import RangoSalarial
 from app.schemas.preferencias_schema import RangoSalarialCreate, RangoSalarialUpdate
 
+
 def get_all_rangos_salariales(db: Session):
-    return db.query(RangoSalarial).all()
+   return db.query(RangoSalarial).all()
+
+
+
 
 def get_rango_salarial(db: Session, rango_id: int):
     rango = db.query(RangoSalarial).filter(RangoSalarial.id_rango_salarial == rango_id).first()

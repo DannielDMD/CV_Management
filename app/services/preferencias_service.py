@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.preferencias import PreferenciaDisponibilidad
 from app.schemas.preferencias_schema import PreferenciaDisponibilidadCreate, PreferenciaDisponibilidadUpdate, PreferenciaDisponibilidadResponse
+from app.utils.orden_catalogos import ordenar_por_nombre
 
 def obtener_preferencia_candidato(db: Session, id_candidato: int):
     return db.query(PreferenciaDisponibilidad).filter(PreferenciaDisponibilidad.id_candidato == id_candidato).first()

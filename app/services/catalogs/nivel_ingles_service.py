@@ -3,9 +3,10 @@ from fastapi import HTTPException
 from app.models.catalogs.nivel_ingles import NivelIngles
 from app.schemas.catalogs.nivel_ingles import NivelInglesCreate, NivelInglesUpdate
 
+
 # Obtener todos los niveles de inglés
 def get_niveles_ingles(db: Session):
-    return db.query(NivelIngles).all()
+     return db.query(NivelIngles).all()
 
 # Obtener un nivel de inglés por ID
 def get_nivel_ingles(db: Session, nivel_ingles_id: int):

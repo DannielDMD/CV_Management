@@ -3,12 +3,16 @@ from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
 from app.models.preferencias import MotivoSalida
 from app.schemas.catalogs.motivo_salida import MotivoSalidaCreate, MotivoSalidaUpdate
+from app.utils.orden_catalogos import ordenar_por_nombre
 
 def get_motivos_salida(db: Session):
     try:
-        return db.query(MotivoSalida).all()
+        query = db.query(MotivoSalida)
+        ordenado = ordenar_por_nombre(query, "descripcion_motivo")  # 👈 campo que contiene el nombre
+        return ordenado.all()
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener motivos de salida: {str(e)}")
+
 
 def get_motivo_salida(db: Session, motivo_id: int):
     try:

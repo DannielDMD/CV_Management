@@ -3,9 +3,11 @@ from fastapi import HTTPException
 from app.models.catalogs.rango_experiencia import RangoExperiencia
 from app.schemas.catalogs.rango_experiencia import RangoExperienciaCreate, RangoExperienciaUpdate
 
+
 # Obtener todos los rangos de experiencia
 def get_rangos_experiencia(db: Session):
-    return db.query(RangoExperiencia).all()
+     return db.query(RangoExperiencia).all()
+
 
 # Obtener un rango de experiencia por ID
 def get_rango_experiencia(db: Session, rango_experiencia_id: int):

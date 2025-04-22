@@ -19,6 +19,7 @@ from app.models.preferencias import PreferenciaDisponibilidad
 
 from sqlalchemy import desc, or_
 from app.models.catalogs.cargo_ofrecido import CargoOfrecido
+from app.utils.orden_catalogos import ordenar_por_nombre
 
 
 

@@ -2,10 +2,12 @@ from sqlalchemy.orm import Session
 from app.models.catalogs.ciudad import Ciudad
 from app.schemas.catalogs.ciudad import CiudadCreate
 from fastapi import HTTPException
+from app.utils.orden_catalogos import ordenar_por_nombre
 
 # Catalogo de ciudades
 def get_ciudades(db: Session):
-    return db.query(Ciudad).all()
+    query = db.query(Ciudad)
+    return ordenar_por_nombre(query, "nombre_ciudad").all()
 
 def get_ciudad_by_id(db: Session, ciudad_id: int):
     ciudad = db.query(Ciudad).filter(Ciudad.id_ciudad == ciudad_id).first()

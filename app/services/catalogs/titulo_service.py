@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.catalogs.titulo import TituloObtenido
 from app.schemas.catalogs.titulo import TituloObtenidoCreate, TituloObtenidoUpdate
+from app.utils.orden_catalogos import ordenar_por_nombre
 
 def get_titulo(db: Session, titulo_id: int):
     titulo = db.query(TituloObtenido).filter(TituloObtenido.id_titulo == titulo_id).first()
@@ -10,10 +11,15 @@ def get_titulo(db: Session, titulo_id: int):
     return titulo
 
 def get_titulos(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(TituloObtenido).offset(skip).limit(limit).all()
+    query = db.query(TituloObtenido)
+    ordenado = ordenar_por_nombre(query, "nombre_titulo")  # asegúrate que sea el nombre correcto del campo
+    return ordenado.offset(skip).limit(limit).all()
 
 def get_titulos_por_nivel(db: Session, id_nivel_educacion: int, skip: int = 0, limit: int = 100):
-    return db.query(TituloObtenido).filter(TituloObtenido.id_nivel_educacion == id_nivel_educacion).offset(skip).limit(limit).all()
+    query = db.query(TituloObtenido).filter(TituloObtenido.id_nivel_educacion == id_nivel_educacion)
+    ordenado = ordenar_por_nombre(query, "nombre_titulo")
+    return ordenado.offset(skip).limit(limit).all()
+
 
 
 def create_titulo(db: Session, titulo: TituloObtenidoCreate):

@@ -17,7 +17,7 @@ from app.models.experiencia_model import ExperienciaLaboral
 from app.models.conocimientos_model import CandidatoConocimiento
 from app.models.preferencias import PreferenciaDisponibilidad
 
-from sqlalchemy import desc, or_
+from sqlalchemy import desc, func, or_
 from app.models.catalogs.cargo_ofrecido import CargoOfrecido
 from app.utils.orden_catalogos import ordenar_por_nombre
 
@@ -378,3 +378,13 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
             preferencias.razon_trabajar_joyco if preferencias else None
         ),
     )
+
+def obtener_estadisticas_candidatos(db: Session):
+    resultados = db.query(
+        Candidato.estado,
+        func.count(Candidato.id_candidato)
+    ).group_by(Candidato.estado).all()
+
+    resumen = {estado: cantidad for estado, cantidad in resultados}
+    resumen["total"] = sum(resumen.values())
+    return resumen

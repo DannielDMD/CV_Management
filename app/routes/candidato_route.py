@@ -6,10 +6,11 @@ from app.services.candidato_service import (
     get_candidato_by_id,
     get_all_candidatos,
     get_candidato_detalle,
+    obtener_estadisticas_candidatos,
     update_candidato,
     delete_candidato,
 )
-from app.schemas.candidato_schema import CandidatoCreate, CandidatoDetalleResponse, CandidatoUpdate, CandidatoResponse
+from app.schemas.candidato_schema import CandidatoCreate, CandidatoDetalleResponse, CandidatoUpdate, CandidatoResponse, EstadisticasCandidatosResponse
 from app.core.database import get_db
 from app.services.candidato_service import get_candidatos_resumen
 from app.schemas.candidato_schema import CandidatoResumenResponse
@@ -65,6 +66,9 @@ def obtener_resumen_candidatos(
 def obtener_candidato_detalle(id_candidato: int, db: Session = Depends(get_db)):
     return get_candidato_detalle(db, id_candidato)
 
+@router.get("/estadisticas", response_model=EstadisticasCandidatosResponse)
+def estadisticas_candidatos(db: Session = Depends(get_db)):
+    return obtener_estadisticas_candidatos(db)
 
 # Obtener un candidato por ID
 @router.get("/{id_candidato}", response_model=CandidatoResponse)
@@ -85,3 +89,5 @@ def update_candidato_endpoint(id_candidato: int, candidato_data: CandidatoUpdate
 @router.delete("/{id_candidato}")
 def delete_candidato_endpoint(id_candidato: int, db: Session = Depends(get_db)):
     return delete_candidato(db, id_candidato)
+
+

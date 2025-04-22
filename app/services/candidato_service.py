@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
@@ -16,7 +17,7 @@ from app.models.experiencia_model import ExperienciaLaboral
 from app.models.conocimientos_model import CandidatoConocimiento
 from app.models.preferencias import PreferenciaDisponibilidad
 
-from sqlalchemy import or_
+from sqlalchemy import desc, or_
 from app.models.catalogs.cargo_ofrecido import CargoOfrecido
 
 
@@ -122,9 +123,11 @@ def get_candidatos_resumen(
     id_experiencia: int = None,
     id_titulo: int = None,
     trabaja_joyco: bool = None,
+    ordenar_por_fecha: Optional[str] = None,  # 👈 aquí lo agregamos
     skip: int = 0,
     limit: int = 10
 ):
+
     query = db.query(Candidato).options(
         joinedload(Candidato.ciudad),
         joinedload(Candidato.cargo),
@@ -182,6 +185,12 @@ def get_candidatos_resumen(
     # ✅ calculamos total antes del paginado
     total = query.count()
 
+    # ✅ aplicar ordenamiento por fecha si se pidió
+    if ordenar_por_fecha == "recientes":
+        query = query.order_by(desc(Candidato.fecha_registro))
+    elif ordenar_por_fecha == "antiguos":
+        query = query.order_by(Candidato.fecha_registro)
+        
     # ✅ aplicamos paginación
     candidatos = query.offset(skip).limit(limit).all()
 

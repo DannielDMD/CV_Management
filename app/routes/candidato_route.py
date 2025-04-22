@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.services.candidato_service import (
@@ -37,6 +38,7 @@ def obtener_resumen_candidatos(
     id_experiencia: int = Query(None),
     id_titulo: int = Query(None),
     trabaja_joyco: bool = Query(None),
+    ordenar_por_fecha: Optional[str] = Query(None),
     skip: int = Query(0),
     limit: int = Query(10),
 ):
@@ -53,6 +55,7 @@ def obtener_resumen_candidatos(
         id_experiencia=id_experiencia,
         id_titulo=id_titulo,
         trabaja_joyco=trabaja_joyco,
+        ordenar_por_fecha=ordenar_por_fecha,
         skip=skip,
         limit=limit
     )

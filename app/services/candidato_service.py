@@ -22,7 +22,6 @@ from app.models.catalogs.cargo_ofrecido import CargoOfrecido
 from app.utils.orden_catalogos import ordenar_por_nombre
 
 
-
 # Configurar logging
 logger = logging.getLogger(__name__)
 
@@ -109,8 +108,8 @@ def delete_candidato(db: Session, id_candidato: int):
         logger.error(f"Error al eliminar candidato: {e}")
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al eliminar el candidato")
-    
-    
+
+
 def get_candidatos_resumen(
     db: Session,
     search: str = None,
@@ -126,7 +125,7 @@ def get_candidatos_resumen(
     trabaja_joyco: bool = None,
     ordenar_por_fecha: Optional[str] = None,  # 👈 aquí lo agregamos
     skip: int = 0,
-    limit: int = 10
+    limit: int = 10,
 ):
 
     query = db.query(Candidato).options(
@@ -134,11 +133,21 @@ def get_candidatos_resumen(
         joinedload(Candidato.cargo),
         joinedload(Candidato.educaciones).joinedload(Educacion.nivel_educacion),
         joinedload(Candidato.educaciones).joinedload(Educacion.titulo),
-        joinedload(Candidato.experiencias).joinedload(ExperienciaLaboral.rango_experiencia),
-        joinedload(Candidato.conocimientos).joinedload(CandidatoConocimiento.habilidad_blanda),
-        joinedload(Candidato.conocimientos).joinedload(CandidatoConocimiento.habilidad_tecnica),
-        joinedload(Candidato.conocimientos).joinedload(CandidatoConocimiento.herramienta),
-        joinedload(Candidato.preferencias).joinedload(PreferenciaDisponibilidad.disponibilidad),
+        joinedload(Candidato.experiencias).joinedload(
+            ExperienciaLaboral.rango_experiencia
+        ),
+        joinedload(Candidato.conocimientos).joinedload(
+            CandidatoConocimiento.habilidad_blanda
+        ),
+        joinedload(Candidato.conocimientos).joinedload(
+            CandidatoConocimiento.habilidad_tecnica
+        ),
+        joinedload(Candidato.conocimientos).joinedload(
+            CandidatoConocimiento.herramienta
+        ),
+        joinedload(Candidato.preferencias).joinedload(
+            PreferenciaDisponibilidad.disponibilidad
+        ),
     )
 
     # 👇 tus filtros
@@ -191,7 +200,7 @@ def get_candidatos_resumen(
         query = query.order_by(desc(Candidato.fecha_registro))
     elif ordenar_por_fecha == "antiguos":
         query = query.order_by(Candidato.fecha_registro)
-        
+
     # ✅ aplicamos paginación
     candidatos = query.offset(skip).limit(limit).all()
 
@@ -210,7 +219,9 @@ def get_candidatos_resumen(
             if c.tipo_conocimiento == "blanda" and c.habilidad_blanda:
                 habilidades_blandas.append(c.habilidad_blanda.nombre_habilidad_blanda)
             elif c.tipo_conocimiento == "tecnica" and c.habilidad_tecnica:
-                habilidades_tecnicas.append(c.habilidad_tecnica.nombre_habilidad_tecnica)
+                habilidades_tecnicas.append(
+                    c.habilidad_tecnica.nombre_habilidad_tecnica
+                )
             elif c.tipo_conocimiento == "herramienta" and c.herramienta:
                 herramientas.append(c.herramienta.nombre_herramienta)
 
@@ -222,13 +233,27 @@ def get_candidatos_resumen(
                 telefono=candidato.telefono,
                 ciudad=candidato.ciudad.nombre_ciudad,
                 cargo_ofrecido=candidato.cargo.nombre_cargo,
-                nivel_educativo=(educacion.nivel_educacion.descripcion_nivel if educacion else None),
-                titulo_obtenido=(educacion.titulo.nombre_titulo if educacion and educacion.titulo else None),
-                rango_experiencia=(experiencia.rango_experiencia.descripcion_rango if experiencia else None),
+                nivel_educativo=(
+                    educacion.nivel_educacion.descripcion_nivel if educacion else None
+                ),
+                titulo_obtenido=(
+                    educacion.titulo.nombre_titulo
+                    if educacion and educacion.titulo
+                    else None
+                ),
+                rango_experiencia=(
+                    experiencia.rango_experiencia.descripcion_rango
+                    if experiencia
+                    else None
+                ),
                 habilidades_blandas=habilidades_blandas,
                 habilidades_tecnicas=habilidades_tecnicas,
                 herramientas=herramientas,
-                disponibilidad_inicio=(preferencias.disponibilidad.descripcion_disponibilidad if preferencias else None),
+                disponibilidad_inicio=(
+                    preferencias.disponibilidad.descripcion_disponibilidad
+                    if preferencias
+                    else None
+                ),
                 trabaja_actualmente_joyco=candidato.trabaja_actualmente_joyco,
                 fecha_postulacion=candidato.fecha_registro,
                 estado=candidato.estado,
@@ -237,7 +262,6 @@ def get_candidatos_resumen(
 
     # ✅ devolvemos también el total
     return {"data": resumen, "total": total}
-
 
 
 # -------------Detalle de un Candidato -----------------#
@@ -254,19 +278,17 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
             joinedload(Candidato.ciudad),
             joinedload(Candidato.cargo),
             joinedload(Candidato.motivo_salida),
-            
-            
             # Joins de Educación
             joinedload(Candidato.educaciones).joinedload(Educacion.nivel_educacion),
             joinedload(Candidato.educaciones).joinedload(Educacion.titulo),
             joinedload(Candidato.educaciones).joinedload(Educacion.institucion),
             joinedload(Candidato.educaciones).joinedload(Educacion.nivel_ingles),
-            
             # Joins de Experiencia
-            joinedload(Candidato.experiencias).joinedload(ExperienciaLaboral.rango_experiencia),
-            
+            joinedload(Candidato.experiencias).joinedload(
+                ExperienciaLaboral.rango_experiencia
+            ),
             # Joins de Conocimientos
-             joinedload(Candidato.conocimientos).joinedload(
+            joinedload(Candidato.conocimientos).joinedload(
                 CandidatoConocimiento.habilidad_blanda
             ),
             joinedload(Candidato.conocimientos).joinedload(
@@ -275,11 +297,16 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
             joinedload(Candidato.conocimientos).joinedload(
                 CandidatoConocimiento.herramienta
             ),
-            
             # Joins de Preferencias
-            joinedload(Candidato.preferencias).joinedload(PreferenciaDisponibilidad.disponibilidad),
-            joinedload(Candidato.preferencias).joinedload(PreferenciaDisponibilidad.rango_salarial),
-            joinedload(Candidato.preferencias).joinedload(PreferenciaDisponibilidad.motivo_salida),
+            joinedload(Candidato.preferencias).joinedload(
+                PreferenciaDisponibilidad.disponibilidad
+            ),
+            joinedload(Candidato.preferencias).joinedload(
+                PreferenciaDisponibilidad.rango_salarial
+            ),
+            joinedload(Candidato.preferencias).joinedload(
+                PreferenciaDisponibilidad.motivo_salida
+            ),
         )
         .filter(Candidato.id_candidato == id_candidato)
         .first()
@@ -379,11 +406,13 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
         ),
     )
 
+
 def obtener_estadisticas_candidatos(db: Session):
-    resultados = db.query(
-        Candidato.estado,
-        func.count(Candidato.id_candidato)
-    ).group_by(Candidato.estado).all()
+    resultados = (
+        db.query(Candidato.estado, func.count(Candidato.id_candidato))
+        .group_by(Candidato.estado)
+        .all()
+    )
 
     resumen = {estado: cantidad for estado, cantidad in resultados}
     resumen["total"] = sum(resumen.values())

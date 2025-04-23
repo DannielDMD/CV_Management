@@ -1,6 +1,6 @@
 import re
 from typing import Optional
-from datetime import date
+from datetime import date, datetime
 from pydantic import BaseModel, field_validator, model_validator
 from app.schemas.catalogs.rango_experiencia import *
 
@@ -42,18 +42,23 @@ class ExperienciaLaboralCreate(BaseModel):
         fecha_fin = values.get("fecha_fin")
         hoy = date.today()
 
+        # 🛠️ Convertir string a date si es necesario
+        if isinstance(fecha_inicio, str):
+            fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
+        if fecha_fin and isinstance(fecha_fin, str):
+            fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d").date()
+
         if fecha_inicio > hoy:
             raise ValueError("La fecha de inicio no puede ser futura.")
         if fecha_inicio.year < 1970:
             raise ValueError("La fecha de inicio no puede ser anterior a 1970.")
-
         if fecha_fin:
             if fecha_fin > hoy:
                 raise ValueError("La fecha de finalización no puede ser futura.")
             if fecha_fin < fecha_inicio:
-                raise ValueError("La fecha de finalización no puede ser anterior a la fecha de inicio.")
-
+                raise ValueError("La fecha de finalización no puede ser anterior a la de inicio.")
         return values
+
 
 # Schema para actualizar una experiencia laboral (todos los campos opcionales)
 class ExperienciaLaboralUpdate(BaseModel):

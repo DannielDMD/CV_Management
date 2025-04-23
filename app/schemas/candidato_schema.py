@@ -1,6 +1,7 @@
+import re
 from typing import Optional, List
 from datetime import date, datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, field_validator
 
 # Imports de los catalogos
 from app.schemas.catalogs.ciudad import *
@@ -8,10 +9,9 @@ from app.schemas.catalogs.cargo_ofrecido import *
 from app.schemas.catalogs.motivo_salida import *
 
 
-# Schema para crear un candidato
 class CandidatoCreate(BaseModel):
     nombre_completo: str
-    correo_electronico: str
+    correo_electronico: EmailStr
     cc: str
     fecha_nacimiento: Optional[date] = None
     telefono: str
@@ -24,6 +24,61 @@ class CandidatoCreate(BaseModel):
     tiene_referido: bool
     nombre_referido: Optional[str] = None
 
+    @field_validator("fecha_nacimiento")
+    @classmethod
+    def validar_fecha_nacimiento(cls, value: Optional[date]) -> Optional[date]:
+        if value is None:
+            raise ValueError("La fecha de nacimiento es obligatoria.")
+        hoy = date.today()
+        edad = hoy.year - value.year - ((hoy.month, hoy.day) < (value.month, value.day))
+        if value > hoy:
+            raise ValueError("La fecha de nacimiento no puede ser futura.")
+        if edad < 18:
+            raise ValueError("Debes tener al menos 18 años.")
+        if value < date(1930, 1, 1):
+            raise ValueError("La fecha de nacimiento no puede ser anterior a 1930.")
+        return value
+
+    @field_validator("nombre_completo")
+    @classmethod
+    def validar_nombre_completo(cls, value: str) -> str:
+        if not re.match(r"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", value):
+            raise ValueError("El nombre solo debe contener letras y espacios.")
+        return value
+
+    @field_validator("cc")
+    @classmethod
+    def validar_cc(cls, value: str) -> str:
+        if not value.isdigit():
+            raise ValueError("La cédula solo debe contener números.")
+        if not (6 <= len(value) <= 10):
+            raise ValueError("La cédula debe tener entre 6 y 10 dígitos.")
+        return value
+
+    @field_validator("telefono")
+    @classmethod
+    def validar_telefono(cls, value: str) -> str:
+        if not value.isdigit():
+            raise ValueError("El teléfono solo debe contener números.")
+        if len(value) != 10:
+            raise ValueError("El teléfono debe tener exactamente 10 dígitos.")
+        return value
+
+    @field_validator("descripcion_perfil")
+    @classmethod
+    def validar_descripcion_perfil(cls, value: Optional[str]) -> Optional[str]:
+        if value and len(value) > 300:
+            raise ValueError("La descripción del perfil no debe superar los 300 caracteres.")
+        if value and not re.match(r"^[\w\s.,;:áéíóúÁÉÍÓÚñÑ()¿?¡!\"'-]*$", value):
+            raise ValueError("La descripción contiene caracteres no permitidos.")
+        return value
+
+    @field_validator("nombre_referido")
+    @classmethod
+    def validar_nombre_referido(cls, value: Optional[str]) -> Optional[str]:
+        if value and not re.match(r"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", value):
+            raise ValueError("El nombre del referido solo debe contener letras y espacios.")
+        return value
 
 # Schema para actualizar un candidato (todos los campos opcionales)
 class CandidatoUpdate(BaseModel):

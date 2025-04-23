@@ -1,12 +1,28 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
+from app.models.candidato_model import Candidato
 from app.models.educacion_model import Educacion
 from app.schemas.educacion_schema import EducacionCreate, EducacionUpdate
 from app.utils.orden_catalogos import ordenar_por_nombre
 
 #  Crear una educación para un candidato
 def create_educacion(db: Session, educacion_data: EducacionCreate):
+    # 🔎 Buscar fecha de nacimiento del candidato
+    candidato = db.query(Candidato).filter(Candidato.id_candidato == educacion_data.id_candidato).first()
+
+    if not candidato:
+        raise HTTPException(status_code=404, detail="Candidato no encontrado.")
+
+    if educacion_data.anio_graduacion and candidato.fecha_nacimiento:
+        año_nacimiento = candidato.fecha_nacimiento.year
+        if educacion_data.anio_graduacion < año_nacimiento:
+            raise HTTPException(
+                status_code=400,
+                detail=f"El año de graduación ({educacion_data.anio_graduacion}) no puede ser anterior al año de nacimiento ({año_nacimiento})."
+            )
+
+    # ✅ Guardar si pasa la validación
     nueva_educacion = Educacion(**educacion_data.model_dump())
     try:
         db.add(nueva_educacion)
@@ -16,6 +32,8 @@ def create_educacion(db: Session, educacion_data: EducacionCreate):
     except IntegrityError:
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al insertar la educación en la base de datos")
+
+
 
 #  Obtener una educación por ID
 def get_educacion_by_id(db: Session, id_educacion: int):

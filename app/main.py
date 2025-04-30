@@ -57,6 +57,13 @@ from app.routes.Dashboard import stats_general
 from app.routes.Dashboard import stats_educacion
 
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from app.jobs.limpieza_candidatos import limpiar_candidatos_incompletos_job
+
+
+
+
+
 print(engine.url)
 
 
@@ -106,6 +113,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Crear scheduler y agregar job cada 6 horas
+scheduler = BackgroundScheduler()
+scheduler.add_job(limpiar_candidatos_incompletos_job, "interval", hours=6)
+scheduler.start()
+
 
 
 # Comprobar la conexión a la Base de Datos

@@ -33,9 +33,12 @@ class Candidato(Base):
     tiene_referido = Column(Boolean, nullable=False)
     nombre_referido = Column(String(255), nullable=True)
     fecha_registro = Column(TIMESTAMP, server_default=func.current_timestamp())
-
+    
     # ✅ Nuevo campo: estado del candidato
     estado = Column(String(20), nullable=False, default="EN_PROCESO")
+
+    # SE CREA EL NUEVO CAMPO PARA SABER SI SE COMPLETÓ O NO EL FORMULARIO
+    formulario_completo = Column(Boolean, nullable=False, default=False)  # ✅ nuevo campo
 
     # Relaciones con otras tablas
     ciudad = relationship("Ciudad", back_populates="candidatos")

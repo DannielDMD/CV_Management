@@ -13,6 +13,7 @@ Este es el backend del sistema de **Gestión de Candidatos**, una aplicación di
 - Alembic (migraciones)
 - Pydantic
 - Uvicorn
+- APScheduler (Automatizaciones de Instrucciones)
 
 ## 📦 Estructura del proyecto
 

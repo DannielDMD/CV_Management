@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 import logging
 from typing import Optional
 from sqlalchemy.orm import Session
@@ -417,3 +418,30 @@ def obtener_estadisticas_candidatos(db: Session):
     resumen = {estado: cantidad for estado, cantidad in resultados}
     resumen["total"] = sum(resumen.values())
     return resumen
+
+# NUEVA FUNCIÓN AGREGADA PARA SABER SI EL FORMULARIO SE COMPLETÓ
+def marcar_formulario_completo(db: Session, id_candidato: int):
+    candidato = db.query(Candidato).filter(Candidato.id_candidato == id_candidato).first()
+    if not candidato:
+        raise HTTPException(status_code=404, detail="Candidato no encontrado")
+
+    candidato.formulario_completo = True
+    db.commit()
+    db.refresh(candidato)
+    return candidato
+
+#Función de Eliminación de Candidatos incompletos
+def eliminar_candidatos_incompletos(db: Session):
+    limite = datetime.now(timezone.utc) - timedelta(hours=6)
+    candidatos = db.query(Candidato).filter(
+        Candidato.formulario_completo == False,
+        Candidato.fecha_registro < limite
+    ).all()
+
+    eliminados = 0
+    for candidato in candidatos:
+        db.delete(candidato)
+        eliminados += 1
+
+    db.commit()
+    return {"eliminados": eliminados}

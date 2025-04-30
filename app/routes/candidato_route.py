@@ -3,9 +3,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.services.candidato_service import (
     create_candidato,
+    eliminar_candidatos_incompletos,
     get_candidato_by_id,
     get_all_candidatos,
     get_candidato_detalle,
+    marcar_formulario_completo,
     obtener_estadisticas_candidatos,
     update_candidato,
     delete_candidato,
@@ -106,3 +108,13 @@ def update_candidato_endpoint(
 @router.delete("/{id_candidato}")
 def delete_candidato_endpoint(id_candidato: int, db: Session = Depends(get_db)):
     return delete_candidato(db, id_candidato)
+
+# FUNCIÓN DEL ROUTE PARA CUANDO SE COMPLETÓ EL FORMULARIO
+@router.put("/{id_candidato}/completar", response_model=CandidatoResponse)
+def marcar_formulario_completo_endpoint(id_candidato: int, db: Session = Depends(get_db)):
+    return marcar_formulario_completo(db, id_candidato)
+
+# FUNCIÓN DE LA RUTA QUE ELIMINA LOS CANDIDATOS INCOMPLETOS
+@router.delete("/limpiar-incompletos")
+def limpiar_candidatos_incompletos(db: Session = Depends(get_db)):
+    return eliminar_candidatos_incompletos(db)

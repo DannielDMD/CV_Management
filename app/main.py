@@ -52,7 +52,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # from app.routes.Dashboard import dashboard_routes
 
-from app.routes.Dashboard import stats_general
+from app.routes.Dashboard import stats_general, stats_personal
 
 from app.routes.Dashboard import stats_educacion
 
@@ -68,6 +68,15 @@ print(engine.url)
 
 
 app = FastAPI(title="Gestión de Candidatos - Backend")
+
+# Cores para el fetch en el frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Puedes usar ["*"] solo para desarrollo
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # app.include_router(dashboard_routes.router)
 
@@ -104,15 +113,8 @@ app.include_router(experiencia_route.router)
 app.include_router(conocimientos_candidato_route.router)
 app.include_router(preferencias_route.router)
 
+app.include_router (stats_personal.router)
 
-# Cores para el fetch en el frontend
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Puedes usar ["*"] solo para desarrollo
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 # Crear scheduler y agregar job cada 6 horas

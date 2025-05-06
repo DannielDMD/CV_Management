@@ -52,7 +52,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # from app.routes.Dashboard import dashboard_routes
 
-from app.routes.Dashboard import stats_general, stats_personal
+from app.routes.Dashboard import stats_experiencia, stats_general, stats_personal
 
 from app.routes.Dashboard import stats_educacion
 
@@ -114,6 +114,7 @@ app.include_router(conocimientos_candidato_route.router)
 app.include_router(preferencias_route.router)
 
 app.include_router (stats_personal.router)
+app.include_router (stats_experiencia.router)
 
 
 

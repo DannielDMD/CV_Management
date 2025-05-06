@@ -1,8 +1,8 @@
-# services/dashboard/export_service.py
-
+from typing import Optional
 from io import BytesIO
 import pandas as pd
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import extract
 
 from app.models.candidato_model import Candidato
 from app.models.educacion_model import Educacion
@@ -10,19 +10,14 @@ from app.models.experiencia_model import ExperienciaLaboral
 from app.models.conocimientos_model import CandidatoConocimiento
 from app.models.preferencias import PreferenciaDisponibilidad
 
-def exportar_candidatos_detallados_excel(db: Session) -> BytesIO:
+def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None) -> BytesIO:
     """
-    Genera un archivo Excel con toda la información detallada de cada candidato:
-      - Datos personales
-      - Educación
-      - Experiencia laboral
-      - Conocimientos
-      - Preferencias y disponibilidad
-    Retorna un BytesIO listo para enviar como StreamingResponse.
+    Genera un archivo Excel con toda la información detallada de cada candidato.
+    Si se especifica un año, solo se exportan los registrados ese año.
     """
 
-    # 1. Consultar todos los candidatos con sus relaciones
-    candidatos = (
+    # 1. Consultar candidatos filtrando por año si aplica
+    query = (
         db.query(Candidato)
         .options(
             joinedload(Candidato.ciudad),
@@ -40,31 +35,22 @@ def exportar_candidatos_detallados_excel(db: Session) -> BytesIO:
             joinedload(Candidato.preferencias).joinedload(PreferenciaDisponibilidad.rango_salarial),
             joinedload(Candidato.preferencias).joinedload(PreferenciaDisponibilidad.motivo_salida),
         )
-        .all()
     )
+    if año:
+        query = query.filter(extract("year", Candidato.fecha_registro) == año)
 
-    # 2. Construir lista de diccionarios con todos los campos
+    candidatos = query.all()
+
+    # 2. Resto del código queda igual (construcción de registros, DataFrame y exportación)
     registros = []
     for c in candidatos:
         educ = c.educaciones[0] if c.educaciones else None
         exp = c.experiencias[0] if c.experiencias else None
         pref = c.preferencias[0] if c.preferencias else None
 
-        hb = [
-            ci.habilidad_blanda.nombre_habilidad_blanda
-            for ci in c.conocimientos
-            if ci.tipo_conocimiento == "blanda" and ci.habilidad_blanda
-        ]
-        ht = [
-            ci.habilidad_tecnica.nombre_habilidad_tecnica
-            for ci in c.conocimientos
-            if ci.tipo_conocimiento == "tecnica" and ci.habilidad_tecnica
-        ]
-        hr = [
-            ci.herramienta.nombre_herramienta
-            for ci in c.conocimientos
-            if ci.tipo_conocimiento == "herramienta" and ci.herramienta
-        ]
+        hb = [ci.habilidad_blanda.nombre_habilidad_blanda for ci in c.conocimientos if ci.tipo_conocimiento == "blanda" and ci.habilidad_blanda]
+        ht = [ci.habilidad_tecnica.nombre_habilidad_tecnica for ci in c.conocimientos if ci.tipo_conocimiento == "tecnica" and ci.habilidad_tecnica]
+        hr = [ci.herramienta.nombre_herramienta for ci in c.conocimientos if ci.tipo_conocimiento == "herramienta" and ci.herramienta]
 
         registros.append({
             "id_candidato": c.id_candidato,
@@ -110,10 +96,7 @@ def exportar_candidatos_detallados_excel(db: Session) -> BytesIO:
             "razon_trabajar_joyco": pref.razon_trabajar_joyco if pref else None,
         })
 
-    # 3. Convertir a DataFrame
     df = pd.DataFrame(registros)
-
-    # 4. Generar el Excel en memoria
     output = BytesIO()
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="Candidatos")

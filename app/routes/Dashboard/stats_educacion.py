@@ -1,6 +1,8 @@
 # routes/Dashboard/stats_educacion.py
 
-from fastapi import APIRouter, Depends
+
+from typing import Optional
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -15,18 +17,30 @@ router = APIRouter(
 @router.get(
     "/",
     response_model=EstadisticasEducacionResponse,
-    summary="Obtener estadísticas de educación de los candidatos"
+    summary="Obtener estadísticas de educación de los candidatos filtradas por año"
 )
-def estadisticas_educacion(db: Session = Depends(get_db)):
+def estadisticas_educacion(
+    año: Optional[int] = Query(
+        None,
+        title="Año",
+        description="Año para filtrar las estadísticas de educación (por ejemplo, 2025). Si no se indica, usa todos los años."
+    ),
+    db: Session = Depends(get_db)
+):
     """
-    Devuelve:
-    - Top 5 niveles educativos
-    - Top 5 títulos obtenidos
-    - Top 5 instituciones académicas
-    - Distribución por nivel de inglés
-    - Distribución por año de graduación
+    Devuelve un objeto con:
+    - educaciones_por_mes: total de registros de educación cada mes del año indicado
+    - top_niveles_educacion_anual: Top 5 niveles educativos en el año
+    - top_niveles_por_mes: nivel más frecuente por mes
+    - top_titulos_obtenidos_anual: Top 5 títulos en el año
+    - top_titulos_por_mes: título más frecuente por mes
+    - top_instituciones_academicas_anual: Top 5 instituciones en el año
+    - top_instituciones_por_mes: institución más frecuente por mes
+    - distribucion_nivel_ingles_anual: distribución de nivel de inglés en el año
+    - distribucion_nivel_ingles_por_mes: nivel de inglés más frecuente por mes
+    - distribucion_anio_graduacion: conteo por año de graduación (sin filtro de año)
     """
-    return obtener_estadisticas_educacion(db)
+    return obtener_estadisticas_educacion(db, año)
 
 
 

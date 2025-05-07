@@ -8,6 +8,7 @@ from app.services.candidato_service import (
     get_all_candidatos,
     get_candidato_detalle,
     marcar_formulario_completo,
+    obtener_estadisticas_candidatos,
     update_candidato,
     delete_candidato,
 )
@@ -16,9 +17,11 @@ from app.schemas.candidato_schema import (
     CandidatoDetalleResponse,
     CandidatoUpdate,
     CandidatoResponse,
+    EstadisticasCandidatosResponse,
 )
 from app.core.database import get_db
 from app.services.candidato_service import get_candidatos_resumen
+from app.schemas.candidato_schema import CandidatoResumenResponse
 from app.schemas.candidato_schema import CandidatoResumenPaginatedResponse
 
 
@@ -76,6 +79,9 @@ def obtener_candidato_detalle(id_candidato: int, db: Session = Depends(get_db)):
     return get_candidato_detalle(db, id_candidato)
 
 
+@router.get("/estadisticas", response_model=EstadisticasCandidatosResponse)
+def estadisticas_candidatos(db: Session = Depends(get_db)):
+    return obtener_estadisticas_candidatos(db)
 
 
 # Obtener un candidato por ID

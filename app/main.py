@@ -11,7 +11,7 @@ from app.schemas.experiencia_schema import *
 from app.schemas.preferencias_schema import *
 
 # Rutas generales
-from app.routes import candidato_route
+from app.routes import candidato_route, solicitudes_eliminacion_route
 from app.routes import educacion_route
 from app.routes import experiencia_route
 from app.routes import conocimientos_candidato_route
@@ -120,6 +120,10 @@ app.include_router (stats_preferencias.router)
 app.include_router(stats_proceso.router)
 app.include_router (export_report.router)
 app.include_router(export_pdf.router)
+
+
+app.include_router(solicitudes_eliminacion_route.router)
+
 
 # Crear scheduler y agregar job cada 6 horas
 scheduler = BackgroundScheduler()

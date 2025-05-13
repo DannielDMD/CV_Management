@@ -62,3 +62,5 @@ class EstadisticasPersonalesResponse(BaseModel):
     estadisticas_booleanas: BooleanStats
     top_cargos_anual: List[CountItem]
     top_cargos_por_mes: List[MonthTopItem]
+    top_nombres_referidos: List[CountItem]
+

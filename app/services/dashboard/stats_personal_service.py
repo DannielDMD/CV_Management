@@ -197,6 +197,25 @@ def obtener_estadisticas_personales(
             top_cargos_por_mes.append(
                 MonthTopItem(month=m, label=row.label, count=row.count)
             )
+    # 9. Top nombres de referidos (donde sí hay nombre registrado)
+    referidos_q = (
+        año_filter(
+            db.query(
+                Candidato.nombre_referido.label("label"),
+                func.count(Candidato.id_candidato).label("count")
+            ).filter(Candidato.nombre_referido.isnot(None), Candidato.nombre_referido != ""),
+            Candidato.fecha_registro
+        )
+        .group_by(Candidato.nombre_referido)
+        .order_by(func.count(Candidato.id_candidato).desc())
+        .limit(3)
+        .all()
+    )
+
+    top_nombres_referidos = [
+        CountItem(label=r.label, count=r.count) for r in referidos_q
+    ]
+
 
     return EstadisticasPersonalesResponse(
         candidatos_por_mes=candidatos_por_mes,
@@ -207,4 +226,5 @@ def obtener_estadisticas_personales(
         estadisticas_booleanas=estadisticas_booleanas,
         top_cargos_anual=top_cargos_anual,
         top_cargos_por_mes=top_cargos_por_mes,
+        top_nombres_referidos=top_nombres_referidos  # 👈 nuevo
     )

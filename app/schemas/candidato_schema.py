@@ -23,6 +23,8 @@ class CandidatoCreate(BaseModel):
     id_motivo_salida: Optional[int] = None
     tiene_referido: bool
     nombre_referido: Optional[str] = None
+    acepta_politica_datos: bool = False
+
 
     @field_validator("fecha_nacimiento")
     @classmethod
@@ -96,6 +98,8 @@ class CandidatoUpdate(BaseModel):
     tiene_referido: Optional[bool] = None
     nombre_referido: Optional[str] = None
     estado: Optional[str] = None
+    acepta_politica_datos: Optional[bool] = None
+
 
 
 # Schema para devolver información de un candidato
@@ -117,6 +121,8 @@ class CandidatoResponse(BaseModel):
     fecha_registro: datetime
     estado: str  # ✅ nuevo campo
     formulario_completo: bool  # ✅ NUEVO CAMPO
+    acepta_politica_datos: bool
+
 
 
     class Config:

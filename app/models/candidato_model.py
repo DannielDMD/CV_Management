@@ -40,6 +40,12 @@ class Candidato(Base):
     # SE CREA EL NUEVO CAMPO PARA SABER SI SE COMPLETÓ O NO EL FORMULARIO
     formulario_completo = Column(Boolean, nullable=False, default=False)  # ✅ nuevo campo
 
+    # SE CREA EL NUEVO CAMPO PARA CUANDO SE ACEPTA LA POLITICA DE DATOS
+    acepta_politica_datos = Column(Boolean, nullable=False, default=False)
+
+    
+    
+    
     # Relaciones con otras tablas
     ciudad = relationship("Ciudad", back_populates="candidatos")
     cargo = relationship("CargoOfrecido", back_populates="candidatos")

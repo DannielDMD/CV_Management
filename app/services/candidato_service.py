@@ -428,6 +428,7 @@ def obtener_estadisticas_candidatos(db: Session):
     resumen["total"] = sum(resumen.values())
     return resumen
 
+
 # NUEVA FUNCIÓN AGREGADA PARA SABER SI EL FORMULARIO SE COMPLETÓ
 def marcar_formulario_completo(db: Session, id_candidato: int):
     candidato = db.query(Candidato).filter(Candidato.id_candidato == id_candidato).first()

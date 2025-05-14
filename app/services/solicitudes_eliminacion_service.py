@@ -1,8 +1,10 @@
+from typing import Optional
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, func, extract, desc
 from app.models.solicitud_eliminacion_model import SolicitudEliminacion
 from app.schemas.solicitud_eliminacion_schema import (
+    ConteoSolicitudesEliminacion,
     SolicitudEliminacionCreate,
     SolicitudesPaginadasResponse,
     SolicitudEliminacionResponse,
@@ -99,3 +101,33 @@ def eliminar_solicitud_eliminacion(db: Session, id: int):
     except Exception:
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al eliminar la solicitud")
+
+
+def get_estadisticas_solicitudes_eliminacion(
+    db: Session,
+    año: Optional[int] = None
+) -> ConteoSolicitudesEliminacion:
+    query = db.query(SolicitudEliminacion)
+
+    if año:
+        query = query.filter(
+            extract("year", SolicitudEliminacion.fecha_solicitud) == año
+        )
+
+    total = query.count()
+
+    pendientes = query.filter(SolicitudEliminacion.estado == "Pendiente").count()
+    rechazadas = query.filter(SolicitudEliminacion.estado == "Rechazada").count()
+    aceptadas = query.filter(SolicitudEliminacion.estado == "Aceptada").count()
+
+    motivo_actualizar = query.filter(SolicitudEliminacion.motivo.ilike("%actualizar%")).count()
+    motivo_eliminar = query.filter(SolicitudEliminacion.motivo.ilike("%eliminar%")).count()
+
+    return ConteoSolicitudesEliminacion(
+        total=total,
+        pendientes=pendientes,
+        rechazadas=rechazadas,
+        aceptadas=aceptadas,
+        motivo_actualizar_datos=motivo_actualizar,
+        motivo_eliminar_candidatura=motivo_eliminar,
+    )

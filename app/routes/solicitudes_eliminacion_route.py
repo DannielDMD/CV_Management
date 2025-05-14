@@ -3,8 +3,8 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import Optional
 
-from app.schemas.solicitud_eliminacion_schema import SolicitudEliminacionCreate, SolicitudEliminacionResponse, SolicitudesPaginadasResponse
-from app.services.solicitudes_eliminacion_service import crear_solicitud_eliminacion, get_solicitudes_eliminacion, update_solicitud_eliminacion
+from app.schemas.solicitud_eliminacion_schema import ConteoSolicitudesEliminacion, SolicitudEliminacionCreate, SolicitudEliminacionResponse, SolicitudesPaginadasResponse
+from app.services.solicitudes_eliminacion_service import crear_solicitud_eliminacion, get_estadisticas_solicitudes_eliminacion, get_solicitudes_eliminacion, update_solicitud_eliminacion
 from app.core.database import get_db
 
 from fastapi import Path
@@ -66,3 +66,7 @@ def eliminar_solicitud(
     db: Session = Depends(get_db)
 ):
     return eliminar_solicitud_eliminacion(db, id)
+
+@router.get("/estadisticas", response_model=ConteoSolicitudesEliminacion)
+def obtener_estadisticas_solicitudes(año: int = None, db: Session = Depends(get_db)):
+    return get_estadisticas_solicitudes_eliminacion(db, año)

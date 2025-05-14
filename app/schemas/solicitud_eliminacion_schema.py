@@ -28,3 +28,11 @@ class SolicitudEliminacionResponse(BaseModel):
 class SolicitudesPaginadasResponse(BaseModel):
     data: List[SolicitudEliminacionResponse]
     total: int
+    
+class ConteoSolicitudesEliminacion(BaseModel):
+    total: int
+    pendientes: int
+    rechazadas: int
+    aceptadas: int
+    motivo_actualizar_datos: int
+    motivo_eliminar_candidatura: int

@@ -18,7 +18,7 @@ from app.models.experiencia_model import ExperienciaLaboral
 from app.models.conocimientos_model import CandidatoConocimiento
 from app.models.preferencias import PreferenciaDisponibilidad
 
-from sqlalchemy import desc, func, or_
+from sqlalchemy import desc, extract, func, or_
 from app.models.catalogs.cargo_ofrecido import CargoOfrecido
 from app.utils.orden_catalogos import ordenar_por_nombre
 
@@ -125,6 +125,8 @@ def get_candidatos_resumen(
     id_titulo: int = None,
     trabaja_joyco: bool = None,
     ordenar_por_fecha: Optional[str] = None,  # 👈 aquí lo agregamos
+    anio: Optional[int] = None,  # ✅ AÑADIDO
+    mes: Optional[int] = None,  # ✅ AÑADIDO
     skip: int = 0,
     limit: int = 10,
 ):
@@ -192,6 +194,13 @@ def get_candidatos_resumen(
         query = query.join(Candidato.experiencias).filter(
             ExperienciaLaboral.id_rango_experiencia == id_experiencia
         )
+    
+    if anio:
+        query = query.filter(extract("year", Candidato.fecha_registro) == anio)
+
+    if mes:
+        query = query.filter(extract("month", Candidato.fecha_registro) == mes)
+
 
     # ✅ calculamos total antes del paginado
     total = query.count()

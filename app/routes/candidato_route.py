@@ -51,6 +51,8 @@ def obtener_resumen_candidatos(
     id_titulo: int = Query(None),
     trabaja_joyco: bool = Query(None),
     ordenar_por_fecha: Optional[str] = Query(None),
+    anio: Optional[int] = Query(None, description="Filtrar por año de postulación"),
+    mes: Optional[int] = Query(None, ge=1, le=12, description="Filtrar por mes de postulación"),
     skip: int = Query(0),
     limit: int = Query(10),
 ):
@@ -68,6 +70,8 @@ def obtener_resumen_candidatos(
         id_titulo=id_titulo,
         trabaja_joyco=trabaja_joyco,
         ordenar_por_fecha=ordenar_por_fecha,
+        anio=anio,  # ✅
+        mes=mes,    # ✅
         skip=skip,
         limit=limit,
     )

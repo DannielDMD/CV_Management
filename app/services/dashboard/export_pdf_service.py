@@ -78,61 +78,112 @@ def exportar_estadisticas_pdf_reportlab(
             ]))
             elements.append(tbl)
         elements.append(Spacer(1, 12))
+# ───────────────────────── PERSONAL ─────────────────────────
+    elements.append(Paragraph("📍 Estadísticas Personales", styles["Heading2"]))
 
-    # ─ Sección Personal ─
-    add_section("Top Ciudades (anual)", [(i.label, i.count) for i in personal.top_ciudades_anual])
-    add_section("Top Cargos (anual)", [(i.label, i.count) for i in personal.top_cargos_anual])
-    add_section("Rangos de edad",       [(i.label, i.count) for i in personal.rangos_edad])
-    add_section("Estados de candidatos",[(i.label, i.count) for i in personal.estado_candidatos])
-    add_section("Booleanos", [
-        ("Referidos",              personal.estadisticas_booleanas.referidos),
-        ("No referidos",           personal.estadisticas_booleanas.no_referidos),
-        ("Formularios completos",  personal.estadisticas_booleanas.formularios_completos),
-        ("Formularios incompletos",personal.estadisticas_booleanas.formularios_incompletos),
-        ("Trabaja en Joyco",       personal.estadisticas_booleanas.trabaja_actualmente_joyco),
-        ("Ha trabajado en Joyco",  personal.estadisticas_booleanas.ha_trabajado_joyco),
+    # Anuales
+    add_section("Top ciudades (anual)", [(i.label, i.count) for i in personal.top_ciudades_anual])
+    add_section("Top cargos (anual)", [(i.label, i.count) for i in personal.top_cargos_anual])
+    add_section("Top nombres de referidos", [(i.label, i.count) for i in personal.top_nombres_referidos])
+    add_section("Rangos de edad", [(i.label, i.count) for i in personal.rangos_edad])
+    add_section("Estados de los candidatos", [(i.label, i.count) for i in personal.estado_candidatos])
+    add_section("Estadísticas booleanas", [
+        ("Referidos", personal.estadisticas_booleanas.referidos),
+        ("No referidos", personal.estadisticas_booleanas.no_referidos),
+        ("Formularios completos", personal.estadisticas_booleanas.formularios_completos),
+        ("Formularios incompletos", personal.estadisticas_booleanas.formularios_incompletos),
+        ("Trabaja en Joyco", personal.estadisticas_booleanas.trabaja_actualmente_joyco),
+        ("Ha trabajado en Joyco", personal.estadisticas_booleanas.ha_trabajado_joyco),
     ])
 
-    # ─ Sección Educación ─
-    add_section("Top niveles educativos",     [(i.label, i.count) for i in educacion.top_niveles_educacion_anual])
-    add_section("Top títulos obtenidos",      [(i.label, i.count) for i in educacion.top_titulos_obtenidos_anual])
-    add_section("Top instituciones",          [(i.label, i.count) for i in educacion.top_instituciones_academicas_anual])
-    add_section("Nivel de inglés",            [(i.label, i.count) for i in educacion.distribucion_nivel_ingles_anual])
+    # Mensuales
+    add_section("Candidatos registrados por mes", [(f"Mes {i.month}", i.count) for i in personal.candidatos_por_mes])
+    add_section("Top ciudad por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in personal.top_ciudades_por_mes])
+    add_section("Top cargo por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in personal.top_cargos_por_mes])
 
-    # ─ Sección Experiencia ─
-    add_section("Top rangos de experiencia",  [(i.label, i.count) for i in experiencia.top_rangos_experiencia_anual])
-    add_section("Top últimos cargos",         [(i.label, i.count) for i in experiencia.top_ultimos_cargos_anual])
-    add_section("Top últimas empresas",       [(i.label, i.count) for i in experiencia.top_ultimas_empresas_anual])
-    add_section("Duración experiencia",       [(i.label, i.count) for i in experiencia.distribucion_duracion])
+# ───────────────────────── EDUCACIÓN ─────────────────────────
+    elements.append(Paragraph("🎓 Estadísticas de Educación", styles["Heading2"]))
 
-    # ─ Sección Conocimientos ─
-    add_section("Habilidades blandas",       [(i.label, i.count) for i in conocimientos.top_habilidades_blandas_anual])
-    add_section("Habilidades técnicas",      [(i.label, i.count) for i in conocimientos.top_habilidades_tecnicas_anual])
-    add_section("Herramientas",              [(i.label, i.count) for i in conocimientos.top_herramientas_anual])
+    # Anuales
+    add_section("Top niveles educativos (anual)", [(i.label, i.count) for i in educacion.top_niveles_educacion_anual])
+    add_section("Top títulos obtenidos (anual)", [(i.label, i.count) for i in educacion.top_titulos_obtenidos_anual])
+    add_section("Top instituciones académicas (anual)", [(i.label, i.count) for i in educacion.top_instituciones_academicas_anual])
+    add_section("Distribución del nivel de inglés (anual)", [(i.label, i.count) for i in educacion.distribucion_nivel_ingles_anual])
+    add_section("Distribución por año de graduación", [(i.label, i.count) for i in educacion.distribucion_anio_graduacion])
 
-    # ─ Sección Preferencias ─
-    add_section("Disponibilidad inicio",     [(i.label, i.count) for i in preferencias.top_disponibilidad_inicio_anual])
-    add_section("Rangos salariales",         [(i.label, i.count) for i in preferencias.top_rangos_salariales_anual])
-    add_section("Motivos de salida",         [(i.label, i.count) for i in preferencias.top_motivos_salida_anual])
-    add_section("Viajar",                    [(i.label, i.count) for i in preferencias.disponibilidad_viajar_anual])
-    add_section("Situación laboral",         [(i.label, i.count) for i in preferencias.situacion_laboral_actual_anual])
+    # Mensuales
+    add_section("Educaciones registradas por mes", [(f"Mes {i.month}", i.count) for i in educacion.educaciones_por_mes])
+    add_section("Top nivel educativo por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in educacion.top_niveles_por_mes])
+    add_section("Top título obtenido por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in educacion.top_titulos_por_mes])
+    add_section("Top institución académica por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in educacion.top_instituciones_por_mes])
+    add_section("Nivel de inglés más frecuente por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in educacion.distribucion_nivel_ingles_por_mes])
 
-    # ─ Sección Proceso ─
-    # 1) Candidatos por mes
-    add_section(
-        "Candidatos por mes",
-        [(f"Mes {m.month}", m.count) for m in proceso.candidatos_por_mes]
-    )
-    # 2) Top estados anual
-    add_section(
-        "Top estados (anual)",
-        [(e.label, e.count) for e in proceso.top_estados_anual]
-    )
-    # 3) Top estado por mes
-    add_section(
-        "Top estado por mes",
-        [(f"Mes {t.month}: {t.label}", t.count) for t in proceso.top_estados_por_mes]
-    )
+
+
+
+    # ───────────────────────── EXPERIENCIA ────────────────────────
+    elements.append(Paragraph("💼 Estadísticas de Experiencia", styles["Heading2"]))
+
+    # Anuales
+    add_section("Top rangos de experiencia (anual)", [(i.label, i.count) for i in experiencia.top_rangos_experiencia_anual])
+    add_section("Top últimos cargos (anual)", [(i.label, i.count) for i in experiencia.top_ultimos_cargos_anual])
+    add_section("Top últimas empresas (anual)", [(i.label, i.count) for i in experiencia.top_ultimas_empresas_anual])
+    add_section("Distribución de duración de la experiencia", [(i.label, i.count) for i in experiencia.distribucion_duracion])
+
+    # Mensuales
+    add_section("Experiencias registradas por mes", [(f"Mes {i.month}", i.count) for i in experiencia.experiencias_por_mes])
+    add_section("Top rango de experiencia por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in experiencia.top_rangos_por_mes])
+    add_section("Top último cargo por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in experiencia.top_ultimos_cargos_por_mes])
+    add_section("Top última empresa por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in experiencia.top_ultimas_empresas_por_mes])
+
+    
+        # ───────────────────────── CONOCIMIENTOS ─────────────────────
+    elements.append(Paragraph("🧠 Estadísticas de Conocimientos", styles["Heading2"]))
+
+    # Anuales
+    add_section("Top habilidades blandas (anual)", [(i.label, i.count) for i in conocimientos.top_habilidades_blandas_anual])
+    add_section("Top habilidades técnicas (anual)", [(i.label, i.count) for i in conocimientos.top_habilidades_tecnicas_anual])
+    add_section("Top herramientas (anual)", [(i.label, i.count) for i in conocimientos.top_herramientas_anual])
+
+    # Mensuales
+    add_section("Conocimientos registrados por mes", [(f"Mes {i.month}", i.count) for i in conocimientos.conocimientos_por_mes])
+    add_section("Top habilidad blanda por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in conocimientos.top_habilidades_blandas_por_mes])
+    add_section("Top habilidad técnica por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in conocimientos.top_habilidades_tecnicas_por_mes])
+    add_section("Top herramienta por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in conocimientos.top_herramientas_por_mes])
+
+
+
+
+# ───────────────────────── PREFERENCIAS ──────────────────────
+    elements.append(Paragraph("📌 Estadísticas de Preferencias", styles["Heading2"]))
+
+    # Anuales
+    add_section("Top disponibilidad de inicio (anual)", [(i.label, i.count) for i in preferencias.top_disponibilidad_inicio_anual])
+    add_section("Top rangos salariales (anual)", [(i.label, i.count) for i in preferencias.top_rangos_salariales_anual])
+    add_section("Top motivos de salida (anual)", [(i.label, i.count) for i in preferencias.top_motivos_salida_anual])
+    add_section("Disponibilidad para viajar (anual)", [(i.label, i.count) for i in preferencias.disponibilidad_viajar_anual])
+    add_section("Situación laboral actual (anual)", [(i.label, i.count) for i in preferencias.situacion_laboral_actual_anual])
+
+    # Mensuales
+    add_section("Preferencias registradas por mes", [(f"Mes {i.month}", i.count) for i in preferencias.preferencias_por_mes])
+    add_section("Top disponibilidad de inicio por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in preferencias.top_disponibilidad_inicio_por_mes])
+    add_section("Top rango salarial por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in preferencias.top_rangos_salariales_por_mes])
+    add_section("Top motivo de salida por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in preferencias.top_motivos_salida_por_mes])
+    add_section("Disponibilidad para viajar por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in preferencias.disponibilidad_viajar_por_mes])
+    add_section("Situación laboral actual por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in preferencias.situacion_laboral_actual_por_mes])
+
+
+
+    # ───────────────────────── PROCESO ───────────────────────────
+    elements.append(Paragraph("📈 Estadísticas del Proceso de Selección", styles["Heading2"]))
+
+    # Anuales
+    add_section("Top estados de candidatos (anual)", [(i.label, i.count) for i in proceso.top_estados_anual])
+
+    # Mensuales
+    add_section("Candidatos registrados por mes", [(f"Mes {i.month}", i.count) for i in proceso.candidatos_por_mes])
+    add_section("Top estado por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in proceso.top_estados_por_mes])
+
 
     # Construir y devolver
     doc.build(elements)

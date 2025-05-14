@@ -3,6 +3,10 @@ from io import BytesIO
 import pandas as pd
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import extract
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl import Workbook
+from openpyxl.worksheet.table import Table, TableStyleInfo
+from openpyxl.styles import Alignment
 
 from app.models.candidato_model import Candidato
 from app.models.educacion_model import Educacion
@@ -16,7 +20,7 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
     Si se especifica un año, solo se exportan los registrados ese año.
     """
 
-    # 1. Consultar candidatos filtrando por año si aplica
+    # 1. Consultar candidatos con joins
     query = (
         db.query(Candidato)
         .options(
@@ -41,7 +45,7 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
 
     candidatos = query.all()
 
-    # 2. Resto del código queda igual (construcción de registros, DataFrame y exportación)
+    # 2. Construir registros
     registros = []
     for c in candidatos:
         educ = c.educaciones[0] if c.educaciones else None
@@ -67,9 +71,9 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
             "motivo_salida": c.motivo_salida.descripcion_motivo if c.motivo_salida else None,
             "tiene_referido": c.tiene_referido,
             "nombre_referido": c.nombre_referido,
-            "fecha_registro": c.fecha_registro,
             "estado": c.estado,
             "formulario_completo": c.formulario_completo,
+            "acepta_politica_datos": c.acepta_politica_datos,
             # Educación
             "nivel_educacion": educ.nivel_educacion.descripcion_nivel if educ else None,
             "titulo": educ.titulo.nombre_titulo if educ and educ.titulo else None,
@@ -94,12 +98,48 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
             "trabaja_actualmente": pref.trabaja_actualmente if pref else None,
             "motivo_salida_laboral": pref.motivo_salida.descripcion_motivo if pref and pref.motivo_salida else None,
             "razon_trabajar_joyco": pref.razon_trabajar_joyco if pref else None,
+            # Fecha al final
+            "fecha_registro": c.fecha_registro,
         })
 
     df = pd.DataFrame(registros)
-    output = BytesIO()
-    with pd.ExcelWriter(output, engine="openpyxl") as writer:
-        df.to_excel(writer, index=False, sheet_name="Candidatos")
-    output.seek(0)
 
+    # Crear archivo Excel
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Candidatos"
+
+    if not df.empty:
+        # Ordenar y mover columna
+        df.sort_values(by="fecha_registro", ascending=False, inplace=True)
+        columnas_ordenadas = [col for col in df.columns if col != "fecha_registro"] + ["fecha_registro"]
+        df = df[columnas_ordenadas]
+
+        # Escribir filas al worksheet
+        for r_idx, row in enumerate(dataframe_to_rows(df, index=False, header=True), start=1):
+            ws.append(row)
+            for cell in ws[r_idx]:
+                cell.alignment = Alignment(wrap_text=True, vertical="top")
+
+        # Ajuste de anchos
+        for col in ws.columns:
+            max_length = max(len(str(cell.value or "")) for cell in col)
+            ws.column_dimensions[col[0].column_letter].width = min(max_length + 2, 50)
+
+        # Estilo de tabla
+        tab = Table(displayName="TablaCandidatos", ref=ws.dimensions)
+        style = TableStyleInfo(name="TableStyleMedium9", showRowStripes=True)
+        tab.tableStyleInfo = style
+        ws.add_table(tab)
+    else:
+        # Sin datos → mostrar mensaje
+        ws.append(["Sin datos disponibles para el año seleccionado."])
+        ws.column_dimensions["A"].width = 50
+        ws["A1"].alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+    # Guardar en BytesIO
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
     return output
+

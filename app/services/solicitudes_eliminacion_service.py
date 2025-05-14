@@ -12,14 +12,17 @@ from app.schemas.solicitud_eliminacion_schema import (
 
 
 def get_solicitudes_eliminacion(
+    
     db: Session,
     search: str = None,
     estado: str = None,
     año: int = None,
+    mes: int = None,  # 👈 agregado
     ordenar_por_fecha: str = None,
     skip: int = 0,
     limit: int = 10,
 ) -> SolicitudesPaginadasResponse:
+    print(f"[DEBUG] Filtros recibidos - Año: {año}, Mes: {mes}")
 
     query = db.query(SolicitudEliminacion)
 
@@ -36,10 +39,18 @@ def get_solicitudes_eliminacion(
     if estado:
         query = query.filter(SolicitudEliminacion.estado == estado)
 
-    if año:
+    if año is not None:
         query = query.filter(
-            extract("year", SolicitudEliminacion.fecha_solicitud) == año
-        )
+        extract("year", SolicitudEliminacion.fecha_solicitud) == int(año)
+    )
+
+
+    if mes is not None:
+        query = query.filter(
+        extract("month", SolicitudEliminacion.fecha_solicitud) == int(mes)
+    )
+
+
 
     # 📅 Orden por fecha
     if ordenar_por_fecha == "recientes":
@@ -105,7 +116,8 @@ def eliminar_solicitud_eliminacion(db: Session, id: int):
 
 def get_estadisticas_solicitudes_eliminacion(
     db: Session,
-    año: Optional[int] = None
+    año: Optional[int] = None,
+    mes: Optional[int] = None  # 👈 nuevo
 ) -> ConteoSolicitudesEliminacion:
     query = db.query(SolicitudEliminacion)
 
@@ -113,7 +125,10 @@ def get_estadisticas_solicitudes_eliminacion(
         query = query.filter(
             extract("year", SolicitudEliminacion.fecha_solicitud) == año
         )
-
+    if mes:
+        query = query.filter(
+            extract("month", SolicitudEliminacion.fecha_solicitud) == mes
+        )
     total = query.count()
 
     pendientes = query.filter(SolicitudEliminacion.estado == "Pendiente").count()

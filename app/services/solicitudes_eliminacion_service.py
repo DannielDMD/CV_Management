@@ -87,3 +87,15 @@ def update_solicitud_eliminacion(
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al actualizar la solicitud")
+def eliminar_solicitud_eliminacion(db: Session, id: int):
+    solicitud = db.query(SolicitudEliminacion).filter(SolicitudEliminacion.id == id).first()
+    if not solicitud:
+        raise HTTPException(status_code=404, detail="Solicitud no encontrada")
+    
+    try:
+        db.delete(solicitud)
+        db.commit()
+        return {"mensaje": "Solicitud eliminada"}
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Error al eliminar la solicitud")

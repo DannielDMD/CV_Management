@@ -7,6 +7,8 @@ from app.schemas.solicitud_eliminacion_schema import SolicitudEliminacionCreate,
 from app.services.solicitudes_eliminacion_service import crear_solicitud_eliminacion, get_solicitudes_eliminacion, update_solicitud_eliminacion
 from app.core.database import get_db
 
+from fastapi import Path
+from app.services.solicitudes_eliminacion_service import eliminar_solicitud_eliminacion
 
 router = APIRouter(prefix="/solicitudes-eliminacion", tags=["Solicitudes de Eliminación"])
 
@@ -57,3 +59,10 @@ def actualizar_solicitud(
         nuevo_estado=datos.estado,
         observacion_admin=datos.observacion_admin
     )
+
+@router.delete("/{id}", status_code=200)
+def eliminar_solicitud(
+    id: int = Path(..., gt=0),
+    db: Session = Depends(get_db)
+):
+    return eliminar_solicitud_eliminacion(db, id)

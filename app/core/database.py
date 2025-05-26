@@ -1,41 +1,38 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
-#from core.config import settings
-import os
+"""Configuración de la base de datos para el proyecto Gestión de Candidatos."""
 
-#  Cargar variables de entorno del archivo .env
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
-#  Obtener URL de conexión desde .env
+# URL de conexión a la base de datos (PostgreSQL)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-#  Crear motor de la base de datos (engine)
+# Motor de conexión a la base de datos
 engine = create_engine(
     DATABASE_URL,
-    echo=True,  # Mostrar en consola las operaciones SQL (desactiva si no lo necesitas)
-    pool_pre_ping=True  # Verifica la conexión antes de usarla (evita errores de desconexión)
+    echo=True,           # Muestra las sentencias SQL en consola (útil en desarrollo)
+    pool_pre_ping=True   # Verifica conexión antes de usarla
 )
 
-#  Configuración de sesiones (SessionLocal)
+# Configuración de sesiones de base de datos
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-#  Declaración base para los modelos
+# Base declarativa para los modelos
 Base = declarative_base()
 
-#  Dependencia para obtener sesión en cada solicitud de FastAPI
 def get_db():
+    """
+    Generador de sesión de base de datos para inyectar en rutas o servicios.
+
+    Yields:
+        Session: sesión activa de SQLAlchemy.
+    """
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-
-#  Probar conexión (opcional)
-if __name__ == "__main__":
-    try:
-        with engine.connect() as connection:
-            print("✅ Conexión exitosa a la base de datos 🎉")
-    except Exception as e:
-        print(f"❌ Error al conectar a la base de datos: {e}")

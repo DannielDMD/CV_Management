@@ -1,9 +1,10 @@
+"""Ruta para exportar todos los candidatos detallados en archivo Excel."""
+
 from io import BytesIO
 from typing import Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from fastapi.responses import StreamingResponse
-from fastapi import Body
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -16,7 +17,14 @@ router = APIRouter(
 )
 
 class ExportFiltroRequest(BaseModel):
+    """
+    Modelo de solicitud para aplicar filtro por año al exportar candidatos.
+
+    Atributos:
+        año (Optional[int]): Año opcional para filtrar candidatos registrados.
+    """
     año: Optional[int] = None
+
 
 @router.post(
     "/exportar-candidatos",
@@ -27,8 +35,14 @@ def exportar_candidatos_excel(
     db: Session = Depends(get_db)
 ):
     """
-    Genera y devuelve un archivo Excel con la información completa de todos los candidatos.
-    Si se envía un año, solo exporta los registrados en ese año.
+    Genera un archivo Excel con la información detallada de todos los candidatos.
+
+    Args:
+        filtros (ExportFiltroRequest): Filtro opcional por año de registro.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        StreamingResponse: Archivo Excel como descarga.
     """
     output: BytesIO = exportar_candidatos_detallados_excel(db, filtros.año)
     headers = {

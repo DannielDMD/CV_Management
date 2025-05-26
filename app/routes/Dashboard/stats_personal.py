@@ -1,4 +1,4 @@
-# routes/Dashboard/stats_personal.py
+"""Ruta para obtener estadísticas de información personal de los candidatos."""
 
 from typing import Optional
 from fastapi import APIRouter, Depends, Query
@@ -27,14 +27,23 @@ def estadisticas_personales(
     db: Session = Depends(get_db)
 ):
     """
-    Devuelve un objeto con:
-    - candidatos_por_mes: total de candidatos registrados cada mes del año indicado
-    - top_ciudades_anual: top 5 ciudades en todo el año
-    - top_ciudades_por_mes: ciudad más frecuente por mes
-    - rangos_edad: distribución de edad en el año
-    - estado_candidatos: conteo por estado en el año
-    - estadisticas_booleanas: campos booleanos en el año
-    - top_cargos_anual: top 5 cargos en el año
-    - top_cargos_por_mes: cargo más frecuente por mes
+    Retorna estadísticas relacionadas con la información personal de los candidatos.
+
+    Estadísticas devueltas:
+    - candidatos_por_mes: total de registros mensuales en el año indicado.
+    - top_ciudades_anual: top 5 ciudades con más registros en el año.
+    - top_ciudades_por_mes: ciudad más frecuente por mes.
+    - rangos_edad: distribución de edades (por rangos) durante el año.
+    - estado_candidatos: cantidad de candidatos por estado ('EN_PROCESO', 'DESCARTADO', etc.).
+    - estadisticas_booleanas: conteo de respuestas booleanas (trabaja en Joyco, ha trabajado, tiene referido, etc.).
+    - top_cargos_anual: top 5 cargos solicitados en el año.
+    - top_cargos_por_mes: cargo más frecuente por mes.
+
+    Args:
+        año (Optional[int]): Año a filtrar. Si no se indica, agrupa todos los años.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        EstadisticasPersonalesResponse: Diccionario con estadísticas personales consolidadas.
     """
     return obtener_estadisticas_personales(db, año)

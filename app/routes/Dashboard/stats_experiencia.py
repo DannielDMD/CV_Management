@@ -1,4 +1,4 @@
-# routes/Dashboard/stats_experiencia.py
+"""Ruta para obtener estadísticas de experiencia laboral de los candidatos."""
 
 from typing import Optional
 from fastapi import APIRouter, Depends, Query
@@ -27,14 +27,23 @@ def estadisticas_experiencia(
     db: Session = Depends(get_db)
 ):
     """
-    Devuelve un objeto con:
-    - experiencias_por_mes: total de registros de experiencia cada mes del año indicado
-    - top_rangos_experiencia_anual: Top rangos de experiencia en el año
-    - top_rangos_por_mes: rango más frecuente por mes
-    - top_ultimos_cargos_anual: Top últimos cargos en el año
-    - top_ultimos_cargos_por_mes: cargo más frecuente por mes
-    - top_ultimas_empresas_anual: Top últimas empresas en el año
-    - top_ultimas_empresas_por_mes: empresa más frecuente por mes
-    - distribucion_duracion: distribución de duración de la experiencia (todo el año)
+    Retorna estadísticas sobre la experiencia laboral registrada por los candidatos.
+
+    Estadísticas devueltas:
+    - experiencias_por_mes: cantidad de experiencias registradas por mes.
+    - top_rangos_experiencia_anual: rangos de experiencia más frecuentes en el año.
+    - top_rangos_por_mes: rango de experiencia más común por mes.
+    - top_ultimos_cargos_anual: últimos cargos más comunes en el año.
+    - top_ultimos_cargos_por_mes: cargo más frecuente por mes.
+    - top_ultimas_empresas_anual: empresas más mencionadas como últimas.
+    - top_ultimas_empresas_por_mes: empresa más frecuente por mes.
+    - distribucion_duracion: distribución de duración de experiencia laboral (acumulado anual).
+
+    Args:
+        año (Optional[int]): Año para aplicar filtro. Si no se especifica, devuelve estadísticas globales.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        EstadisticasExperienciaResponse: Datos estadísticos consolidados de experiencia laboral.
     """
     return obtener_estadisticas_experiencia(db, año)

@@ -1,19 +1,26 @@
-# schemas/dashboard/stats_personal_schema.py
+"""Esquemas Pydantic para estadísticas de información personal en el dashboard."""
 
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
+
 
 class CountItem(BaseModel):
     """
-    Modelo genérico para un elemento con etiqueta y su conteo.
-    Ejemplo: {'label': 'Bogotá', 'count': 42}
+    Elemento con etiqueta y su conteo.
+
+    Ejemplo:
+        {
+            "label": "Bogotá",
+            "count": 42
+        }
     """
     label: str
     count: int
 
+
 class BooleanStats(BaseModel):
     """
-    Estadísticas simples basadas en campos booleanos del modelo Candidato.
+    Estadísticas agrupadas por campos booleanos del modelo Candidato.
     """
     referidos: int
     no_referidos: int
@@ -22,37 +29,44 @@ class BooleanStats(BaseModel):
     trabaja_actualmente_joyco: int
     ha_trabajado_joyco: int
 
+
 class MonthCountItem(BaseModel):
     """
-    Conteo de candidatos por mes en un año específico.
-    month: número de mes (1 = enero, ..., 12 = diciembre)
-    count: cantidad de candidatos registrados en ese mes.
+    Conteo total por mes.
+
+    Atributos:
+        month (int): Número del mes (1-12).
+        count (int): Cantidad de registros.
     """
     month: int
     count: int
 
+
 class MonthTopItem(BaseModel):
     """
-    Top de un ítem (ciudad o cargo) en un mes concreto.
-    month: número de mes
-    label: nombre del ítem (ciudad o cargo)
-    count: cantidad registrada en ese mes
+    Ítem más frecuente en un mes específico.
+
+    Atributos:
+        month (int): Número del mes (1-12).
+        label (str): Nombre del ítem.
+        count (int): Cantidad de registros del ítem.
     """
     month: int
     label: str
     count: int
 
+
 class EstadisticasPersonalesResponse(BaseModel):
     """
-    Respuesta extendida para /reportes/personal con filtrado por año:
-     - candidatos_por_mes: total de candidatos registrados cada mes
-     - top_ciudades_anual: top 5 ciudades en todo el año
-     - top_ciudades_por_mes: ciudad más frecuente por cada mes
-     - rangos_edad: distribución de edad (todo el año)
-     - estado_candidatos: conteo de estados (todo el año)
-     - estadisticas_booleanas: campos booleanos (todo el año)
-     - top_cargos_anual: top 5 cargos en todo el año
-     - top_cargos_por_mes: cargo más frecuente por cada mes
+    Esquema de respuesta para `/reportes/personal`.
+
+    Incluye:
+    - Conteo mensual de candidatos
+    - Top de ciudades y cargos
+    - Rangos de edad
+    - Estado de los candidatos
+    - Estadísticas de campos booleanos
+    - Top de nombres de referidos
     """
     candidatos_por_mes: List[MonthCountItem]
     top_ciudades_anual: List[CountItem]
@@ -63,4 +77,3 @@ class EstadisticasPersonalesResponse(BaseModel):
     top_cargos_anual: List[CountItem]
     top_cargos_por_mes: List[MonthTopItem]
     top_nombres_referidos: List[CountItem]
-

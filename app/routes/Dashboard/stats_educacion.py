@@ -1,5 +1,4 @@
-# routes/Dashboard/stats_educacion.py
-
+"""Ruta para obtener estadísticas educativas de los candidatos."""
 
 from typing import Optional
 from fastapi import APIRouter, Depends, Query
@@ -28,42 +27,25 @@ def estadisticas_educacion(
     db: Session = Depends(get_db)
 ):
     """
-    Devuelve un objeto con:
-    - educaciones_por_mes: total de registros de educación cada mes del año indicado
-    - top_niveles_educacion_anual: Top 5 niveles educativos en el año
-    - top_niveles_por_mes: nivel más frecuente por mes
-    - top_titulos_obtenidos_anual: Top 5 títulos en el año
-    - top_titulos_por_mes: título más frecuente por mes
-    - top_instituciones_academicas_anual: Top 5 instituciones en el año
-    - top_instituciones_por_mes: institución más frecuente por mes
-    - distribucion_nivel_ingles_anual: distribución de nivel de inglés en el año
-    - distribucion_nivel_ingles_por_mes: nivel de inglés más frecuente por mes
-    - distribucion_anio_graduacion: conteo por año de graduación (sin filtro de año)
+    Retorna estadísticas de los registros educativos de los candidatos.
+
+    Estadísticas devueltas:
+    - educaciones_por_mes: cantidad de registros de educación por mes.
+    - top_niveles_educacion_anual: Top 5 niveles educativos más frecuentes en el año.
+    - top_niveles_por_mes: nivel educativo más frecuente por mes.
+    - top_titulos_obtenidos_anual: Top 5 títulos obtenidos en el año.
+    - top_titulos_por_mes: título más frecuente por mes.
+    - top_instituciones_academicas_anual: Top 5 instituciones académicas en el año.
+    - top_instituciones_por_mes: institución más frecuente por mes.
+    - distribucion_nivel_ingles_anual: distribución de niveles de inglés durante el año.
+    - distribucion_nivel_ingles_por_mes: nivel de inglés más común por mes.
+    - distribucion_anio_graduacion: conteo de candidatos por año de graduación (sin filtro anual).
+
+    Args:
+        año (Optional[int]): Año para aplicar filtro. Si no se envía, devuelve estadísticas generales.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        EstadisticasEducacionResponse: Datos estadísticos consolidados de educación.
     """
     return obtener_estadisticas_educacion(db, año)
-
-
-
-
-"""
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from sqlalchemy import func
-
-from app.core.database import get_db
-from app.models.educacion_model import Educacion
-from app.models.catalogs.nivel_educacion import NivelEducacion
-
-router = APIRouter(prefix="/dashboard/stats", tags=["Estadísticas Educación"])
-
-@router.get("/educacion")
-def get_educational_distribution(db: Session = Depends(get_db)):
-    resultados = (
-        db.query(NivelEducacion.descripcion_nivel, func.count(Educacion.id_educacion).label("total"))
-        .join(Educacion, Educacion.id_nivel_educacion == NivelEducacion.id_nivel_educacion)
-        .group_by(NivelEducacion.descripcion_nivel)
-        .order_by(func.count(Educacion.id_educacion).desc())
-        .all()
-    )
-
-    return [{"nivel": descripcion, "total": total} for descripcion, total in resultados]"""

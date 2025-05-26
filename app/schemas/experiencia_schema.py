@@ -1,11 +1,17 @@
+"""Esquemas Pydantic para la gestión de experiencia laboral de los candidatos."""
+
 import re
 from typing import Optional
 from datetime import date, datetime
 from pydantic import BaseModel, field_validator, model_validator
-from app.schemas.catalogs.rango_experiencia import *
+
+from app.schemas.catalogs.rango_experiencia import RangoExperienciaResponse
 
 
 class ExperienciaLaboralCreate(BaseModel):
+    """
+    Esquema para crear un nuevo registro de experiencia laboral asociado a un candidato.
+    """
     id_candidato: int
     id_rango_experiencia: int
     ultima_empresa: str
@@ -14,6 +20,7 @@ class ExperienciaLaboralCreate(BaseModel):
     fecha_inicio: date
     fecha_fin: Optional[date] = None
 
+    # Validación de caracteres permitidos en el nombre de la empresa
     @field_validator("ultima_empresa")
     @classmethod
     def validar_empresa(cls, value: str) -> str:
@@ -21,6 +28,7 @@ class ExperienciaLaboralCreate(BaseModel):
             raise ValueError("El nombre de la empresa contiene caracteres inválidos.")
         return value
 
+    # Validación de caracteres permitidos en el nombre del cargo
     @field_validator("ultimo_cargo")
     @classmethod
     def validar_cargo(cls, value: str) -> str:
@@ -28,6 +36,7 @@ class ExperienciaLaboralCreate(BaseModel):
             raise ValueError("El cargo contiene caracteres inválidos.")
         return value
 
+    # Validación opcional para el campo de funciones
     @field_validator("funciones")
     @classmethod
     def validar_funciones(cls, value: Optional[str]) -> Optional[str]:
@@ -35,6 +44,7 @@ class ExperienciaLaboralCreate(BaseModel):
             raise ValueError("Las funciones contienen caracteres no válidos.")
         return value
 
+    # Validaciones de fechas lógicas
     @model_validator(mode="before")
     @classmethod
     def validar_fechas(cls, values):
@@ -42,7 +52,7 @@ class ExperienciaLaboralCreate(BaseModel):
         fecha_fin = values.get("fecha_fin")
         hoy = date.today()
 
-        # 🛠️ Convertir string a date si es necesario
+        # Conversión de string a date si es necesario
         if isinstance(fecha_inicio, str):
             fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
         if fecha_fin and isinstance(fecha_fin, str):
@@ -60,8 +70,11 @@ class ExperienciaLaboralCreate(BaseModel):
         return values
 
 
-# Schema para actualizar una experiencia laboral (todos los campos opcionales)
 class ExperienciaLaboralUpdate(BaseModel):
+    """
+    Esquema para actualizar un registro de experiencia laboral.
+    Todos los campos son opcionales.
+    """
     id_rango_experiencia: Optional[int] = None
     ultima_empresa: Optional[str] = None
     ultimo_cargo: Optional[str] = None
@@ -69,8 +82,11 @@ class ExperienciaLaboralUpdate(BaseModel):
     fecha_inicio: Optional[date] = None
     fecha_fin: Optional[date] = None
 
-# Schema para devolver información de una experiencia laboral
+
 class ExperienciaLaboralResponse(BaseModel):
+    """
+    Esquema de respuesta para un registro de experiencia laboral.
+    """
     id_experiencia: int
     rango_experiencia: RangoExperienciaResponse
     ultima_empresa: str

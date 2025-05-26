@@ -1,10 +1,29 @@
+"""Modelo de la tabla 'educacion'."""
+
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
-
-#  Modelo para la tabla de Educación
 class Educacion(Base):
+    """
+    Representa un registro educativo asociado a un candidato.
+
+    Atributos:
+        id_educacion (int): Identificador único del registro educativo.
+        id_candidato (int): Clave foránea al candidato.
+        id_nivel_educacion (int): Clave foránea al nivel educativo alcanzado.
+        id_titulo (int): Clave foránea al título obtenido (opcional).
+        id_institucion (int): Clave foránea a la institución académica (opcional).
+        anio_graduacion (int): Año de graduación del programa educativo.
+        id_nivel_ingles (int): Clave foránea al nivel de inglés del candidato.
+
+    Relaciones:
+        nivel_educacion (NivelEducacion): Nivel educativo alcanzado.
+        titulo (TituloObtenido): Título obtenido por el candidato.
+        institucion (InstitucionAcademica): Institución donde cursó estudios.
+        nivel_ingles (NivelIngles): Nivel de inglés declarado.
+        candidato (Candidato): Candidato asociado al registro educativo.
+    """
     __tablename__ = "educacion"
 
     id_educacion = Column(Integer, primary_key=True, index=True)
@@ -25,11 +44,11 @@ class Educacion(Base):
         Integer, ForeignKey("nivel_ingles.id_nivel_ingles"), nullable=False
     )
 
-    # Relaciones
+    # Relaciones con tablas de catálogo
     nivel_educacion = relationship("NivelEducacion", back_populates="educaciones")
     titulo = relationship("TituloObtenido")
     institucion = relationship("InstitucionAcademica")
     nivel_ingles = relationship("NivelIngles", back_populates="educaciones")
 
-    # Relación inversa con candidatos
+    # Relación con la tabla de candidatos
     candidato = relationship("Candidato", back_populates="educaciones")

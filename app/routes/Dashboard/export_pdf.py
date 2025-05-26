@@ -1,3 +1,5 @@
+"""Ruta para exportar estadísticas en formato PDF utilizando ReportLab."""
+
 from io import BytesIO
 from typing import Optional
 
@@ -15,7 +17,14 @@ router = APIRouter(
 )
 
 class PDFExportRequest(BaseModel):
+    """
+    Modelo de solicitud para exportar estadísticas en PDF.
+
+    Atributos:
+        año (Optional[int]): Año opcional para filtrar las estadísticas.
+    """
     año: Optional[int] = None
+
 
 @router.post(
     "/exportar-estadisticas-pdf",
@@ -26,15 +35,22 @@ def exportar_estadisticas_pdf_endpoint(
     db: Session = Depends(get_db)
 ):
     """
-    Genera un PDF con:
-      - Estadísticas de Información Personal
+    Genera un informe PDF con todas las estadísticas del sistema.
+
+    Incluye:
+      - Información personal
       - Educación
-      - Experiencia
+      - Experiencia laboral
       - Conocimientos
-      - Preferencias
-      - Proceso
-    usando ReportLab, y lo devuelve como descarga.
-    Opcionalmente se puede filtrar por año.
+      - Preferencias y disponibilidad
+      - Proceso de selección
+
+    Args:
+        request (PDFExportRequest): Filtro opcional por año.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        StreamingResponse: PDF generado como archivo descargable.
     """
     pdf_io: BytesIO = exportar_estadisticas_pdf_reportlab(db, año=request.año)
     headers = {

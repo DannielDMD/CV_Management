@@ -1,43 +1,58 @@
+"""Esquemas Pydantic para gestionar la disponibilidad, rangos salariales y preferencias de los candidatos."""
+
 from typing import Optional
 from pydantic import BaseModel
-from app.schemas.catalogs.motivo_salida import *
+from app.schemas.catalogs.motivo_salida import MotivoSalidaResponse
 
 
-# Schema para crear una nueva disponibilidad
-class DisponibilidadCreate(BaseModel):
+# ──────────────── DISPONIBILIDAD ────────────────
+
+class DisponibilidadCreate(BaseModel):  
+    """Esquema para crear una nueva disponibilidad."""
     descripcion_disponibilidad: str
 
-# Schema para actualizar disponibilidad (parcialmente)
+
 class DisponibilidadUpdate(BaseModel):
+    """Esquema para actualizar la descripción de una disponibilidad (opcional)."""
     descripcion_disponibilidad: Optional[str] = None
-    
-# Schema para representar la disponibilidad
+
+
 class DisponibilidadResponse(BaseModel):
+    """Esquema de respuesta para una disponibilidad."""
     id_disponibilidad: int
     descripcion_disponibilidad: str
 
     class Config:
         from_attributes = True
 
-# Schema para crear un nuevo rango salarial
-class RangoSalarialCreate(BaseModel):
-    descripcion_rango: str
-    
 
-# Schema para actualizar rango salarial (parcialmente)
+# ──────────────── RANGO SALARIAL ────────────────
+
+class RangoSalarialCreate(BaseModel):
+    """Esquema para crear un nuevo rango salarial."""
+    descripcion_rango: str
+
+
 class RangoSalarialUpdate(BaseModel):
+    """Esquema para actualizar un rango salarial (opcional)."""
     descripcion_rango: Optional[str] = None
-    
-# Schema para representar el rango salarial
+
+
 class RangoSalarialResponse(BaseModel):
+    """Esquema de respuesta para un rango salarial."""
     id_rango_salarial: int
     descripcion_rango: str
 
     class Config:
         from_attributes = True
 
-# Schema para crear preferencias y disponibilidad
+
+# ──────────────── PREFERENCIAS Y DISPONIBILIDAD ────────────────
+
 class PreferenciaDisponibilidadCreate(BaseModel):
+    """
+    Esquema para crear preferencias y disponibilidad asociadas a un candidato.
+    """
     id_candidato: int
     disponibilidad_viajar: bool
     id_disponibilidad_inicio: int
@@ -46,8 +61,12 @@ class PreferenciaDisponibilidadCreate(BaseModel):
     id_motivo_salida: Optional[int] = None
     razon_trabajar_joyco: Optional[str] = None
 
-# Schema para actualizar preferencias y disponibilidad (todos los campos opcionales)
+
 class PreferenciaDisponibilidadUpdate(BaseModel):
+    """
+    Esquema para actualizar parcialmente las preferencias y disponibilidad.
+    Todos los campos son opcionales.
+    """
     disponibilidad_viajar: Optional[bool] = None
     id_disponibilidad_inicio: Optional[int] = None
     id_rango_salarial: Optional[int] = None
@@ -55,8 +74,11 @@ class PreferenciaDisponibilidadUpdate(BaseModel):
     id_motivo_salida: Optional[int] = None
     razon_trabajar_joyco: Optional[str] = None
 
-# Schema para devolver información de preferencias y disponibilidad
+
 class PreferenciaDisponibilidadResponse(BaseModel):
+    """
+    Esquema de respuesta para las preferencias y disponibilidad de un candidato.
+    """
     id_preferencia: int
     disponibilidad_viajar: bool
     disponibilidad: DisponibilidadResponse
@@ -67,4 +89,3 @@ class PreferenciaDisponibilidadResponse(BaseModel):
 
     class Config:
         from_attributes = True
-    

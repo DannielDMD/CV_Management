@@ -10,23 +10,41 @@ from app.schemas.solicitud_eliminacion_schema import (
     SolicitudEliminacionResponse,
 )
 
+# ─────────────────────────────────────────────────────────────────────────────
+# SERVICIO: Gestión de solicitudes de eliminación de datos personales
+# Este servicio permite crear, listar, actualizar, eliminar y obtener estadísticas
+# de las solicitudes hechas por los usuarios conforme a la Ley de Protección de Datos.
+# ─────────────────────────────────────────────────────────────────────────────
+
 
 def get_solicitudes_eliminacion(
-    
     db: Session,
     search: str = None,
     estado: str = None,
     año: int = None,
-    mes: int = None,  # 👈 agregado
+    mes: int = None,
     ordenar_por_fecha: str = None,
     skip: int = 0,
     limit: int = 10,
 ) -> SolicitudesPaginadasResponse:
-    print(f"[DEBUG] Filtros recibidos - Año: {año}, Mes: {mes}")
+    """
+    Retorna una lista paginada de solicitudes de eliminación, aplicando filtros opcionales.
 
+    Args:
+        db (Session): Sesión de base de datos.
+        search (str, optional): Buscar por nombre, cédula o correo.
+        estado (str, optional): Estado de la solicitud ("Pendiente", "Aceptada", "Rechazada").
+        año (int, optional): Año de la solicitud.
+        mes (int, optional): Mes de la solicitud.
+        ordenar_por_fecha (str, optional): "recientes" o "antiguos".
+        skip (int): Registros a omitir (paginación).
+        limit (int): Cantidad de registros a retornar.
+
+    Returns:
+        SolicitudesPaginadasResponse: Resultado con data y total.
+    """
     query = db.query(SolicitudEliminacion)
 
-    # 🔍 Filtros
     if search:
         query = query.filter(
             or_(
@@ -35,31 +53,18 @@ def get_solicitudes_eliminacion(
                 SolicitudEliminacion.cc.ilike(f"%{search}%"),
             )
         )
-
     if estado:
         query = query.filter(SolicitudEliminacion.estado == estado)
-
-    if año is not None:
-        query = query.filter(
-        extract("year", SolicitudEliminacion.fecha_solicitud) == int(año)
-    )
-
-
-    if mes is not None:
-        query = query.filter(
-        extract("month", SolicitudEliminacion.fecha_solicitud) == int(mes)
-    )
-
-
-
-    # 📅 Orden por fecha
+    if año:
+        query = query.filter(extract("year", SolicitudEliminacion.fecha_solicitud) == año)
+    if mes:
+        query = query.filter(extract("month", SolicitudEliminacion.fecha_solicitud) == mes)
     if ordenar_por_fecha == "recientes":
         query = query.order_by(SolicitudEliminacion.fecha_solicitud.desc())
     elif ordenar_por_fecha == "antiguos":
         query = query.order_by(SolicitudEliminacion.fecha_solicitud.asc())
 
     total = query.count()
-
     resultados = query.offset(skip).limit(limit).all()
 
     return SolicitudesPaginadasResponse(
@@ -71,6 +76,16 @@ def get_solicitudes_eliminacion(
 def crear_solicitud_eliminacion(
     db: Session, data: SolicitudEliminacionCreate
 ) -> SolicitudEliminacionResponse:
+    """
+    Crea una nueva solicitud de eliminación.
+
+    Args:
+        db (Session): Sesión de base de datos.
+        data (SolicitudEliminacionCreate): Datos del formulario enviado por el usuario.
+
+    Returns:
+        SolicitudEliminacionResponse: Solicitud creada.
+    """
     nueva_solicitud = SolicitudEliminacion(**data.model_dump())
     db.add(nueva_solicitud)
     db.commit()
@@ -81,10 +96,19 @@ def crear_solicitud_eliminacion(
 def update_solicitud_eliminacion(
     db: Session, id: int, nuevo_estado: str, observacion_admin: str = None
 ) -> SolicitudEliminacionResponse:
-    solicitud = (
-        db.query(SolicitudEliminacion).filter(SolicitudEliminacion.id == id).first()
-    )
+    """
+    Actualiza el estado de una solicitud (por ejemplo: Pendiente → Aceptada).
 
+    Args:
+        db (Session): Sesión de base de datos.
+        id (int): ID de la solicitud.
+        nuevo_estado (str): Nuevo estado ("Pendiente", "Aceptada", "Rechazada").
+        observacion_admin (str, optional): Comentario adicional del administrador.
+
+    Returns:
+        SolicitudEliminacionResponse: Solicitud actualizada.
+    """
+    solicitud = db.query(SolicitudEliminacion).filter(SolicitudEliminacion.id == id).first()
     if not solicitud:
         raise HTTPException(status_code=404, detail="Solicitud no encontrada")
 
@@ -92,19 +116,30 @@ def update_solicitud_eliminacion(
     if observacion_admin is not None:
         solicitud.observacion_admin = observacion_admin
 
-
     try:
         db.commit()
         db.refresh(solicitud)
         return solicitud
-    except Exception as e:
+    except Exception:
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al actualizar la solicitud")
+
+
 def eliminar_solicitud_eliminacion(db: Session, id: int):
+    """
+    Elimina una solicitud del sistema.
+
+    Args:
+        db (Session): Sesión de base de datos.
+        id (int): ID de la solicitud.
+
+    Returns:
+        dict: Mensaje de confirmación.
+    """
     solicitud = db.query(SolicitudEliminacion).filter(SolicitudEliminacion.id == id).first()
     if not solicitud:
         raise HTTPException(status_code=404, detail="Solicitud no encontrada")
-    
+
     try:
         db.delete(solicitud)
         db.commit()
@@ -117,24 +152,31 @@ def eliminar_solicitud_eliminacion(db: Session, id: int):
 def get_estadisticas_solicitudes_eliminacion(
     db: Session,
     año: Optional[int] = None,
-    mes: Optional[int] = None  # 👈 nuevo
+    mes: Optional[int] = None
 ) -> ConteoSolicitudesEliminacion:
+    """
+    Devuelve estadísticas generales de las solicitudes, incluyendo conteos por estado
+    y motivos, con posibilidad de filtrar por año y mes.
+
+    Args:
+        db (Session): Sesión de base de datos.
+        año (int, optional): Año a filtrar.
+        mes (int, optional): Mes a filtrar.
+
+    Returns:
+        ConteoSolicitudesEliminacion: Objeto con totales y subtotales.
+    """
     query = db.query(SolicitudEliminacion)
 
     if año:
-        query = query.filter(
-            extract("year", SolicitudEliminacion.fecha_solicitud) == año
-        )
+        query = query.filter(extract("year", SolicitudEliminacion.fecha_solicitud) == año)
     if mes:
-        query = query.filter(
-            extract("month", SolicitudEliminacion.fecha_solicitud) == mes
-        )
-    total = query.count()
+        query = query.filter(extract("month", SolicitudEliminacion.fecha_solicitud) == mes)
 
+    total = query.count()
     pendientes = query.filter(SolicitudEliminacion.estado == "Pendiente").count()
     rechazadas = query.filter(SolicitudEliminacion.estado == "Rechazada").count()
     aceptadas = query.filter(SolicitudEliminacion.estado == "Aceptada").count()
-
     motivo_actualizar = query.filter(SolicitudEliminacion.motivo.ilike("%actualizar%")).count()
     motivo_eliminar = query.filter(SolicitudEliminacion.motivo.ilike("%eliminar%")).count()
 

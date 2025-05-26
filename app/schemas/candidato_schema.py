@@ -1,13 +1,17 @@
+"""Esquemas Pydantic para gestión, validación y visualización de candidatos."""
+
 import re
 from typing import Optional, List
 from datetime import date, datetime
 from pydantic import BaseModel, EmailStr, field_validator
 
-# Imports de los catalogos
-from app.schemas.catalogs.ciudad import *
-from app.schemas.catalogs.cargo_ofrecido import *
-from app.schemas.catalogs.motivo_salida import *
+# Imports de esquemas relacionados
+from app.schemas.catalogs.ciudad import CiudadResponse
+from app.schemas.catalogs.cargo_ofrecido import CargoOfrecidoResponse
+from app.schemas.catalogs.motivo_salida import MotivoSalidaResponse
 
+
+# ──────────────────────── SCHEMA DE CREACIÓN ────────────────────────
 
 class CandidatoCreate(BaseModel):
     nombre_completo: str
@@ -25,6 +29,7 @@ class CandidatoCreate(BaseModel):
     nombre_referido: Optional[str] = None
     acepta_politica_datos: bool = False
 
+    # Validaciones
 
     @field_validator("fecha_nacimiento")
     @classmethod
@@ -82,7 +87,9 @@ class CandidatoCreate(BaseModel):
             raise ValueError("El nombre del referido solo debe contener letras y espacios.")
         return value
 
-# Schema para actualizar un candidato (todos los campos opcionales)
+
+# ──────────────────────── SCHEMA DE ACTUALIZACIÓN ────────────────────────
+
 class CandidatoUpdate(BaseModel):
     nombre_completo: Optional[str] = None
     correo_electronico: Optional[str] = None
@@ -101,8 +108,8 @@ class CandidatoUpdate(BaseModel):
     acepta_politica_datos: Optional[bool] = None
 
 
+# ──────────────────────── SCHEMA DE RESPUESTA ────────────────────────
 
-# Schema para devolver información de un candidato
 class CandidatoResponse(BaseModel):
     id_candidato: int
     nombre_completo: str
@@ -119,18 +126,15 @@ class CandidatoResponse(BaseModel):
     tiene_referido: bool
     nombre_referido: Optional[str]
     fecha_registro: datetime
-    estado: str  # ✅ nuevo campo
-    formulario_completo: bool  # ✅ NUEVO CAMPO
+    estado: str
+    formulario_completo: bool
     acepta_politica_datos: bool
-
-
 
     class Config:
         from_attributes = True
 
 
 # ───────────── SCHEMA RESUMIDO PARA DASHBOARD ─────────────
-
 
 class CandidatoResumenResponse(BaseModel):
     id_candidato: int
@@ -149,18 +153,18 @@ class CandidatoResumenResponse(BaseModel):
     trabaja_actualmente_joyco: bool
     fecha_postulacion: datetime
     estado: str
-    
 
     class Config:
         from_attributes = True
-
 
 
 class CandidatoResumenPaginatedResponse(BaseModel):
     data: List[CandidatoResumenResponse]
     total: int
 
-# ───────────── SCHEMA Completo PARA DASHBOAR   D ─────────────
+
+# ───────────── SCHEMA DETALLADO PARA DASHBOARD ─────────────
+
 class CandidatoDetalleResponse(BaseModel):
     # Información Personal
     nombre_completo: str
@@ -209,7 +213,10 @@ class CandidatoDetalleResponse(BaseModel):
 
     class Config:
         orm_mode = True
-        
+
+
+# ───────────── SCHEMA DE ESTADÍSTICAS GENERALES ─────────────
+
 class EstadisticasCandidatosResponse(BaseModel):
     total: int
     EN_PROCESO: int = 0
@@ -219,4 +226,4 @@ class EstadisticasCandidatosResponse(BaseModel):
     CONTRATADO: int = 0
 
     class Config:
-        from_attributes = True  # Para mantenerlo igual que el resto
+        from_attributes = True

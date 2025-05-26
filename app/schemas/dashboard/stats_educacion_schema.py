@@ -1,22 +1,25 @@
-# schemas/dashboard/stats_educacion_schema.py
+"""Esquema de respuesta para estadísticas de educación en el dashboard."""
 
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 from app.schemas.dashboard.stats_personal_schema import CountItem, MonthCountItem, MonthTopItem
+
 
 class EstadisticasEducacionResponse(BaseModel):
     """
-    Respuesta para /reportes/educacion con filtrado por año:
-     - educaciones_por_mes: total de registros de educación cada mes del año
-     - top_niveles_educacion_anual: Top 5 niveles de formación en todo el año
-     - top_niveles_por_mes: nivel de formación más frecuente por mes
-     - top_titulos_obtenidos_anual: Top 5 títulos obtenidos en todo el año
-     - top_titulos_por_mes: título más frecuente por mes
-     - top_instituciones_academicas_anual: Top 5 instituciones académicas en todo el año
-     - top_instituciones_por_mes: institución más frecuente por mes
-     - distribucion_nivel_ingles_anual: distribución por nivel de inglés en todo el año
-     - distribucion_nivel_ingles_por_mes: nivel de inglés más frecuente por mes
-     - distribucion_anio_graduacion: conteo por año de graduación (sin mes)
+    Esquema de respuesta para `/reportes/educacion`.
+
+    Incluye estadísticas educativas generales y mensuales:
+    - educaciones_por_mes: cantidad de registros por mes
+    - top_niveles_educacion_anual: niveles de educación más frecuentes en el año
+    - top_niveles_por_mes: nivel educativo más frecuente por mes
+    - top_titulos_obtenidos_anual: títulos más frecuentes en el año
+    - top_titulos_por_mes: título más frecuente por mes
+    - top_instituciones_academicas_anual: instituciones más mencionadas en el año
+    - top_instituciones_por_mes: institución más frecuente por mes
+    - distribucion_nivel_ingles_anual: frecuencia de niveles de inglés en el año
+    - distribucion_nivel_ingles_por_mes: nivel de inglés más común por mes
+    - distribucion_anio_graduacion: distribución por año de graduación (sin filtro por mes)
     """
     educaciones_por_mes: List[MonthCountItem]
     top_niveles_educacion_anual: List[CountItem]

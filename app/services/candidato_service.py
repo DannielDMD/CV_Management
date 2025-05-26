@@ -1,34 +1,54 @@
 from datetime import datetime, timedelta, timezone
 import logging
 from typing import Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError
-from fastapi import HTTPException, status
+from sqlalchemy import desc, extract, func, or_
+from fastapi import HTTPException
 from app.models.candidato_model import Candidato
 from app.schemas.candidato_schema import (
     CandidatoCreate,
-    CandidatoResponse,
     CandidatoUpdate,
     CandidatoResumenResponse,
+    CandidatoDetalleResponse,
 )
-from sqlalchemy.orm import Session, joinedload
-
 from app.models.educacion_model import Educacion
 from app.models.experiencia_model import ExperienciaLaboral
 from app.models.conocimientos_model import CandidatoConocimiento
 from app.models.preferencias import PreferenciaDisponibilidad
-
-from sqlalchemy import desc, extract, func, or_
 from app.models.catalogs.cargo_ofrecido import CargoOfrecido
-from app.utils.orden_catalogos import ordenar_por_nombre
+
 
 
 # Configurar logging
 logger = logging.getLogger(__name__)
 
 
-# Crear un candidato
 def create_candidato(db: Session, candidato_data: CandidatoCreate):
+    """
+    Crea un nuevo candidato en la base de datos.
+
+    Validaciones:
+    - Verifica si el correo electrónico ya existe en la base de datos.
+    
+    Pasos:
+    1. Verifica la unicidad del correo.
+    2. Si no existe, crea una instancia del modelo `Candidato`.
+    3. Agrega el nuevo candidato a la sesión de la base de datos.
+    4. Hace commit de la sesión y refresca para obtener el ID generado.
+
+    Args:
+        db (Session): Sesión activa de SQLAlchemy.
+        candidato_data (CandidatoCreate): Datos del candidato recibidos desde el frontend.
+
+    Returns:
+        Candidato: Objeto candidato recién creado, incluyendo su ID.
+
+    Raises:
+        HTTPException: 
+            - 400 si el correo ya está registrado.
+            - 500 si ocurre un error de integridad al guardar en la base de datos.
+    """
     if (
         db.query(Candidato)
         .filter(Candidato.correo_electronico == candidato_data.correo_electronico)
@@ -54,21 +74,56 @@ def create_candidato(db: Session, candidato_data: CandidatoCreate):
         )
 
 
-# Obtener un candidato por ID
+
 def get_candidato_by_id(db: Session, id_candidato: int):
+    """
+    Recupera un candidato específico por su ID.
+
+    Args:
+        db (Session): Sesión activa de SQLAlchemy.
+        id_candidato (int): ID del candidato a buscar.
+
+    Returns:
+        Candidato: Objeto del candidato encontrado.
+
+    Raises:
+        HTTPException: 404 si no se encuentra el candidato.
+    """
     candidato = db.get(Candidato, id_candidato)
     if not candidato:
         raise HTTPException(status_code=404, detail="Candidato no encontrado")
     return candidato
 
-
-# Obtener todos los candidatos
 def get_all_candidatos(db: Session):
+    """
+    Recupera todos los candidatos registrados en la base de datos.
+
+    Args:
+        db (Session): Sesión activa de SQLAlchemy.
+
+    Returns:
+        List[Candidato]: Lista de todos los candidatos.
+    """
     return db.query(Candidato).all()
 
-
-# Actualizar un candidato
 def update_candidato(db: Session, id_candidato: int, candidato_data: CandidatoUpdate):
+    """
+    Actualiza los datos de un candidato existente.
+
+    Args:
+        db (Session): Sesión activa de SQLAlchemy.
+        id_candidato (int): ID del candidato a actualizar.
+        candidato_data (CandidatoUpdate): Datos nuevos a aplicar.
+
+    Returns:
+        Candidato: Objeto candidato actualizado.
+
+    Raises:
+        HTTPException:
+            - 404 si no se encuentra el candidato.
+            - 400 si no hay datos para actualizar.
+            - 500 si ocurre un error al guardar los cambios.
+    """
     candidato = db.get(Candidato, id_candidato)
     if not candidato:
         raise HTTPException(status_code=404, detail="Candidato no encontrado")
@@ -92,9 +147,22 @@ def update_candidato(db: Session, id_candidato: int, candidato_data: CandidatoUp
             detail="Error al actualizar el candidato en la base de datos",
         )
 
-
-# Eliminar un candidato
 def delete_candidato(db: Session, id_candidato: int):
+    """
+    Elimina un candidato de la base de datos por su ID.
+
+    Args:
+        db (Session): Sesión activa de SQLAlchemy.
+        id_candidato (int): ID del candidato a eliminar.
+
+    Returns:
+        dict: Mensaje de confirmación.
+
+    Raises:
+        HTTPException:
+            - 404 si no se encuentra el candidato.
+            - 500 si ocurre un error al eliminar el registro.
+    """
     candidato = db.get(Candidato, id_candidato)
     if not candidato:
         raise HTTPException(status_code=404, detail="Candidato no encontrado")
@@ -124,12 +192,52 @@ def get_candidatos_resumen(
     id_experiencia: int = None,
     id_titulo: int = None,
     trabaja_joyco: bool = None,
-    ordenar_por_fecha: Optional[str] = None,  # 👈 aquí lo agregamos
-    anio: Optional[int] = None,  # ✅ AÑADIDO
-    mes: Optional[int] = None,  # ✅ AÑADIDO
+    ordenar_por_fecha: Optional[str] = None,
+    anio: Optional[int] = None,
+    mes: Optional[int] = None,
     skip: int = 0,
     limit: int = 10,
 ):
+    """
+    Obtiene un resumen paginado de candidatos, aplicando múltiples filtros opcionales.
+
+    Esta función construye una consulta dinámica a partir de filtros como:
+    - texto de búsqueda (nombre, correo o cargo)
+    - estado del proceso
+    - disponibilidad, ciudad, cargo ofrecido
+    - herramientas, habilidades, título, inglés, experiencia
+    - si trabaja en Joyco actualmente
+    - año y mes de postulación
+    También permite ordenar por fecha y aplicar paginación.
+
+    Args:
+        db (Session): Sesión de base de datos.
+        search (str): Término de búsqueda general.
+        estado (str): Estado del candidato (ej. "ADMITIDO", "DESCARTADO").
+        id_disponibilidad (int): ID del tipo de disponibilidad.
+        id_cargo (int): ID del cargo ofrecido.
+        id_ciudad (int): ID de la ciudad.
+        id_herramienta (int): ID de la herramienta específica.
+        id_habilidad_tecnica (int): ID de habilidad técnica.
+        id_nivel_ingles (int): ID del nivel de inglés.
+        id_experiencia (int): ID del rango de experiencia.
+        id_titulo (int): ID del título académico.
+        trabaja_joyco (bool): Si el candidato trabaja actualmente en Joyco.
+        ordenar_por_fecha (str): "recientes" o "antiguos".
+        anio (int): Año de postulación (filtro por fecha_registro).
+        mes (int): Mes de postulación (filtro por fecha_registro).
+        skip (int): Número de elementos a omitir (paginación).
+        limit (int): Número máximo de elementos a retornar.
+
+    Returns:
+        dict: Un diccionario con:
+            - data: lista de candidatos resumidos
+            - total: cantidad total de registros sin paginar
+
+    Raises:
+        No genera errores directamente salvo que se rompa la conexión con DB.
+    """
+
 
     query = db.query(Candidato).options(
         joinedload(Candidato.ciudad),
@@ -153,7 +261,7 @@ def get_candidatos_resumen(
         ),
     )
 
-    # 👇 tus filtros
+    # Filtros
     if search:
         query = query.join(Candidato.cargo).filter(
             or_(
@@ -202,19 +310,19 @@ def get_candidatos_resumen(
         query = query.filter(extract("month", Candidato.fecha_registro) == mes)
 
 
-    # ✅ calculamos total antes del paginado
+    # Cálculo antes del paginado
     total = query.count()
 
-    # ✅ aplicar ordenamiento por fecha si se pidió
+    # Aplicar ordenamiento si se solicitó
     if ordenar_por_fecha == "recientes":
         query = query.order_by(desc(Candidato.fecha_registro))
     elif ordenar_por_fecha == "antiguos":
         query = query.order_by(Candidato.fecha_registro)
 
-    # ✅ aplicamos paginación
+    # aplicar paginación
     candidatos = query.offset(skip).limit(limit).all()
 
-    # 👇 tu lógica para armar el resumen
+    # Lógica para armar el resumen
     resumen = []
     for candidato in candidatos:
         educacion = candidato.educaciones[0] if candidato.educaciones else None
@@ -270,18 +378,35 @@ def get_candidatos_resumen(
             )
         )
 
-    # ✅ devolvemos también el total
+    # Retorno del total
     return {"data": resumen, "total": total}
 
 
 # -------------Detalle de un Candidato -----------------#
-from sqlalchemy.orm import Session, joinedload
-from fastapi import HTTPException
-from app.models.candidato_model import Candidato
-from app.schemas.candidato_schema import CandidatoDetalleResponse
-
-
 def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleResponse:
+    """
+    Retorna el detalle completo de un candidato específico por su ID.
+
+    Esta función recupera la información personal, educativa, laboral, de conocimientos y de preferencias
+    de un candidato, usando múltiples joins para evitar llamadas adicionales a la base de datos.
+
+    Args:
+        db (Session): Sesión activa de la base de datos.
+        id_candidato (int): ID único del candidato a consultar.
+
+    Returns:
+        CandidatoDetalleResponse: Objeto con todos los datos consolidados del candidato.
+
+    Raises:
+        HTTPException: Si no se encuentra un candidato con el ID proporcionado (404).
+    
+    Estructura del objeto retornado:
+        - Información personal (nombre, correo, cédula, ciudad, cargo, estado, etc.)
+        - Educación (nivel, título, institución, año, inglés)
+        - Experiencia laboral (empresa, cargo, funciones, duración)
+        - Conocimientos (habilidades blandas, técnicas, herramientas)
+        - Preferencias (disponibilidad, salario, motivo de salida, razón para trabajar)
+    """
     candidato = (
         db.query(Candidato)
         .options(
@@ -321,14 +446,14 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
         .filter(Candidato.id_candidato == id_candidato)
         .first()
     )
-
+    # Verifica si el candidato existe
     if not candidato:
         raise HTTPException(status_code=404, detail="Candidato no encontrado")
-
+    # Extrae una sola entrada por cada relación de uno-a-muchos
     educacion = candidato.educaciones[0] if candidato.educaciones else None
     experiencia = candidato.experiencias[0] if candidato.experiencias else None
     preferencias = candidato.preferencias[0] if candidato.preferencias else None
-
+    # Separa las habilidades y herramientas según su tipo
     habilidades_blandas = [
         c.habilidad_blanda.nombre_habilidad_blanda
         for c in candidato.conocimientos
@@ -344,9 +469,9 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
         for c in candidato.conocimientos
         if c.tipo_conocimiento == "herramienta" and c.herramienta
     ]
-
+    # Construye la respuesta detallada del candidato combinando todas las secciones
     return CandidatoDetalleResponse(
-        # 📌 Información Personal
+        # Información Personal
         nombre_completo=candidato.nombre_completo,
         correo_electronico=candidato.correo_electronico,
         cc=candidato.cc,
@@ -366,7 +491,7 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
         nombre_referido=candidato.nombre_referido,
         fecha_registro=candidato.fecha_registro,
         estado=candidato.estado,
-        # 🎓 Educación
+        # Educación
         nivel_educacion=(
             educacion.nivel_educacion.descripcion_nivel if educacion else None
         ),
@@ -380,7 +505,7 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
         ),
         anio_graduacion=educacion.anio_graduacion if educacion else None,
         nivel_ingles=educacion.nivel_ingles.nivel if educacion else None,
-        # 💼 Experiencia
+        # Experiencia
         rango_experiencia=(
             experiencia.rango_experiencia.descripcion_rango if experiencia else None
         ),
@@ -389,11 +514,11 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
         funciones=experiencia.funciones if experiencia else None,
         fecha_inicio=experiencia.fecha_inicio if experiencia else None,
         fecha_fin=experiencia.fecha_fin if experiencia else None,
-        # 🧠 Conocimientos
+        # Conocimientos
         habilidades_blandas=habilidades_blandas,
         habilidades_tecnicas=habilidades_tecnicas,
         herramientas=herramientas,
-        # ⚙️ Preferencias
+        # Preferencias
         disponibilidad_viajar=(
             preferencias.disponibilidad_viajar if preferencias else None
         ),
@@ -416,21 +541,39 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
         ),
     )
 
+def obtener_estadisticas_candidatos(db: Session) -> dict:
+    """
+    Obtiene un resumen de candidatos agrupados por su estado actual dentro del proceso de selección.
 
-def obtener_estadisticas_candidatos(db: Session):
+    Returns:
+        dict: Diccionario con el conteo por estado (e.g., 'EN_PROCESO', 'ADMITIDO') 
+              e incluye una clave adicional 'total' con la suma de todos los registros.
+    """
     resultados = (
         db.query(Candidato.estado, func.count(Candidato.id_candidato))
         .group_by(Candidato.estado)
         .all()
     )
-
     resumen = {estado: cantidad for estado, cantidad in resultados}
     resumen["total"] = sum(resumen.values())
     return resumen
 
 
-# NUEVA FUNCIÓN AGREGADA PARA SABER SI EL FORMULARIO SE COMPLETÓ
-def marcar_formulario_completo(db: Session, id_candidato: int):
+def marcar_formulario_completo(db: Session, id_candidato: int) -> Candidato:
+    """
+    Marca el formulario de un candidato como completado, estableciendo el atributo 
+    `formulario_completo` en True.
+
+    Args:
+        db (Session): Sesión activa de la base de datos.
+        id_candidato (int): ID del candidato a actualizar.
+
+    Returns:
+        Candidato: Instancia actualizada del candidato.
+
+    Raises:
+        HTTPException: Si no se encuentra el candidato con el ID especificado.
+    """
     candidato = db.query(Candidato).filter(Candidato.id_candidato == id_candidato).first()
     if not candidato:
         raise HTTPException(status_code=404, detail="Candidato no encontrado")
@@ -440,8 +583,18 @@ def marcar_formulario_completo(db: Session, id_candidato: int):
     db.refresh(candidato)
     return candidato
 
-#Función de Eliminación de Candidatos incompletos
-def eliminar_candidatos_incompletos(db: Session):
+
+def eliminar_candidatos_incompletos(db: Session) -> dict:
+    """
+    Elimina todos los candidatos cuyo formulario no ha sido completado y que fueron registrados 
+    hace más de 6 horas.
+
+    Args:
+        db (Session): Sesión activa de la base de datos.
+
+    Returns:
+        dict: Diccionario con el número de registros eliminados bajo la clave 'eliminados'.
+    """
     limite = datetime.now(timezone.utc) - timedelta(hours=6)
     candidatos = db.query(Candidato).filter(
         Candidato.formulario_completo == False,
@@ -454,4 +607,4 @@ def eliminar_candidatos_incompletos(db: Session):
         eliminados += 1
 
     db.commit()
-    return {"eliminados": eliminados}
+    return {"eliminados": eliminados}   

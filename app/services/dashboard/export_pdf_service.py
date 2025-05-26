@@ -118,9 +118,6 @@ def exportar_estadisticas_pdf_reportlab(
     add_section("Top institución académica por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in educacion.top_instituciones_por_mes])
     add_section("Nivel de inglés más frecuente por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in educacion.distribucion_nivel_ingles_por_mes])
 
-
-
-
     # ───────────────────────── EXPERIENCIA ────────────────────────
     elements.append(Paragraph("💼 Estadísticas de Experiencia", styles["Heading2"]))
 
@@ -135,7 +132,6 @@ def exportar_estadisticas_pdf_reportlab(
     add_section("Top rango de experiencia por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in experiencia.top_rangos_por_mes])
     add_section("Top último cargo por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in experiencia.top_ultimos_cargos_por_mes])
     add_section("Top última empresa por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in experiencia.top_ultimas_empresas_por_mes])
-
     
         # ───────────────────────── CONOCIMIENTOS ─────────────────────
     elements.append(Paragraph("🧠 Estadísticas de Conocimientos", styles["Heading2"]))
@@ -150,9 +146,6 @@ def exportar_estadisticas_pdf_reportlab(
     add_section("Top habilidad blanda por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in conocimientos.top_habilidades_blandas_por_mes])
     add_section("Top habilidad técnica por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in conocimientos.top_habilidades_tecnicas_por_mes])
     add_section("Top herramienta por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in conocimientos.top_herramientas_por_mes])
-
-
-
 
 # ───────────────────────── PREFERENCIAS ──────────────────────
     elements.append(Paragraph("📌 Estadísticas de Preferencias", styles["Heading2"]))
@@ -171,8 +164,6 @@ def exportar_estadisticas_pdf_reportlab(
     add_section("Top motivo de salida por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in preferencias.top_motivos_salida_por_mes])
     add_section("Disponibilidad para viajar por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in preferencias.disponibilidad_viajar_por_mes])
     add_section("Situación laboral actual por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in preferencias.situacion_laboral_actual_por_mes])
-
-
 
     # ───────────────────────── PROCESO ───────────────────────────
     elements.append(Paragraph("📈 Estadísticas del Proceso de Selección", styles["Heading2"]))

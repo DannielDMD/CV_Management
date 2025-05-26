@@ -1,4 +1,4 @@
-# routes/Dashboard/stats_proceso.py
+"""Ruta para obtener estadísticas del proceso de selección de candidatos."""
 
 from typing import Optional
 from fastapi import APIRouter, Depends, Query
@@ -23,9 +23,18 @@ def estadisticas_proceso(
     db: Session = Depends(get_db)
 ):
     """
-    Devuelve:
-    - candidatos_por_mes: total de candidatos registrados cada mes
-    - top_estados_anual: conteo por estado para todo el año
-    - top_estados_por_mes: estado más frecuente por mes
+    Retorna estadísticas del avance de los candidatos en el proceso de selección.
+
+    Estadísticas devueltas:
+    - candidatos_por_mes: total de candidatos registrados por mes.
+    - top_estados_anual: cantidad total por estado (EN_PROCESO, ADMITIDO, DESCARTADO) en el año.
+    - top_estados_por_mes: estado más común por mes.
+
+    Args:
+        año (Optional[int]): Año para aplicar el filtro. Si no se indica, se toman todos los años.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        EstadisticasProcesoResponse: Estadísticas del proceso de selección.
     """
     return obtener_estadisticas_proceso(db, año)

@@ -1,25 +1,70 @@
+"""
+Servicios para el catálogo de Rangos de Experiencia.
+Incluye funciones CRUD: listar, obtener, crear, actualizar y eliminar.
+"""
+
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.catalogs.rango_experiencia import RangoExperiencia
 from app.schemas.catalogs.rango_experiencia import RangoExperienciaCreate, RangoExperienciaUpdate
 
 
-# Obtener todos los rangos de experiencia
 def get_rangos_experiencia(db: Session):
-     return db.query(RangoExperiencia).all()
+    """
+    Retorna todos los rangos de experiencia existentes.
+
+    Args:
+        db (Session): Sesión activa de la base de datos.
+
+    Returns:
+        List[RangoExperiencia]: Lista de rangos.
+    """
+    return db.query(RangoExperiencia).all()
 
 
-# Obtener un rango de experiencia por ID
 def get_rango_experiencia(db: Session, rango_experiencia_id: int):
-    rango = db.query(RangoExperiencia).filter(RangoExperiencia.id_rango_experiencia == rango_experiencia_id).first()
+    """
+    Obtiene un rango de experiencia por su ID.
+
+    Args:
+        db (Session): Sesión activa de la base de datos.
+        rango_experiencia_id (int): ID del rango.
+
+    Returns:
+        RangoExperiencia: Objeto encontrado.
+
+    Raises:
+        HTTPException: Si no se encuentra el rango.
+    """
+    rango = db.query(RangoExperiencia).filter(
+        RangoExperiencia.id_rango_experiencia == rango_experiencia_id
+    ).first()
+
     if not rango:
         raise HTTPException(status_code=404, detail="Rango de experiencia no encontrado")
+
     return rango
 
-# Crear un nuevo rango de experiencia
+
 def create_rango_experiencia(db: Session, rango_data: RangoExperienciaCreate):
-    existe_rango = db.query(RangoExperiencia).filter(RangoExperiencia.descripcion_rango == rango_data.descripcion_rango).first()
-    if existe_rango:
+    """
+    Crea un nuevo rango de experiencia si no existe uno igual.
+
+    Args:
+        db (Session): Sesión activa de la base de datos.
+        rango_data (RangoExperienciaCreate): Datos del nuevo rango.
+
+    Returns:
+        RangoExperiencia: Objeto creado.
+
+    Raises:
+        HTTPException: Si ya existe un rango con la misma descripción.
+    """
+    existe = db.query(RangoExperiencia).filter(
+        RangoExperiencia.descripcion_rango == rango_data.descripcion_rango
+    ).first()
+
+    if existe:
         raise HTTPException(status_code=400, detail="El rango de experiencia ya existe")
 
     nuevo_rango = RangoExperiencia(descripcion_rango=rango_data.descripcion_rango)
@@ -28,9 +73,26 @@ def create_rango_experiencia(db: Session, rango_data: RangoExperienciaCreate):
     db.refresh(nuevo_rango)
     return nuevo_rango
 
-# Actualizar un rango de experiencia por ID
+
 def update_rango_experiencia(db: Session, rango_experiencia_id: int, rango_data: RangoExperienciaUpdate):
-    rango = db.query(RangoExperiencia).filter(RangoExperiencia.id_rango_experiencia == rango_experiencia_id).first()
+    """
+    Actualiza un rango de experiencia por ID.
+
+    Args:
+        db (Session): Sesión activa de la base de datos.
+        rango_experiencia_id (int): ID del rango.
+        rango_data (RangoExperienciaUpdate): Datos a actualizar.
+
+    Returns:
+        RangoExperiencia: Objeto actualizado.
+
+    Raises:
+        HTTPException: Si no se encuentra el rango.
+    """
+    rango = db.query(RangoExperiencia).filter(
+        RangoExperiencia.id_rango_experiencia == rango_experiencia_id
+    ).first()
+
     if not rango:
         raise HTTPException(status_code=404, detail="Rango de experiencia no encontrado")
 
@@ -41,9 +103,25 @@ def update_rango_experiencia(db: Session, rango_experiencia_id: int, rango_data:
     db.refresh(rango)
     return rango
 
-# Eliminar un rango de experiencia por ID
+
 def delete_rango_experiencia(db: Session, rango_experiencia_id: int):
-    rango = db.query(RangoExperiencia).filter(RangoExperiencia.id_rango_experiencia == rango_experiencia_id).first()
+    """
+    Elimina un rango de experiencia por su ID.
+
+    Args:
+        db (Session): Sesión activa de la base de datos.
+        rango_experiencia_id (int): ID del rango.
+
+    Returns:
+        dict: Mensaje de confirmación.
+
+    Raises:
+        HTTPException: Si no se encuentra el rango.
+    """
+    rango = db.query(RangoExperiencia).filter(
+        RangoExperiencia.id_rango_experiencia == rango_experiencia_id
+    ).first()
+
     if not rango:
         raise HTTPException(status_code=404, detail="Rango de experiencia no encontrado")
 

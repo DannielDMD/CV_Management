@@ -1,18 +1,39 @@
+"""Esquemas Pydantic para la entidad Motivo de Salida."""
+
 from typing import Optional
 from pydantic import BaseModel
 
-# Schema para representar un motivo de salida
+
 class MotivoSalidaResponse(BaseModel):
+    """
+    Esquema de respuesta para un motivo de salida registrado.
+
+    Atributos:
+        id_motivo_salida (int): ID único del motivo.
+        descripcion_motivo (str): Descripción del motivo de salida.
+    """
     id_motivo_salida: int
     descripcion_motivo: str
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # Habilita compatibilidad con modelos ORM
 
-# Schema para crear un motivo de salida
+
 class MotivoSalidaCreate(BaseModel):
+    """
+    Esquema para crear un nuevo motivo de salida.
+
+    Atributos:
+        descripcion_motivo (str): Descripción del motivo de salida.
+    """
     descripcion_motivo: str
 
-# Schema para actualizar un motivo de salida
+
 class MotivoSalidaUpdate(BaseModel):
+    """
+    Esquema para actualizar parcialmente un motivo de salida.
+
+    Atributos:
+        descripcion_motivo (Optional[str]): Nueva descripción, si se proporciona.
+    """
     descripcion_motivo: Optional[str] = None

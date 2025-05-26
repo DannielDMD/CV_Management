@@ -1,19 +1,19 @@
-# schemas/dashboard/stats_conocimientos_schema.py
+"""Esquema de respuesta para estadísticas de conocimientos en el dashboard."""
 
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 from app.schemas.dashboard.stats_personal_schema import CountItem, MonthCountItem, MonthTopItem
+
 
 class EstadisticasConocimientosResponse(BaseModel):
     """
-    Respuesta para /reportes/conocimientos con filtrado por año:
-     - conocimientos_por_mes: total de registros de conocimientos cada mes del año
-     - top_habilidades_blandas_anual: Top 5 habilidades blandas en todo el año
-     - top_habilidades_blandas_por_mes: habilidad blanda más frecuente por mes
-     - top_habilidades_tecnicas_anual: Top 5 habilidades técnicas en todo el año
-     - top_habilidades_tecnicas_por_mes: habilidad técnica más frecuente por mes
-     - top_herramientas_anual: Top 5 herramientas en todo el año
-     - top_herramientas_por_mes: herramienta más frecuente por mes
+    Esquema de respuesta para `/reportes/conocimientos`.
+
+    Contiene estadísticas anuales y mensuales sobre:
+    - conocimientos registrados por mes
+    - top habilidades blandas
+    - top habilidades técnicas
+    - top herramientas
     """
     conocimientos_por_mes: List[MonthCountItem]
     top_habilidades_blandas_anual: List[CountItem]

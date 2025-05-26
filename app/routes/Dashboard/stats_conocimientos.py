@@ -1,4 +1,4 @@
-# routes/Dashboard/stats_conocimientos.py
+"""Ruta para obtener estadísticas de conocimientos de los candidatos."""
 
 from typing import Optional
 from fastapi import APIRouter, Depends, Query
@@ -27,13 +27,22 @@ def estadisticas_conocimientos(
     db: Session = Depends(get_db)
 ):
     """
-    Devuelve un objeto con:
-    - conocimientos_por_mes: total de registros de conocimientos cada mes del año indicado
-    - top_habilidades_blandas_anual: Top 5 habilidades blandas en el año
-    - top_habilidades_blandas_por_mes: habilidad blanda más frecuente por mes
-    - top_habilidades_tecnicas_anual: Top 5 habilidades técnicas en el año
-    - top_habilidades_tecnicas_por_mes: habilidad técnica más frecuente por mes
-    - top_herramientas_anual: Top 5 herramientas en el año
-    - top_herramientas_por_mes: herramienta más frecuente por mes
+    Retorna estadísticas de conocimientos registrados por los candidatos.
+
+    Estadísticas devueltas:
+    - conocimientos_por_mes: cantidad total de registros por mes.
+    - top_habilidades_blandas_anual: Top 5 habilidades blandas más frecuentes en el año.
+    - top_habilidades_blandas_por_mes: habilidad blanda más frecuente por mes.
+    - top_habilidades_tecnicas_anual: Top 5 habilidades técnicas más frecuentes en el año.
+    - top_habilidades_tecnicas_por_mes: habilidad técnica más frecuente por mes.
+    - top_herramientas_anual: Top 5 herramientas más frecuentes en el año.
+    - top_herramientas_por_mes: herramienta más frecuente por mes.
+
+    Args:
+        año (Optional[int]): Año para aplicar filtro (opcional).
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        EstadisticasConocimientosResponse: Datos estadísticos consolidados.
     """
     return obtener_estadisticas_conocimientos(db, año)

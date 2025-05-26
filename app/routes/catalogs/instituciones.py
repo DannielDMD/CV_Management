@@ -1,27 +1,99 @@
-from fastapi import APIRouter, Depends, HTTPException
+"""Rutas para la gestión del catálogo de instituciones académicas."""
+
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from typing import List
+
 from app.core.database import get_db
-from app.schemas.catalogs.instituciones import InstitucionAcademicaCreate, InstitucionAcademicaUpdate, InstitucionAcademicaResponse
-from app.services.catalogs.instituciones_service import get_institucion, get_instituciones, create_institucion, update_institucion, delete_institucion
+from app.schemas.catalogs.instituciones import (
+    InstitucionAcademicaCreate,
+    InstitucionAcademicaUpdate,
+    InstitucionAcademicaResponse,
+)
+from app.services.catalogs.instituciones_service import (
+    get_institucion,
+    get_instituciones,
+    create_institucion,
+    update_institucion,
+    delete_institucion,
+)
 
 router = APIRouter(prefix="/instituciones", tags=["Instituciones Académicas"])
 
-@router.get("/", response_model=list[InstitucionAcademicaResponse])
+@router.get("/", response_model=List[InstitucionAcademicaResponse])
 def read_instituciones(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    Lista todas las instituciones académicas registradas.
+
+    Args:
+        skip (int): Número de registros a omitir (paginación).
+        limit (int): Número máximo de registros a retornar.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        List[InstitucionAcademicaResponse]: Lista de instituciones académicas.
+    """
     return get_instituciones(db, skip, limit)
 
 @router.get("/{institucion_id}", response_model=InstitucionAcademicaResponse)
 def read_institucion(institucion_id: int, db: Session = Depends(get_db)):
+    """
+    Obtiene una institución académica por su ID.
+
+    Args:
+        institucion_id (int): ID de la institución.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        InstitucionAcademicaResponse: Institución encontrada.
+    """
     return get_institucion(db, institucion_id)
 
 @router.post("/", response_model=InstitucionAcademicaResponse, status_code=201)
-def create_institucion_endpoint(institucion: InstitucionAcademicaCreate, db: Session = Depends(get_db)):
+def create_institucion_endpoint(
+    institucion: InstitucionAcademicaCreate, db: Session = Depends(get_db)
+):
+    """
+    Crea una nueva institución académica.
+
+    Args:
+        institucion (InstitucionAcademicaCreate): Datos de la nueva institución.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        InstitucionAcademicaResponse: Institución creada.
+    """
     return create_institucion(db, institucion)
 
 @router.put("/{institucion_id}", response_model=InstitucionAcademicaResponse)
-def update_institucion_endpoint(institucion_id: int, institucion_update: InstitucionAcademicaUpdate, db: Session = Depends(get_db)):
+def update_institucion_endpoint(
+    institucion_id: int,
+    institucion_update: InstitucionAcademicaUpdate,
+    db: Session = Depends(get_db)
+):
+    """
+    Actualiza una institución académica existente.
+
+    Args:
+        institucion_id (int): ID de la institución a actualizar.
+        institucion_update (InstitucionAcademicaUpdate): Nuevos datos.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        InstitucionAcademicaResponse: Institución actualizada.
+    """
     return update_institucion(db, institucion_id, institucion_update)
 
 @router.delete("/{institucion_id}")
 def delete_institucion_endpoint(institucion_id: int, db: Session = Depends(get_db)):
+    """
+    Elimina una institución académica por su ID.
+
+    Args:
+        institucion_id (int): ID de la institución a eliminar.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        dict: Mensaje de confirmación.
+    """
     return delete_institucion(db, institucion_id)

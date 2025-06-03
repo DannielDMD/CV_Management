@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
 # Jobs
+from app.core.database import DATABASE_URL
 from app.jobs.limpieza_candidatos import limpiar_candidatos_incompletos_job
 
 # Rutas generales
@@ -18,8 +19,10 @@ from app.routes import (
 
 # Rutas de catálogos
 from app.routes.catalogs import (
+    centro_costos,
     ciudades,
     cargos_ofrecidos,
+    departamentos,
     nivel_educacion,
     titulo,
     instituciones,
@@ -66,8 +69,10 @@ app.include_router(preferencias_route.router)
 app.include_router(solicitudes_eliminacion_route.router)
 
 # Registro de rutas de catálogos
+app.include_router(departamentos.router)
 app.include_router(ciudades.router)
 app.include_router(cargos_ofrecidos.router)
+app.include_router(centro_costos.router)
 app.include_router(nivel_educacion.router)
 app.include_router(titulo.router)
 app.include_router(instituciones.router)
@@ -88,6 +93,9 @@ app.include_router(stats_preferencias.router)
 app.include_router(stats_proceso.router)
 app.include_router(export_report.router)
 app.include_router(export_pdf.router)
+
+
+print(f"🚀 BASE DE DATOS ACTUAL: {DATABASE_URL}")
 
 # Programación de job periódico para limpiar candidatos incompletos
 scheduler = BackgroundScheduler()

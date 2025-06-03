@@ -8,7 +8,8 @@ from sqlalchemy import func, extract
 
 from app.models.candidato_model import Candidato
 from app.models.catalogs.cargo_ofrecido import CargoOfrecido
-from app.models.catalogs.ciudad import Ciudad
+from app.models.catalogs.centro_costos import CentroCostos
+from app.models.catalogs.ciudad import Ciudad, Departamento
 from app.schemas.dashboard.stats_personal_schema import (
     CountItem,
     BooleanStats,
@@ -16,7 +17,6 @@ from app.schemas.dashboard.stats_personal_schema import (
     MonthTopItem,
     EstadisticasPersonalesResponse,
 )
-
 def obtener_estadisticas_personales(
     db: Session,
     año: Optional[int] = None
@@ -211,6 +211,97 @@ def obtener_estadisticas_personales(
         .limit(3)
         .all()
     )
+    
+    # 10. Top departamentos anual
+    departamentos_q = (
+        año_filter(
+            db.query(
+                Departamento.nombre_departamento.label("label"),
+                func.count(Candidato.id_candidato).label("count")
+            )
+            .join(Ciudad, Candidato.id_ciudad == Ciudad.id_ciudad)
+            .join(Departamento, Ciudad.id_departamento == Departamento.id_departamento),
+            Candidato.fecha_registro
+        )
+        .group_by(Departamento.nombre_departamento)
+        .order_by(func.count(Candidato.id_candidato).desc())
+        .limit(5)
+        .all()
+    )
+    top_departamentos_anual = [
+        CountItem(label=d.label, count=d.count) for d in departamentos_q
+    ]
+
+    # 11. Top departamento por mes
+    top_departamentos_por_mes = []
+    for m in range(1, 13):
+        row = (
+            año_filter(
+                db.query(
+                    Departamento.nombre_departamento.label("label"),
+                    func.count(Candidato.id_candidato).label("count")
+                )
+                .join(Ciudad, Candidato.id_ciudad == Ciudad.id_ciudad)
+                .join(Departamento, Ciudad.id_departamento == Departamento.id_departamento),
+                Candidato.fecha_registro
+            )
+            .filter(extract("month", Candidato.fecha_registro) == m)
+            .group_by(Departamento.nombre_departamento)
+            .order_by(func.count(Candidato.id_candidato).desc())
+            .limit(1)
+            .first()
+        )
+        if row:
+            top_departamentos_por_mes.append(
+                MonthTopItem(month=m, label=row.label, count=row.count)
+            )
+
+
+    # 11. Top centros de costos anual
+    centros_q = (
+        año_filter(
+            db.query(
+                CentroCostos.nombre_centro_costos.label("label"),
+                func.count(Candidato.id_candidato).label("count")
+            )
+            .join(CentroCostos, Candidato.id_centro_costos == CentroCostos.id_centro_costos)
+            .filter(Candidato.id_centro_costos.isnot(None)),
+            Candidato.fecha_registro
+        )
+        .group_by(CentroCostos.nombre_centro_costos)
+        .order_by(func.count(Candidato.id_candidato).desc())
+        .limit(5)
+        .all()
+    )
+
+    top_centros_costos_anual = [
+        CountItem(label=c.label, count=c.count) for c in centros_q
+    ]
+
+    # 12. Top centro de costos por mes
+    top_centros_costos_por_mes = []
+    for m in range(1, 13):
+        row = (
+            año_filter(
+                db.query(
+                    CentroCostos.nombre_centro_costos.label("label"),
+                    func.count(Candidato.id_candidato).label("count")
+                )
+                .join(CentroCostos, Candidato.id_centro_costos == CentroCostos.id_centro_costos)
+                .filter(Candidato.id_centro_costos.isnot(None)),
+                Candidato.fecha_registro
+            )
+            .filter(extract("month", Candidato.fecha_registro) == m)
+            .group_by(CentroCostos.nombre_centro_costos)
+            .order_by(func.count(Candidato.id_candidato).desc())
+            .limit(1)
+            .first()
+        )
+        if row:
+            top_centros_costos_por_mes.append(
+                MonthTopItem(month=m, label=row.label, count=row.count)
+            )
+
 
     top_nombres_referidos = [
         CountItem(label=r.label, count=r.count) for r in referidos_q
@@ -219,6 +310,8 @@ def obtener_estadisticas_personales(
 
     return EstadisticasPersonalesResponse(
         candidatos_por_mes=candidatos_por_mes,
+        top_departamentos_por_mes=top_departamentos_por_mes,
+         top_departamentos_anual=top_departamentos_anual,  # 👈 nuevo
         top_ciudades_anual=top_ciudades_anual,
         top_ciudades_por_mes=top_ciudades_por_mes,
         rangos_edad=rangos_edad,
@@ -226,5 +319,7 @@ def obtener_estadisticas_personales(
         estadisticas_booleanas=estadisticas_booleanas,
         top_cargos_anual=top_cargos_anual,
         top_cargos_por_mes=top_cargos_por_mes,
-        top_nombres_referidos=top_nombres_referidos  # 👈 nuevo
+        top_nombres_referidos=top_nombres_referidos, # 👈 nuevo
+        top_centros_costos_anual=top_centros_costos_anual,  # 👈 nuevo
+        top_centros_costos_por_mes=top_centros_costos_por_mes
     )

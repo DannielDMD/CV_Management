@@ -102,6 +102,7 @@ class PreferenciaDisponibilidad(Base):
         Integer, ForeignKey("motivos_salida.id_motivo_salida"), nullable=True
     )
     razon_trabajar_joyco = Column(Text, nullable=True)
+    otro_motivo_salida = Column(Text, nullable=True)
 
     disponibilidad = relationship("Disponibilidad", back_populates="preferencias")
     rango_salarial = relationship("RangoSalarial", back_populates="preferencias")

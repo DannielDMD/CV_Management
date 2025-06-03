@@ -9,6 +9,7 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.styles import Alignment
 
 from app.models.candidato_model import Candidato
+from app.models.catalogs.ciudad import Ciudad
 from app.models.educacion_model import Educacion
 from app.models.experiencia_model import ExperienciaLaboral
 from app.models.conocimientos_model import CandidatoConocimiento
@@ -24,8 +25,10 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
     query = (
         db.query(Candidato)
         .options(
+            joinedload(Candidato.ciudad).joinedload(Ciudad.departamento),
             joinedload(Candidato.ciudad),
             joinedload(Candidato.cargo),
+            joinedload(Candidato.centro_costos),
             joinedload(Candidato.motivo_salida),
             joinedload(Candidato.educaciones).joinedload(Educacion.nivel_educacion),
             joinedload(Candidato.educaciones).joinedload(Educacion.titulo),
@@ -63,10 +66,12 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
             "cc": c.cc,
             "fecha_nacimiento": c.fecha_nacimiento,
             "telefono": c.telefono,
+            "departamento": c.ciudad.departamento.nombre_departamento if c.ciudad and c.ciudad.departamento else None,
             "ciudad": c.ciudad.nombre_ciudad if c.ciudad else None,
             "descripcion_perfil": c.descripcion_perfil,
             "cargo": c.cargo.nombre_cargo if c.cargo else None,
             "trabaja_actualmente_joyco": c.trabaja_actualmente_joyco,
+            "centro_costos": c.centro_costos.nombre_centro_costos if c.centro_costos else None,
             "ha_trabajado_joyco": c.ha_trabajado_joyco,
             "motivo_salida": c.motivo_salida.descripcion_motivo if c.motivo_salida else None,
             "tiene_referido": c.tiene_referido,

@@ -69,6 +69,8 @@ class EstadisticasPersonalesResponse(BaseModel):
     - Top de nombres de referidos
     """
     candidatos_por_mes: List[MonthCountItem]
+    top_departamentos_anual: List[CountItem]
+    top_departamentos_por_mes: List[MonthTopItem]
     top_ciudades_anual: List[CountItem]
     top_ciudades_por_mes: List[MonthTopItem]
     rangos_edad: List[CountItem]
@@ -76,4 +78,6 @@ class EstadisticasPersonalesResponse(BaseModel):
     estadisticas_booleanas: BooleanStats
     top_cargos_anual: List[CountItem]
     top_cargos_por_mes: List[MonthTopItem]
+    top_centros_costos_anual: List[CountItem]
+    top_centros_costos_por_mes: List[MonthTopItem]
     top_nombres_referidos: List[CountItem]

@@ -83,6 +83,8 @@ def exportar_estadisticas_pdf_reportlab(
 
     # Anuales
     add_section("Top ciudades (anual)", [(i.label, i.count) for i in personal.top_ciudades_anual])
+    add_section("Top departamentos (anual)", [(i.label, i.count) for i in personal.top_departamentos_anual])
+    add_section("Top centros de costos (anual)", [(i.label, i.count) for i in personal.top_centros_costos_anual])
     add_section("Top cargos (anual)", [(i.label, i.count) for i in personal.top_cargos_anual])
     add_section("Top nombres de referidos", [(i.label, i.count) for i in personal.top_nombres_referidos])
     add_section("Rangos de edad", [(i.label, i.count) for i in personal.rangos_edad])
@@ -99,6 +101,8 @@ def exportar_estadisticas_pdf_reportlab(
     # Mensuales
     add_section("Candidatos registrados por mes", [(f"Mes {i.month}", i.count) for i in personal.candidatos_por_mes])
     add_section("Top ciudad por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in personal.top_ciudades_por_mes])
+    add_section("Top departamento por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in personal.top_departamentos_por_mes])
+    add_section("Top centro de costos por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in personal.top_centros_costos_por_mes])
     add_section("Top cargo por mes", [(f"Mes {i.month}: {i.label}", i.count) for i in personal.top_cargos_por_mes])
 
 # ───────────────────────── EDUCACIÓN ─────────────────────────

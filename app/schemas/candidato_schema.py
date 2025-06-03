@@ -6,6 +6,7 @@ from datetime import date, datetime
 from pydantic import BaseModel, EmailStr, field_validator
 
 # Imports de esquemas relacionados
+from app.schemas.catalogs.centro_costos import CentroCostosResponse
 from app.schemas.catalogs.ciudad import CiudadResponse
 from app.schemas.catalogs.cargo_ofrecido import CargoOfrecidoResponse
 from app.schemas.catalogs.motivo_salida import MotivoSalidaResponse
@@ -25,6 +26,10 @@ class CandidatoCreate(BaseModel):
     trabaja_actualmente_joyco: bool
     ha_trabajado_joyco: bool
     id_motivo_salida: Optional[int] = None
+    id_centro_costos: Optional[int] = None
+    nombre_cargo_otro: Optional[str] = None
+    nombre_centro_costos_otro: Optional[str] = None
+    otro_motivo_salida: Optional[str] = None
     tiene_referido: bool
     nombre_referido: Optional[str] = None
     acepta_politica_datos: bool = False
@@ -102,6 +107,10 @@ class CandidatoUpdate(BaseModel):
     trabaja_actualmente_joyco: Optional[bool] = None
     ha_trabajado_joyco: Optional[bool] = None
     id_motivo_salida: Optional[int] = None
+    id_centro_costos: Optional[int] = None
+    nombre_cargo_otro: Optional[str] = None
+    nombre_centro_costos_otro: Optional[str] = None
+    otro_motivo_salida: Optional[str] = None
     tiene_referido: Optional[bool] = None
     nombre_referido: Optional[str] = None
     estado: Optional[str] = None
@@ -121,6 +130,10 @@ class CandidatoResponse(BaseModel):
     descripcion_perfil: Optional[str]
     cargo: CargoOfrecidoResponse
     motivo_salida: Optional[MotivoSalidaResponse]
+    centro_costos: Optional[CentroCostosResponse]
+    nombre_cargo_otro: Optional[str]
+    nombre_centro_costos_otro: Optional[str]
+    otro_motivo_salida: Optional[str]
     trabaja_actualmente_joyco: bool
     ha_trabajado_joyco: bool
     tiene_referido: bool
@@ -173,8 +186,12 @@ class CandidatoDetalleResponse(BaseModel):
     fecha_nacimiento: date
     telefono: str
     ciudad: str
+    departamento: Optional[str] = None
     descripcion_perfil: Optional[str]
     cargo: str
+    nombre_cargo_otro: Optional[str] = None
+    nombre_centro_costos_otro: Optional[str] = None
+    nombre_motivo_salida_otro: Optional[str] = None
     trabaja_actualmente_joyco: bool
     ha_trabajado_joyco: bool
     motivo_salida: Optional[str] = None

@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import desc, extract, func, or_
 from fastapi import HTTPException
 from app.models.candidato_model import Candidato
+from app.models.catalogs.ciudad import Ciudad
 from app.schemas.candidato_schema import (
     CandidatoCreate,
     CandidatoUpdate,
@@ -58,7 +59,9 @@ def create_candidato(db: Session, candidato_data: CandidatoCreate):
             status_code=400, detail="El correo electrónico ya está registrado"
         )
 
-    nuevo_candidato = Candidato(**candidato_data.model_dump())
+    campos = candidato_data.model_dump()
+    nuevo_candidato = Candidato(**campos)
+
 
     try:
         db.add(nuevo_candidato)
@@ -125,6 +128,7 @@ def update_candidato(db: Session, id_candidato: int, candidato_data: CandidatoUp
             - 500 si ocurre un error al guardar los cambios.
     """
     candidato = db.get(Candidato, id_candidato)
+    print("Campos a actualizar:", cambios)  # Puedes quitarlo en producción
     if not candidato:
         raise HTTPException(status_code=404, detail="Candidato no encontrado")
 
@@ -410,8 +414,9 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
     candidato = (
         db.query(Candidato)
         .options(
-            joinedload(Candidato.ciudad),
+            joinedload(Candidato.ciudad).joinedload(Ciudad.departamento),
             joinedload(Candidato.cargo),
+            joinedload(Candidato.centro_costos),
             joinedload(Candidato.motivo_salida),
             # Joins de Educación
             joinedload(Candidato.educaciones).joinedload(Educacion.nivel_educacion),
@@ -478,8 +483,18 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
         fecha_nacimiento=candidato.fecha_nacimiento,
         telefono=candidato.telefono,
         ciudad=candidato.ciudad.nombre_ciudad,
+        departamento=(
+        candidato.ciudad.departamento.nombre_departamento
+        if candidato.ciudad and candidato.ciudad.departamento
+        else None
+        ),
         descripcion_perfil=candidato.descripcion_perfil,
         cargo=candidato.cargo.nombre_cargo,
+
+        nombre_cargo_otro=candidato.nombre_cargo_otro,
+        nombre_centro_costos_otro=candidato.nombre_centro_costos_otro,
+        otro_motivo_salida=candidato.otro_motivo_salida,
+        centro_costos=(candidato.centro_costos.nombre_centro_costos if candidato.centro_costos else None),
         trabaja_actualmente_joyco=candidato.trabaja_actualmente_joyco,
         ha_trabajado_joyco=candidato.ha_trabajado_joyco,
         motivo_salida=(

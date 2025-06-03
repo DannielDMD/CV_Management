@@ -31,6 +31,7 @@ def get_db():
     Yields:
         Session: sesión activa de SQLAlchemy.
     """
+    print(f"📡 Conectado a: {DATABASE_URL}") 
     db = SessionLocal()
     try:
         yield db

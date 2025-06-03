@@ -3,92 +3,72 @@ Servicios para la gestión del catálogo de ciudades.
 Incluye operaciones CRUD con validaciones de duplicados y existencia.
 """
 
+from typing import List, Optional
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 from app.models.catalogs.ciudad import Ciudad
 from app.schemas.catalogs.ciudad import CiudadCreate
 from app.utils.orden_catalogos import ordenar_por_nombre
 
 
-def get_ciudades(db: Session):
+def get_ciudades(db: Session) -> List[Ciudad]:
     """
-    Obtiene todas las ciudades ordenadas alfabéticamente por nombre.
-
-    Args:
-        db (Session): Sesión activa de la base de datos.
-
-    Returns:
-        List[Ciudad]: Lista de ciudades ordenadas.
+    Obtiene todas las ciudades ordenadas alfabéticamente.
     """
     query = db.query(Ciudad)
     return ordenar_por_nombre(query, "nombre_ciudad").all()
 
 
-def get_ciudad_by_id(db: Session, ciudad_id: int):
+def get_ciudad_by_id(db: Session, ciudad_id: int) -> Optional[Ciudad]:
     """
-    Obtiene una ciudad por su ID.
-
-    Args:
-        db (Session): Sesión activa de la base de datos.
-        ciudad_id (int): ID de la ciudad.
-
-    Returns:
-        Ciudad: Objeto Ciudad correspondiente.
-
-    Raises:
-        HTTPException: Si la ciudad no existe.
+    Busca una ciudad por su ID.
     """
-    ciudad = db.query(Ciudad).filter(Ciudad.id_ciudad == ciudad_id).first()
-    if not ciudad:
-        raise HTTPException(status_code=404, detail="Ciudad no encontrada")
-    return ciudad
+    return db.query(Ciudad).filter(Ciudad.id_ciudad == ciudad_id).first()
 
 
-def create_ciudad(db: Session, ciudad_data: CiudadCreate):
+def get_ciudades_por_departamento(db: Session, id_departamento: int) -> List[Ciudad]:
     """
-    Crea una nueva ciudad si no existe previamente.
-
-    Args:
-        db (Session): Sesión activa de la base de datos.
-        ciudad_data (CiudadCreate): Datos de la ciudad.
-
-    Returns:
-        Ciudad: Objeto ciudad creado.
-
-    Raises:
-        HTTPException: Si ya existe una ciudad con el mismo nombre.
+    Obtiene ciudades asociadas a un departamento específico.
     """
-    existing_ciudad = db.query(Ciudad).filter(
-        Ciudad.nombre_ciudad == ciudad_data.nombre_ciudad
+    return db.query(Ciudad).filter(Ciudad.id_departamento == id_departamento).order_by(Ciudad.nombre_ciudad.asc()).all()
+
+
+def create_ciudad(db: Session, ciudad_data: CiudadCreate) -> Optional[Ciudad]:
+    """
+    Crea una ciudad si no existe una con el mismo nombre dentro del mismo departamento.
+    """
+    existente = db.query(Ciudad).filter(
+        Ciudad.nombre_ciudad.ilike(ciudad_data.nombre_ciudad.strip()),
+        Ciudad.id_departamento == ciudad_data.id_departamento
     ).first()
-    if existing_ciudad:
-        raise HTTPException(status_code=400, detail="La ciudad ya existe")
+    if existente:
+        return None
 
-    nueva_ciudad = Ciudad(nombre_ciudad=ciudad_data.nombre_ciudad)
+    nueva_ciudad = Ciudad(
+        nombre_ciudad=ciudad_data.nombre_ciudad.strip(),
+        id_departamento=ciudad_data.id_departamento
+    )
     db.add(nueva_ciudad)
-    db.commit()
-    db.refresh(nueva_ciudad)
-    return nueva_ciudad
+    try:
+        db.commit()
+        db.refresh(nueva_ciudad)
+        return nueva_ciudad
+    except IntegrityError:
+        db.rollback()
+        return None
 
 
-def delete_ciudad(db: Session, ciudad_id: int):
+def delete_ciudad(db: Session, ciudad_id: int) -> bool:
     """
-    Elimina una ciudad por su ID.
-
-    Args:
-        db (Session): Sesión activa de la base de datos.
-        ciudad_id (int): ID de la ciudad a eliminar.
-
-    Returns:
-        dict: Mensaje de confirmación.
-
-    Raises:
-        HTTPException: Si la ciudad no existe.
+    Elimina una ciudad por ID.
     """
-    ciudad = db.query(Ciudad).filter(Ciudad.id_ciudad == ciudad_id).first()
+    ciudad = get_ciudad_by_id(db, ciudad_id)
     if not ciudad:
-        raise HTTPException(status_code=404, detail="Ciudad no encontrada")
-
-    db.delete(ciudad)
-    db.commit()
-    return {"detail": "Ciudad eliminada correctamente"}
+        return False
+    try:
+        db.delete(ciudad)
+        db.commit()
+        return True
+    except IntegrityError:
+        db.rollback()
+        return False

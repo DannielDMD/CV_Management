@@ -27,6 +27,8 @@ class EducacionCreate(BaseModel):
     id_nivel_educacion: int
     id_titulo: Optional[int] = None
     id_institucion: Optional[int] = None
+    nombre_titulo_otro: Optional[str] = None
+    nombre_institucion_otro: Optional[str] = None
     anio_graduacion: Optional[int] = None
     id_nivel_ingles: int
 
@@ -54,6 +56,8 @@ class EducacionUpdate(BaseModel):
     id_nivel_educacion: Optional[int] = None
     id_titulo: Optional[int] = None
     id_institucion: Optional[int] = None
+    nombre_titulo_otro: Optional[str] = None
+    nombre_institucion_otro: Optional[str] = None
     anio_graduacion: Optional[int] = None
     id_nivel_ingles: Optional[int] = None
 
@@ -74,6 +78,8 @@ class EducacionResponse(BaseModel):
     nivel_educacion: NivelEducacionResponse
     titulo: Optional[TituloObtenidoResponse] = None
     institucion: Optional[InstitucionAcademicaResponse] = None
+    nombre_titulo_otro: Optional[str] = None
+    nombre_institucion_otro: Optional[str] = None
     anio_graduacion: Optional[int] = None
     nivel_ingles: NivelInglesResponse
 

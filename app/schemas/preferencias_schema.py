@@ -60,6 +60,8 @@ class PreferenciaDisponibilidadCreate(BaseModel):
     trabaja_actualmente: bool
     id_motivo_salida: Optional[int] = None
     razon_trabajar_joyco: Optional[str] = None
+    otro_motivo_salida: Optional[str] = None
+
 
 
 class PreferenciaDisponibilidadUpdate(BaseModel):
@@ -73,6 +75,8 @@ class PreferenciaDisponibilidadUpdate(BaseModel):
     trabaja_actualmente: Optional[bool] = None
     id_motivo_salida: Optional[int] = None
     razon_trabajar_joyco: Optional[str] = None
+    otro_motivo_salida: Optional[str] = None
+
 
 
 class PreferenciaDisponibilidadResponse(BaseModel):
@@ -86,6 +90,8 @@ class PreferenciaDisponibilidadResponse(BaseModel):
     trabaja_actualmente: bool
     motivo_salida: Optional[MotivoSalidaResponse]
     razon_trabajar_joyco: Optional[str]
+    otro_motivo_salida: Optional[str]
+
 
     class Config:
         from_attributes = True

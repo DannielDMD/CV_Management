@@ -180,6 +180,7 @@ class CandidatoResumenPaginatedResponse(BaseModel):
 
 class CandidatoDetalleResponse(BaseModel):
     # Información Personal
+    id_candidato: int 
     nombre_completo: str
     correo_electronico: str
     cc: str
@@ -190,11 +191,12 @@ class CandidatoDetalleResponse(BaseModel):
     descripcion_perfil: Optional[str]
     cargo: str
     nombre_cargo_otro: Optional[str] = None
-    nombre_centro_costos_otro: Optional[str] = None
-    otro_motivo_salida_candidato: Optional[str] = None
     trabaja_actualmente_joyco: bool
+    centro_costos: str
+    nombre_centro_costos_otro: Optional[str] = None
     ha_trabajado_joyco: bool
     motivo_salida: Optional[str] = None
+    otro_motivo_salida_candidato: Optional[str] = None
     tiene_referido: bool
     nombre_referido: Optional[str] = None
     fecha_registro: datetime
@@ -203,8 +205,8 @@ class CandidatoDetalleResponse(BaseModel):
     # Educación
     nivel_educacion: Optional[str] = None
     titulo: Optional[str] = None
-    institucion: Optional[str] = None
     nombre_titulo_otro: Optional[str] = None
+    institucion: Optional[str] = None
     nombre_institucion_otro: Optional[str] = None
     anio_graduacion: Optional[int] = None
     nivel_ingles: Optional[str] = None

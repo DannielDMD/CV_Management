@@ -29,7 +29,7 @@ class CandidatoCreate(BaseModel):
     id_centro_costos: Optional[int] = None
     nombre_cargo_otro: Optional[str] = None
     nombre_centro_costos_otro: Optional[str] = None
-    otro_motivo_salida: Optional[str] = None
+    otro_motivo_salida_candidato: Optional[str] = None
     tiene_referido: bool
     nombre_referido: Optional[str] = None
     acepta_politica_datos: bool = False
@@ -191,7 +191,7 @@ class CandidatoDetalleResponse(BaseModel):
     cargo: str
     nombre_cargo_otro: Optional[str] = None
     nombre_centro_costos_otro: Optional[str] = None
-    nombre_motivo_salida_otro: Optional[str] = None
+    otro_motivo_salida_candidato: Optional[str] = None
     trabaja_actualmente_joyco: bool
     ha_trabajado_joyco: bool
     motivo_salida: Optional[str] = None
@@ -204,6 +204,8 @@ class CandidatoDetalleResponse(BaseModel):
     nivel_educacion: Optional[str] = None
     titulo: Optional[str] = None
     institucion: Optional[str] = None
+    nombre_titulo_otro: Optional[str] = None
+    nombre_institucion_otro: Optional[str] = None
     anio_graduacion: Optional[int] = None
     nivel_ingles: Optional[str] = None
 
@@ -226,6 +228,7 @@ class CandidatoDetalleResponse(BaseModel):
     rango_salarial: Optional[str] = None
     trabaja_actualmente: Optional[bool] = None
     motivo_salida_laboral: Optional[str] = None
+    otro_motivo_salida_preferencia: Optional[str] = None
     razon_trabajar_joyco: Optional[str] = None
 
     class Config:

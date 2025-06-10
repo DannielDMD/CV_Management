@@ -70,10 +70,13 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
             "ciudad": c.ciudad.nombre_ciudad if c.ciudad else None,
             "descripcion_perfil": c.descripcion_perfil,
             "cargo": c.cargo.nombre_cargo if c.cargo else None,
+            "nombre_cargo_otro": c.nombre_cargo_otro,
             "trabaja_actualmente_joyco": c.trabaja_actualmente_joyco,
             "centro_costos": c.centro_costos.nombre_centro_costos if c.centro_costos else None,
+            "nombre_centro_costos_otro": c.nombre_centro_costos_otro,
             "ha_trabajado_joyco": c.ha_trabajado_joyco,
             "motivo_salida": c.motivo_salida.descripcion_motivo if c.motivo_salida else None,
+            "otro_motivo_salida": c.otro_motivo_salida,
             "tiene_referido": c.tiene_referido,
             "nombre_referido": c.nombre_referido,
             "estado": c.estado,
@@ -82,7 +85,9 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
             # Educación
             "nivel_educacion": educ.nivel_educacion.descripcion_nivel if educ else None,
             "titulo": educ.titulo.nombre_titulo if educ and educ.titulo else None,
+            "nombre_titulo_otro": educ.nombre_titulo_otro if educ else None,
             "institucion": educ.institucion.nombre_institucion if educ and educ.institucion else None,
+            "nombre_institucion_otro": educ.nombre_institucion_otro if educ else None,
             "anio_graduacion": educ.anio_graduacion if educ else None,
             "nivel_ingles": educ.nivel_ingles.nivel if educ and educ.nivel_ingles else None,
             # Experiencia
@@ -102,6 +107,7 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
             "rango_salarial": pref.rango_salarial.descripcion_rango if pref else None,
             "trabaja_actualmente": pref.trabaja_actualmente if pref else None,
             "motivo_salida_laboral": pref.motivo_salida.descripcion_motivo if pref and pref.motivo_salida else None,
+            "otro_motivo_salida_preferencia": pref.otro_motivo_salida if pref else None,
             "razon_trabajar_joyco": pref.razon_trabajar_joyco if pref else None,
             # Fecha al final
             "fecha_registro": c.fecha_registro,

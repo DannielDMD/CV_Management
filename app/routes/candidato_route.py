@@ -11,6 +11,7 @@ from app.services.candidato_service import (
     get_candidato_by_id,
     get_all_candidatos,
     get_candidato_detalle,
+    get_candidatos_detalle_lista,
     marcar_formulario_completo,
     obtener_estadisticas_candidatos,
     update_candidato,
@@ -99,6 +100,53 @@ def obtener_candidato_detalle(id_candidato: int, db: Session = Depends(get_db)):
         CandidatoDetalleResponse: Información completa del candidato.
     """
     return get_candidato_detalle(db, id_candidato)
+
+
+
+
+
+@router.get("/detalle-lista")
+def obtener_lista_detallada(
+    db: Session = Depends(get_db),
+    search: str = Query(None),
+    estado: str = Query(None),
+    id_disponibilidad: int = Query(None),
+    id_cargo: int = Query(None),
+    id_ciudad: int = Query(None),
+    id_herramienta: int = Query(None),
+    id_habilidad_tecnica: int = Query(None),
+    id_nivel_ingles: int = Query(None),
+    id_experiencia: int = Query(None),
+    id_titulo: int = Query(None),
+    trabaja_joyco: bool = Query(None),
+    ordenar_por_fecha: Optional[str] = Query(None),
+    anio: Optional[int] = Query(None),
+    mes: Optional[int] = Query(None, ge=1, le=12),
+    skip: int = Query(0),
+    limit: int = Query(10),
+):
+    """
+    Devuelve la lista paginada de candidatos con detalle completo, aplicando los mismos filtros que el resumen.
+    """
+    return get_candidatos_detalle_lista(
+        db=db,
+        search=search,
+        estado=estado,
+        id_disponibilidad=id_disponibilidad,
+        id_cargo=id_cargo,
+        id_ciudad=id_ciudad,
+        id_herramienta=id_herramienta,
+        id_habilidad_tecnica=id_habilidad_tecnica,
+        id_nivel_ingles=id_nivel_ingles,
+        id_experiencia=id_experiencia,
+        id_titulo=id_titulo,
+        trabaja_joyco=trabaja_joyco,
+        ordenar_por_fecha=ordenar_por_fecha,
+        anio=anio,
+        mes=mes,
+        skip=skip,
+        limit=limit,
+    )
 
 
 @router.get("/estadisticas", response_model=EstadisticasCandidatosResponse)

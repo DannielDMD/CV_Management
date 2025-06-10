@@ -1,5 +1,6 @@
 # services/dashboard/stats_personal_service.py
 
+from collections import defaultdict
 from typing import Optional
 from io import BytesIO
 from datetime import date
@@ -157,46 +158,81 @@ def obtener_estadisticas_personales(
         ha_trabajado_joyco=boolean_count(Candidato.ha_trabajado_joyco == True),
     )
 
-    # 7. Top 5 cargos anual
-    cargos_anual_q = (
-        año_filter(
+    # 7. Top 5 cargos anual (catálogo + texto libre)
+    cargos_catalogo = año_filter(
+        db.query(
+            CargoOfrecido.nombre_cargo.label("label"),
+            func.count(Candidato.id_candidato).label("count")
+        )
+        .join(Candidato, Candidato.id_cargo == CargoOfrecido.id_cargo),
+        Candidato.fecha_registro
+    ).group_by(CargoOfrecido.nombre_cargo).all()
+
+    cargos_otro = año_filter(
+        db.query(
+            Candidato.nombre_cargo_otro.label("label"),
+            func.count(Candidato.id_candidato).label("count")
+        )
+        .filter(
+            Candidato.nombre_cargo_otro.isnot(None),
+            Candidato.nombre_cargo_otro != ""
+        ),
+        Candidato.fecha_registro
+    ).group_by(Candidato.nombre_cargo_otro).all()
+
+    # Unimos y agrupamos manualmente
+    cargo_map = defaultdict(int)
+    for item in cargos_catalogo + cargos_otro:
+        cargo_map[item.label] += item.count
+
+    top_cargos_anual = sorted(
+        [CountItem(label=label, count=count) for label, count in cargo_map.items()],
+        key=lambda x: x.count,
+        reverse=True
+    )[:5]
+
+
+
+
+
+
+    # 8. Top cargos por mes
+# 8. Top cargos por mes (combinando catálogo y "otro")
+    top_cargos_por_mes = []
+
+    for m in range(1, 13):
+        cargos_catalogo = año_filter(
             db.query(
                 CargoOfrecido.nombre_cargo.label("label"),
                 func.count(Candidato.id_candidato).label("count")
+            )
+            .join(Candidato, Candidato.id_cargo == CargoOfrecido.id_cargo)
+            .filter(extract("month", Candidato.fecha_registro) == m),
+            Candidato.fecha_registro
+        ).group_by(CargoOfrecido.nombre_cargo).all()
+
+        cargos_otro = año_filter(
+            db.query(
+                Candidato.nombre_cargo_otro.label("label"),
+                func.count(Candidato.id_candidato).label("count")
+            )
+            .filter(
+                extract("month", Candidato.fecha_registro) == m,
+                Candidato.id_cargo.is_(None),
+                Candidato.nombre_cargo_otro.isnot(None),
+                Candidato.nombre_cargo_otro != ""
             ),
             Candidato.fecha_registro
-        )
-        .join(Candidato, Candidato.id_cargo == CargoOfrecido.id_cargo)
-        .group_by(CargoOfrecido.nombre_cargo)
-        .order_by(func.count(Candidato.id_candidato).desc())
-        .limit(5)
-        .all()
-    )
-    top_cargos_anual = [
-        CountItem(label=c.label, count=c.count) for c in cargos_anual_q
-    ]
+        ).group_by(Candidato.nombre_cargo_otro).all()
 
-    # 8. Top cargos por mes
-    top_cargos_por_mes = []
-    for m in range(1, 13):
-        row = (
-            año_filter(
-                db.query(
-                    CargoOfrecido.nombre_cargo.label("label"),
-                    func.count(Candidato.id_candidato).label("count")
-                ).join(Candidato, Candidato.id_cargo == CargoOfrecido.id_cargo),
-                Candidato.fecha_registro
-            )
-            .filter(extract("month", Candidato.fecha_registro) == m)
-            .group_by(CargoOfrecido.nombre_cargo)
-            .order_by(func.count(Candidato.id_candidato).desc())
-            .limit(1)
-            .first()
-        )
-        if row:
-            top_cargos_por_mes.append(
-                MonthTopItem(month=m, label=row.label, count=row.count)
-            )
+        mapa = defaultdict(int)
+        for c in cargos_catalogo + cargos_otro:
+            mapa[c.label] += c.count
+
+        if mapa:
+            label_top, count_top = max(mapa.items(), key=lambda x: x[1])
+            top_cargos_por_mes.append(MonthTopItem(month=m, label=label_top, count=count_top))
+
     # 9. Top nombres de referidos (donde sí hay nombre registrado)
     referidos_q = (
         año_filter(
@@ -258,49 +294,77 @@ def obtener_estadisticas_personales(
 
 
     # 11. Top centros de costos anual
-    centros_q = (
-        año_filter(
+    centros_catalogo = año_filter(
+        db.query(
+            CentroCostos.nombre_centro_costos.label("label"),
+            func.count(Candidato.id_candidato).label("count")
+        )
+        .join(CentroCostos, Candidato.id_centro_costos == CentroCostos.id_centro_costos)
+        .filter(Candidato.id_centro_costos.isnot(None)),
+        Candidato.fecha_registro
+    ).group_by(CentroCostos.nombre_centro_costos).all()
+
+    centros_otro = año_filter(
+        db.query(
+            Candidato.nombre_centro_costos_otro.label("label"),
+            func.count(Candidato.id_candidato).label("count")
+        )
+        .filter(
+            Candidato.nombre_centro_costos_otro.isnot(None),
+            Candidato.nombre_centro_costos_otro != ""
+        ),
+        Candidato.fecha_registro
+    ).group_by(Candidato.nombre_centro_costos_otro).all()
+
+    mapa_centros = defaultdict(int)
+    for item in centros_catalogo + centros_otro:
+        mapa_centros[item.label] += item.count
+
+    top_centros_costos_anual = sorted(
+        [CountItem(label=label, count=count) for label, count in mapa_centros.items()],
+        key=lambda x: x.count,
+        reverse=True
+    )[:5]
+
+
+
+    top_centros_costos_por_mes = []
+
+    for m in range(1, 13):
+        centros_catalogo = año_filter(
             db.query(
                 CentroCostos.nombre_centro_costos.label("label"),
                 func.count(Candidato.id_candidato).label("count")
             )
             .join(CentroCostos, Candidato.id_centro_costos == CentroCostos.id_centro_costos)
-            .filter(Candidato.id_centro_costos.isnot(None)),
+            .filter(
+                extract("month", Candidato.fecha_registro) == m,
+                Candidato.id_centro_costos.isnot(None)
+            ),
             Candidato.fecha_registro
-        )
-        .group_by(CentroCostos.nombre_centro_costos)
-        .order_by(func.count(Candidato.id_candidato).desc())
-        .limit(5)
-        .all()
-    )
+        ).group_by(CentroCostos.nombre_centro_costos).all()
 
-    top_centros_costos_anual = [
-        CountItem(label=c.label, count=c.count) for c in centros_q
-    ]
+        centros_otro = año_filter(
+            db.query(
+                Candidato.nombre_centro_costos_otro.label("label"),
+                func.count(Candidato.id_candidato).label("count")
+            )
+            .filter(
+                extract("month", Candidato.fecha_registro) == m,
+                Candidato.nombre_centro_costos_otro.isnot(None),
+                Candidato.nombre_centro_costos_otro != ""
+            ),
+            Candidato.fecha_registro
+        ).group_by(Candidato.nombre_centro_costos_otro).all()
 
-    # 12. Top centro de costos por mes
-    top_centros_costos_por_mes = []
-    for m in range(1, 13):
-        row = (
-            año_filter(
-                db.query(
-                    CentroCostos.nombre_centro_costos.label("label"),
-                    func.count(Candidato.id_candidato).label("count")
-                )
-                .join(CentroCostos, Candidato.id_centro_costos == CentroCostos.id_centro_costos)
-                .filter(Candidato.id_centro_costos.isnot(None)),
-                Candidato.fecha_registro
-            )
-            .filter(extract("month", Candidato.fecha_registro) == m)
-            .group_by(CentroCostos.nombre_centro_costos)
-            .order_by(func.count(Candidato.id_candidato).desc())
-            .limit(1)
-            .first()
-        )
-        if row:
-            top_centros_costos_por_mes.append(
-                MonthTopItem(month=m, label=row.label, count=row.count)
-            )
+        mapa = defaultdict(int)
+        for c in centros_catalogo + centros_otro:
+            mapa[c.label] += c.count
+
+        if mapa:
+            label_top, count_top = max(mapa.items(), key=lambda x: x[1])
+            top_centros_costos_por_mes.append(MonthTopItem(month=m, label=label_top, count=count_top))
+
 
 
     top_nombres_referidos = [

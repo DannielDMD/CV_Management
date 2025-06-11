@@ -29,7 +29,7 @@ class CandidatoCreate(BaseModel):
     id_centro_costos: Optional[int] = None
     nombre_cargo_otro: Optional[str] = None
     nombre_centro_costos_otro: Optional[str] = None
-    otro_motivo_salida_candidato: Optional[str] = None
+    otro_motivo_salida: Optional[str] = None
     tiene_referido: bool
     nombre_referido: Optional[str] = None
     acepta_politica_datos: bool = False

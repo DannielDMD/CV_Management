@@ -52,7 +52,7 @@ def get_education(id: int, db: Session = Depends(get_db)):
     return get_educacion_by_id(db, id)
 
 
-@router.get("/educaciones/candidato/{id_candidato}", response_model=List[EducacionResponse])
+@router.get("/candidato/{id_candidato}", response_model=List[EducacionResponse])
 def obtener_educaciones_por_candidato(id_candidato: int, db: Session = Depends(get_db)):
     """
     Obtiene todos los registros educativos asociados a un candidato.

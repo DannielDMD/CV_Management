@@ -21,6 +21,7 @@ class SolicitudEliminacionCreate(BaseModel):
     cc: str = Field(..., min_length=6, max_length=20)
     correo: EmailStr
     motivo: str = Field(..., max_length=50)
+    descripcion_motivo: Optional[str] = None  # Campo de texto libre
 
 
 # ──────────────── RESPUESTA DE UNA SOLICITUD ────────────────
@@ -45,6 +46,7 @@ class SolicitudEliminacionResponse(BaseModel):
     correo: EmailStr
     motivo: str
     estado: str
+    descripcion_motivo: Optional[str] = None
     observacion_admin: Optional[str] = None
     fecha_solicitud: datetime
 

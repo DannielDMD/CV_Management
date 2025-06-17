@@ -30,6 +30,19 @@ def crear_usuario(usuario: usuario_schema.UsuarioCreate, db: Session = Depends(g
         raise HTTPException(status_code=400, detail="El usuario ya existe")
     return usuario_service.create_usuario(db, usuario)
 
+@router.get("/{id}", response_model=usuario_schema.UsuarioOut)
+def obtener_usuario(id: int, db: Session = Depends(get_db)):
+    usuario = usuario_service.get_usuario_by_id(db, id)
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return usuario
+
+@router.put("/{id}", response_model=usuario_schema.UsuarioOut)
+def actualizar_usuario(id: int, data: usuario_schema.UsuarioUpdate, db: Session = Depends(get_db)):
+    actualizado = usuario_service.update_usuario(db, id, data)
+    if not actualizado:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado o no se pudo actualizar")
+    return actualizado
 
 @router.get("/", response_model=list[usuario_schema.UsuarioOut])
 def listar_usuarios(db: Session = Depends(get_db)):
@@ -65,3 +78,10 @@ def autorizar_usuario(correo: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado")
 
     return {"autorizado": True, "rol": usuario.rol}
+
+@router.delete("/{id}", response_model=dict)
+def eliminar_usuario(id: int, db: Session = Depends(get_db)):
+    eliminado = usuario_service.delete_usuario(db, id)
+    if not eliminado:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado o no se pudo eliminar")
+    return {"mensaje": "Usuario eliminado exitosamente"}

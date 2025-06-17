@@ -19,6 +19,22 @@ def get_usuario_by_correo(db: Session, correo: str):
     """
     return db.query(Usuario).filter(Usuario.correo == correo).first()
 
+def get_usuario_by_id(db: Session, id: int) -> Usuario | None:
+    return db.query(Usuario).filter(Usuario.id == id).first()
+
+def get_usuarios(db: Session, skip: int = 0, limit: int = 100):
+    """
+    Devuelve una lista de todos los usuarios registrados en el sistema.
+
+    Args:
+        db (Session): Sesión activa de SQLAlchemy.
+        skip (int): Número de registros a omitir (paginación).
+        limit (int): Límite de registros a retornar.
+
+    Returns:
+        list[Usuario]: Lista de usuarios.
+    """
+    return db.query(Usuario).offset(skip).limit(limit).all()
 
 def create_usuario(db: Session, usuario: usuario_schema.UsuarioCreate):
     """
@@ -42,17 +58,23 @@ def create_usuario(db: Session, usuario: usuario_schema.UsuarioCreate):
     db.refresh(db_usuario)
     return db_usuario
 
+def update_usuario(db: Session, id: int, data: usuario_schema.UsuarioUpdate) -> Usuario | None:
+    usuario = get_usuario_by_id(db, id)
+    if not usuario:
+        return None
+    
+    for key, value in data.model_dump(exclude_unset=True).items():
+        setattr(usuario, key, value)
+        
+    db.commit()
+    db.refresh(usuario)
+    return usuario
 
-def get_usuarios(db: Session, skip: int = 0, limit: int = 100):
-    """
-    Devuelve una lista de todos los usuarios registrados en el sistema.
+def delete_usuario(db: Session, id: int) -> bool:
+    usuario = get_usuario_by_id(db, id)
+    if not usuario:
+        return False
 
-    Args:
-        db (Session): Sesión activa de SQLAlchemy.
-        skip (int): Número de registros a omitir (paginación).
-        limit (int): Límite de registros a retornar.
-
-    Returns:
-        list[Usuario]: Lista de usuarios.
-    """
-    return db.query(Usuario).offset(skip).limit(limit).all()
+    db.delete(usuario)
+    db.commit()
+    return True

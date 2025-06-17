@@ -6,6 +6,7 @@ from typing import Optional
 
 # ──────────────── ESQUEMA BASE ────────────────
 
+
 class UsuarioBase(BaseModel):
     """
     Esquema base para los datos del usuario.
@@ -15,6 +16,7 @@ class UsuarioBase(BaseModel):
         nombre (Optional[str]): Nombre del usuario.
         rol (str): Rol asignado ('TH' o 'ADMIN').
     """
+
     correo: EmailStr
     nombre: Optional[str] = None
     rol: str
@@ -22,15 +24,18 @@ class UsuarioBase(BaseModel):
 
 # ──────────────── CREACIÓN ────────────────
 
+
 class UsuarioCreate(UsuarioBase):
     """
     Esquema para crear un nuevo usuario.
     Hereda de UsuarioBase.
     """
+
     pass
 
 
 # ──────────────── RESPUESTA ────────────────
+
 
 class UsuarioOut(UsuarioBase):
     """
@@ -40,8 +45,16 @@ class UsuarioOut(UsuarioBase):
         id (int): ID único del usuario.
         activo (bool): Estado de activación del usuario.
     """
+
     id: int
     activo: bool
 
     class Config:
         orm_mode = True  # Compatibilidad con modelos ORM
+
+
+# Actualización de un Usuario
+class UsuarioUpdate(BaseModel):
+    nombre: Optional[str] = None
+    rol: Optional[str] = None  # 'TH' o 'ADMIN'
+    activo: Optional[bool] = None

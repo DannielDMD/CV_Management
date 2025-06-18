@@ -3,10 +3,12 @@ Servicios para el catálogo de Rangos de Experiencia.
 Incluye funciones CRUD: listar, obtener, crear, actualizar y eliminar.
 """
 
+import math
+from typing import Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.catalogs.rango_experiencia import RangoExperiencia
-from app.schemas.catalogs.rango_experiencia import RangoExperienciaCreate, RangoExperienciaUpdate
+from app.schemas.catalogs.rango_experiencia import RangoExperienciaCreate, RangoExperienciaPaginatedResponse, RangoExperienciaUpdate
 
 
 def get_rangos_experiencia(db: Session):
@@ -44,6 +46,39 @@ def get_rango_experiencia(db: Session, rango_experiencia_id: int):
         raise HTTPException(status_code=404, detail="Rango de experiencia no encontrado")
 
     return rango
+
+#Servicio para la paginacion
+def get_rango_experiencia_con_paginacion(
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None
+) -> RangoExperienciaPaginatedResponse:
+    """
+    Retorna Rangos de Experiencia con búsqueda y paginación.
+    """
+    query = db.query(RangoExperiencia)
+
+    if search:
+        query = query.filter(RangoExperiencia.descripcion_rango.ilike(f"%{search}%"))
+
+    total = query.count()
+
+    resultados = query.order_by(RangoExperiencia.descripcion_rango.asc())\
+        .offset(skip).limit(limit).all()
+
+    page = (skip // limit) + 1 if limit > 0 else 1
+    total_pages = math.ceil(total / limit) if limit > 0 else 1
+
+    return RangoExperienciaPaginatedResponse(
+        total=total,
+        page=page,
+        per_page=limit,
+        total_pages=total_pages,
+        resultados=resultados
+    )
+
+
 
 
 def create_rango_experiencia(db: Session, rango_data: RangoExperienciaCreate):

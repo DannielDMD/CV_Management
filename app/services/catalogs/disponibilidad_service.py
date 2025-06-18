@@ -3,23 +3,43 @@ Servicios para el catálogo de Disponibilidad.
 Incluye operaciones CRUD con validaciones de duplicidad y existencia.
 """
 
+import math
+from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from app.models.preferencias import Disponibilidad
-from app.schemas.preferencias_schema import DisponibilidadCreate, DisponibilidadUpdate
+from app.schemas.preferencias_schema import DisponibilidadCreate, DisponibilidadPaginatedResponse, DisponibilidadUpdate
 
 
-def get_all_disponibilidades(db: Session):
+def get_disponabilidad_con_paginacion(
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None
+) -> DisponibilidadPaginatedResponse:
     """
-    Retorna todas las disponibilidades registradas.
-
-    Args:
-        db (Session): Sesión activa de la base de datos.
-
-    Returns:
-        List[Disponibilidad]: Lista de registros de disponibilidad.
+    Retorna Disponibilidades con búsqueda y paginación.
     """
-    return db.query(Disponibilidad).all()
+    query = db.query(Disponibilidad)
+
+    if search:
+        query = query.filter(Disponibilidad.descripcion_disponibilidad.ilike(f"%{search}%"))
+
+    total = query.count()
+
+    resultados = query.order_by(Disponibilidad.descripcion_disponibilidad.asc())\
+        .offset(skip).limit(limit).all()
+
+    page = (skip // limit) + 1 if limit > 0 else 1
+    total_pages = math.ceil(total / limit) if limit > 0 else 1
+
+    return DisponibilidadPaginatedResponse(
+        total=total,
+        page=page,
+        per_page=limit,
+        total_pages=total_pages,
+        resultados=resultados
+    )
 
 
 def get_disponibilidad(db: Session, disponibilidad_id: int):

@@ -3,11 +3,14 @@ Servicios para el manejo del catálogo de Instituciones Académicas.
 Permite operaciones CRUD sobre la tabla `instituciones_academicas`.
 """
 
+import math
+from typing import Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.catalogs.instituciones import InstitucionAcademica
 from app.schemas.catalogs.instituciones import (
     InstitucionAcademicaCreate,
+    InstitucionAcademicaPaginatedResponse,
     InstitucionAcademicaUpdate,
 )
 from app.utils.orden_catalogos import ordenar_por_nombre
@@ -52,6 +55,41 @@ def get_instituciones(db: Session, skip: int = 0, limit: int = 100):
     query = db.query(InstitucionAcademica)
     ordenado = ordenar_por_nombre(query, "nombre_institucion")
     return ordenado.offset(skip).limit(limit).all()
+
+# Servicio para Las instituciones paginadas
+def get_instituciones_academicas_con_paginacion(
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None
+) -> InstitucionAcademicaPaginatedResponse:
+    """
+    Retorna Instituciones con búsqueda y paginación.
+    """
+    query = db.query(InstitucionAcademica)
+
+    if search:
+        query = query.filter(InstitucionAcademica.nombre_institucion.ilike(f"%{search}%"))
+
+    total = query.count()
+
+    resultados = query.order_by(InstitucionAcademica.nombre_institucion.asc())\
+        .offset(skip).limit(limit).all()
+
+    page = (skip // limit) + 1 if limit > 0 else 1
+    total_pages = math.ceil(total / limit) if limit > 0 else 1
+
+    return InstitucionAcademicaPaginatedResponse(
+        total=total,
+        page=page,
+        per_page=limit,
+        total_pages=total_pages,
+        resultados=resultados
+    )
+
+
+
+
 
 
 def create_institucion(db: Session, institucion: InstitucionAcademicaCreate):

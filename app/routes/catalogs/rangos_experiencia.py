@@ -1,16 +1,18 @@
 """Rutas para la gestión del catálogo de rangos de experiencia laboral."""
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from app.core.database import get_db
 from app.schemas.catalogs.rango_experiencia import (
+    RangoExperienciaPaginatedResponse,
     RangoExperienciaResponse,
     RangoExperienciaCreate,
     RangoExperienciaUpdate
 )
 from app.services.catalogs.rango_experiencia_service import (
+    get_rango_experiencia_con_paginacion,
     get_rangos_experiencia,
     get_rango_experiencia,
     create_rango_experiencia,
@@ -21,18 +23,18 @@ from app.services.catalogs.rango_experiencia_service import (
 router = APIRouter(prefix="/rangos-experiencia", tags=["Rangos de Experiencia"])
 
 
-@router.get("/", response_model=List[RangoExperienciaResponse])
-def listar_rangos_experiencia(db: Session = Depends(get_db)):
+@router.get("/", response_model=RangoExperienciaPaginatedResponse)
+def listar_rango_experiencia_con_paginacion(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+    search: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+):
     """
-    Lista todos los rangos de experiencia registrados.
-
-    Args:
-        db (Session): Sesión de base de datos inyectada.
-
-    Returns:
-        List[RangoExperienciaResponse]: Lista de rangos de experiencia.
+    Lista Rangos de Experiencia con búsqueda por nombre y paginación.
     """
-    return get_rangos_experiencia(db)
+    return get_rango_experiencia_con_paginacion(db=db, skip=skip, limit=limit, search=search)
+
 
 
 @router.get("/{rango_experiencia_id}", response_model=RangoExperienciaResponse)

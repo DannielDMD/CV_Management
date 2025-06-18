@@ -1,6 +1,6 @@
 """Esquemas Pydantic para gestionar la disponibilidad, rangos salariales y preferencias de los candidatos."""
 
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel
 from app.schemas.catalogs.motivo_salida import MotivoSalidaResponse
 
@@ -25,6 +25,12 @@ class DisponibilidadResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class DisponibilidadPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[DisponibilidadResponse]
 
 # ──────────────── RANGO SALARIAL ────────────────
 
@@ -45,6 +51,14 @@ class RangoSalarialResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class RangoSalarialPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[RangoSalarialResponse]
+
 
 
 # ──────────────── PREFERENCIAS Y DISPONIBILIDAD ────────────────

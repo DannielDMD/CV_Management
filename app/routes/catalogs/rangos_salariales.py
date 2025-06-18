@@ -1,20 +1,21 @@
 """Rutas para la gestión del catálogo de rangos salariales."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
-from typing import List
+from typing import List, Optional
 
 from app.core.database import get_db
 from app.schemas.preferencias_schema import (
     RangoSalarialCreate,
+    RangoSalarialPaginatedResponse,
     RangoSalarialUpdate,
     RangoSalarialResponse
 )
 from app.services.catalogs.rangos_salariales_service import (
-    get_all_rangos_salariales,
     get_rango_salarial,
     create_rango_salarial,
+    get_rango_salarial_con_paginacion,
     update_rango_salarial,
     delete_rango_salarial
 )
@@ -22,18 +23,19 @@ from app.services.catalogs.rangos_salariales_service import (
 router = APIRouter(prefix="/rangos-salariales", tags=["Rangos Salariales"])
 
 
-@router.get("/", response_model=List[RangoSalarialResponse])
-def listar_rangos_salariales(db: Session = Depends(get_db)):
+@router.get("/", response_model=RangoSalarialPaginatedResponse)
+def listar_rango_salarial_con_paginacion(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+    search: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+):
     """
-    Lista todos los rangos salariales registrados.
-
-    Args:
-        db (Session): Sesión de base de datos inyectada.
-
-    Returns:
-        List[RangoSalarialResponse]: Lista de rangos salariales.
+    Lista Rangos Salarial con búsqueda por nombre y paginación.
     """
-    return get_all_rangos_salariales(db)
+    return get_rango_salarial_con_paginacion(db=db, skip=skip, limit=limit, search=search)
+
+
 
 
 @router.get("/{rango_id}", response_model=RangoSalarialResponse)

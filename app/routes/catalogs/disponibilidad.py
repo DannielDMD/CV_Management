@@ -1,13 +1,13 @@
 """Rutas para la gestión del catálogo de disponibilidades laborales."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
-from typing import List
+from typing import List, Optional
 
 from app.core.database import get_db
 from app.services.catalogs.disponibilidad_service import (
-    get_all_disponibilidades,
+    get_disponabilidad_con_paginacion,
     get_disponibilidad,
     create_disponibilidad,
     update_disponibilidad,
@@ -15,6 +15,7 @@ from app.services.catalogs.disponibilidad_service import (
 )
 from app.schemas.preferencias_schema import (
     DisponibilidadCreate,
+    DisponibilidadPaginatedResponse,
     DisponibilidadUpdate,
     DisponibilidadResponse,
 )
@@ -22,18 +23,20 @@ from app.schemas.preferencias_schema import (
 router = APIRouter(prefix="/disponibilidades", tags=["Disponibilidad"])
 
 
-@router.get("/", response_model=List[DisponibilidadResponse])
-def listar_disponibilidades(db: Session = Depends(get_db)):
+@router.get("/", response_model=DisponibilidadPaginatedResponse)
+def listar_disponabilidad_con_paginacion(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+    search: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+):
     """
-    Lista todas las opciones de disponibilidad laboral.
-
-    Args:
-        db (Session): Sesión de base de datos inyectada.
-
-    Returns:
-        List[DisponibilidadResponse]: Lista de registros de disponibilidad.
+    Lista Disponibilidades con búsqueda por nombre y paginación.
     """
-    return get_all_disponibilidades(db)
+    return get_disponabilidad_con_paginacion(
+        db=db, skip=skip, limit=limit, search=search
+    )
+
 
 
 @router.get("/{disponibilidad_id}", response_model=DisponibilidadResponse)

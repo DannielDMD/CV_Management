@@ -1,5 +1,6 @@
 """Esquemas Pydantic para la entidad Nivel de Inglés."""
 
+from typing import List
 from pydantic import BaseModel
 
 
@@ -36,3 +37,12 @@ class NivelInglesUpdate(BaseModel):
         nivel (str): Nueva descripción del nivel.
     """
     nivel: str
+""""
+Schema de Respuesta para paginación
+"""
+class NivelInglesPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[NivelInglesResponse]

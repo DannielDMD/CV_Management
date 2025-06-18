@@ -1,7 +1,7 @@
 """Esquemas Pydantic para la entidad Rango de Experiencia."""
 
 from pydantic import BaseModel
-from typing import Optional
+from typing import List, Optional
 
 
 class RangoExperienciaBase(BaseModel):
@@ -40,3 +40,10 @@ class RangoExperienciaResponse(RangoExperienciaBase):
 
     class Config:
         from_attributes = True  # Permite compatibilidad con modelos ORM
+
+class RangoExperienciaPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[RangoExperienciaResponse]

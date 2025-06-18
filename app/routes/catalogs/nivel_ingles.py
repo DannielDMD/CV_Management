@@ -1,38 +1,39 @@
 """Rutas para la gestión del catálogo de niveles de inglés."""
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from app.core.database import get_db
 from app.schemas.catalogs.nivel_ingles import (
+    NivelInglesPaginatedResponse,
     NivelInglesResponse,
     NivelInglesCreate,
-    NivelInglesUpdate
+    NivelInglesUpdate,
 )
 from app.services.catalogs.nivel_ingles_service import (
+    get_nivel_ingles_con_paginacion,
     get_niveles_ingles,
     get_nivel_ingles,
     create_nivel_ingles,
     update_nivel_ingles,
-    delete_nivel_ingles
+    delete_nivel_ingles,
 )
 
 router = APIRouter(prefix="/nivel-ingles", tags=["Nivel de Inglés"])
 
 
-@router.get("/", response_model=List[NivelInglesResponse])
-def listar_niveles_ingles(db: Session = Depends(get_db)):
+@router.get("/", response_model=NivelInglesPaginatedResponse)
+def listar_nivel_ingles_con_paginacion(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+    search: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+):
     """
-    Lista todos los niveles de inglés registrados.
-
-    Args:
-        db (Session): Sesión de base de datos inyectada.
-
-    Returns:
-        List[NivelInglesResponse]: Lista de niveles.
+    Lista Niveles de Ingles con búsqueda por nombre y paginación.
     """
-    return get_niveles_ingles(db)
+    return get_nivel_ingles_con_paginacion(db=db, skip=skip, limit=limit, search=search)
 
 
 @router.get("/{nivel_ingles_id}", response_model=NivelInglesResponse)
@@ -51,7 +52,9 @@ def obtener_nivel_ingles(nivel_ingles_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=NivelInglesResponse)
-def crear_nivel_ingles(nivel_ingles_data: NivelInglesCreate, db: Session = Depends(get_db)):
+def crear_nivel_ingles(
+    nivel_ingles_data: NivelInglesCreate, db: Session = Depends(get_db)
+):
     """
     Crea un nuevo nivel de inglés.
 
@@ -69,7 +72,7 @@ def crear_nivel_ingles(nivel_ingles_data: NivelInglesCreate, db: Session = Depen
 def actualizar_nivel_ingles(
     nivel_ingles_id: int,
     nivel_ingles_data: NivelInglesUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
     Actualiza un nivel de inglés existente por su ID.

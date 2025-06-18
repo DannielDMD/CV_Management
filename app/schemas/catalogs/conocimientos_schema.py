@@ -1,5 +1,6 @@
 """Esquemas Pydantic para habilidades blandas, técnicas y herramientas."""
 
+from typing import List
 from pydantic import BaseModel, Field
 
 
@@ -35,6 +36,16 @@ class HabilidadBlandaResponse(HabilidadBlandaBase):
         from_attributes = True
 
 
+
+class HabilidadBlandaPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[HabilidadBlandaResponse]
+
+
+
 # ----------------------------
 # Habilidad Técnica
 # ----------------------------
@@ -67,6 +78,14 @@ class HabilidadTecnicaResponse(HabilidadTecnicaBase):
         from_attributes = True
 
 
+class HabilidadTecnicaPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[HabilidadTecnicaResponse]
+
+
 # ----------------------------
 # Herramienta
 # ----------------------------
@@ -97,3 +116,11 @@ class HerramientaResponse(HerramientaBase):
 
     class Config:
         from_attributes = True
+
+
+class HerramientaPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[HerramientaResponse]

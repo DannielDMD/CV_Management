@@ -3,10 +3,12 @@ Servicios para el manejo del catálogo de Niveles de Inglés.
 Incluye operaciones CRUD: listar, obtener, crear, actualizar y eliminar.
 """
 
+import math
+from typing import Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.catalogs.nivel_ingles import NivelIngles
-from app.schemas.catalogs.nivel_ingles import NivelInglesCreate, NivelInglesUpdate
+from app.schemas.catalogs.nivel_ingles import NivelInglesCreate, NivelInglesPaginatedResponse, NivelInglesUpdate
 
 
 def get_niveles_ingles(db: Session):
@@ -44,6 +46,39 @@ def get_nivel_ingles(db: Session, nivel_ingles_id: int):
         raise HTTPException(status_code=404, detail="Nivel de inglés no encontrado")
 
     return nivel_ingles
+
+
+#Servicio para la paginacion
+def get_nivel_ingles_con_paginacion(
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None
+) -> NivelInglesPaginatedResponse:
+    """
+    Retorna centros de costos con búsqueda y paginación.
+    """
+    query = db.query(NivelIngles)
+
+    if search:
+        query = query.filter(NivelIngles.nivel.ilike(f"%{search}%"))
+
+    total = query.count()
+
+    resultados = query.order_by(NivelIngles.nivel.asc())\
+        .offset(skip).limit(limit).all()
+
+    page = (skip // limit) + 1 if limit > 0 else 1
+    total_pages = math.ceil(total / limit) if limit > 0 else 1
+
+    return NivelInglesPaginatedResponse(
+        total=total,
+        page=page,
+        per_page=limit,
+        total_pages=total_pages,
+        resultados=resultados
+    )
+
 
 
 def create_nivel_ingles(db: Session, nivel_ingles_data: NivelInglesCreate):

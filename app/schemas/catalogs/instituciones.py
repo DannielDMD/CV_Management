@@ -1,5 +1,6 @@
 """Esquemas Pydantic para la entidad Institución Académica."""
 
+from typing import List
 from pydantic import BaseModel
 
 
@@ -39,3 +40,13 @@ class InstitucionAcademicaResponse(InstitucionAcademicaBase):
 
     class Config:
         from_attributes = True  # Permite conversión desde modelos ORM
+
+""""
+Schema de Respuesta para paginación
+"""
+class InstitucionAcademicaPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[InstitucionAcademicaResponse]

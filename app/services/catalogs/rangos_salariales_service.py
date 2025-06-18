@@ -3,24 +3,43 @@ Servicios para el catálogo de Rangos Salariales.
 Incluye funciones CRUD: listar, obtener, crear, actualizar y eliminar.
 """
 
+import math
+from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, NoResultFound
-from fastapi import HTTPException
 from app.models.preferencias import RangoSalarial
-from app.schemas.preferencias_schema import RangoSalarialCreate, RangoSalarialUpdate
+from app.schemas.preferencias_schema import RangoSalarialCreate, RangoSalarialPaginatedResponse, RangoSalarialUpdate
 
 
-def get_all_rangos_salariales(db: Session):
+def get_rango_salarial_con_paginacion(
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None
+) -> RangoSalarialPaginatedResponse:
     """
-    Obtiene todos los rangos salariales registrados.
-
-    Args:
-        db (Session): Sesión activa de la base de datos.
-
-    Returns:
-        List[RangoSalarial]: Lista de rangos salariales.
+    Retorna Rangos Salariales con búsqueda y paginación.
     """
-    return db.query(RangoSalarial).all()
+    query = db.query(RangoSalarial)
+
+    if search:
+        query = query.filter(RangoSalarial.descripcion_rango.ilike(f"%{search}%"))
+
+    total = query.count()
+
+    resultados = query.order_by(RangoSalarial.descripcion_rango.asc())\
+        .offset(skip).limit(limit).all()
+
+    page = (skip // limit) + 1 if limit > 0 else 1
+    total_pages = math.ceil(total / limit) if limit > 0 else 1
+
+    return RangoSalarialPaginatedResponse(
+        total=total,
+        page=page,
+        per_page=limit,
+        total_pages=total_pages,
+        resultados=resultados
+    )
 
 
 def get_rango_salarial(db: Session, rango_id: int):

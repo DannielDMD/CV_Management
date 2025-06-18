@@ -1,5 +1,6 @@
 """Esquemas Pydantic para la entidad Nivel de Educación."""
 
+from typing import List
 from pydantic import BaseModel, Field
 
 
@@ -36,3 +37,10 @@ class NivelEducacionResponse(BaseModel):
 
     class Config:
         from_attributes = True  # Permite uso con modelos ORM
+
+class NivelEducacionPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[NivelEducacionResponse]

@@ -3,10 +3,12 @@ Servicios para la gestión de cargos ofrecidos.
 Incluye operaciones CRUD básicas y validaciones.
 """
 
+import math
+from typing import Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.catalogs.cargo_ofrecido import CargoOfrecido
-from app.schemas.catalogs.cargo_ofrecido import CargoOfrecidoCreate
+from app.schemas.catalogs.cargo_ofrecido import CargoOfrecidoCreate, CargoOfrecidoPaginatedResponse
 from app.utils.orden_catalogos import ordenar_por_nombre
 
 
@@ -62,6 +64,40 @@ def obtener_cargos_por_categoria(db: Session, id_categoria: int):
     if not cargos:
         raise HTTPException(status_code=404, detail="No hay cargos en esta categoría")
     return cargos
+
+"""
+Servicio para el tema de paginación y búqueda
+"""
+def get_cargos_con_paginacion(
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None
+) -> CargoOfrecidoPaginatedResponse:
+    """
+    Retorna cargos ofrecidos con búsqueda y paginación.
+    """
+    query = db.query(CargoOfrecido)
+
+    if search:
+        query = query.filter(CargoOfrecido.nombre_cargo.ilike(f"%{search}%"))
+
+    total = query.count()
+
+    resultados = query.order_by(CargoOfrecido.nombre_cargo.asc())\
+        .offset(skip).limit(limit).all()
+
+    page = (skip // limit) + 1 if limit > 0 else 1
+    total_pages = math.ceil(total / limit) if limit > 0 else 1
+
+    return CargoOfrecidoPaginatedResponse(
+        total=total,
+        page=page,
+        per_page=limit,
+        total_pages=total_pages,
+        resultados=resultados
+    )
+
 
 
 def crear_cargo_ofrecido(db: Session, cargo_data: CargoOfrecidoCreate):

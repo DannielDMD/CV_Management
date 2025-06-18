@@ -1,11 +1,12 @@
 """Servicios para la gestión del catálogo de centros de costos."""
 
+import math
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from typing import List, Optional
 
 from app.models.catalogs.centro_costos import CentroCostos
-from app.schemas.catalogs.centro_costos import CentroCostosCreate
+from app.schemas.catalogs.centro_costos import CentroCostosCreate, CentroCostosPaginatedResponse
 from app.utils.orden_catalogos import ordenar_por_nombre
 
 
@@ -22,6 +23,39 @@ def get_centro_costos_by_id(db: Session, id_centro: int) -> Optional[CentroCosto
     Busca un centro de costos por su ID.
     """
     return db.query(CentroCostos).filter(CentroCostos.id_centro_costos == id_centro).first()
+
+
+
+def get_centros_costos_con_paginacion(
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None
+) -> CentroCostosPaginatedResponse:
+    """
+    Retorna centros de costos con búsqueda y paginación.
+    """
+    query = db.query(CentroCostos)
+
+    if search:
+        query = query.filter(CentroCostos.nombre_centro_costos.ilike(f"%{search}%"))
+
+    total = query.count()
+
+    resultados = query.order_by(CentroCostos.nombre_centro_costos.asc())\
+        .offset(skip).limit(limit).all()
+
+    page = (skip // limit) + 1 if limit > 0 else 1
+    total_pages = math.ceil(total / limit) if limit > 0 else 1
+
+    return CentroCostosPaginatedResponse(
+        total=total,
+        page=page,
+        per_page=limit,
+        total_pages=total_pages,
+        resultados=resultados
+    )
+
 
 
 def create_centro_costos(db: Session, data: CentroCostosCreate) -> Optional[CentroCostos]:

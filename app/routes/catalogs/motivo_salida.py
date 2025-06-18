@@ -1,12 +1,13 @@
 """Rutas para la gestión del catálogo de motivos de salida laboral."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from app.core.database import get_db
 from app.schemas.catalogs.motivo_salida import (
     MotivoSalidaCreate,
+    MotivoSalidaPaginatedResponse,
     MotivoSalidaUpdate,
     MotivoSalidaResponse,
 )
@@ -14,6 +15,7 @@ from app.services.catalogs.motivo_salida_service import (
     get_motivos_salida,
     get_motivo_salida,
     create_motivo_salida,
+    get_motivos_salida_con_paginacion,
     update_motivo_salida,
     delete_motivo_salida,
 )
@@ -21,18 +23,22 @@ from app.services.catalogs.motivo_salida_service import (
 router = APIRouter(prefix="/motivos-salida", tags=["Motivos de Salida"])
 
 
-@router.get("/", response_model=List[MotivoSalidaResponse])
-def obtener_motivos_salida(db: Session = Depends(get_db)):
+@router.get("/", response_model=MotivoSalidaPaginatedResponse)
+def obtener_motivos_salida_con_paginacion(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+    search: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
     """
-    Lista todos los motivos de salida registrados.
-
-    Args:
-        db (Session): Sesión de base de datos inyectada.
-
-    Returns:
-        List[MotivoSalidaResponse]: Lista de motivos.
+    Lista motivos de salida con búsqueda por descripción y paginación.
     """
-    return get_motivos_salida(db)
+    return get_motivos_salida_con_paginacion(
+        db=db,
+        skip=skip,
+        limit=limit,
+        search=search
+    )
 
 
 @router.get("/{id_motivo_salida}", response_model=MotivoSalidaResponse)

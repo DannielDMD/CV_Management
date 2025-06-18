@@ -3,9 +3,11 @@ Servicios para gestionar el catálogo de Niveles de Educación.
 Incluye operaciones CRUD: listar, obtener, crear, actualizar y eliminar.
 """
 
+import math
+from typing import Optional
 from sqlalchemy.orm import Session
 from app.models.catalogs.nivel_educacion import NivelEducacion
-from app.schemas.catalogs.nivel_educacion import NivelEducacionCreate, NivelEducacionUpdate
+from app.schemas.catalogs.nivel_educacion import NivelEducacionCreate, NivelEducacionPaginatedResponse, NivelEducacionUpdate
 
 
 def get_niveles_educacion(db: Session, skip: int = 0, limit: int = 10):
@@ -37,6 +39,34 @@ def get_nivel_educacion(db: Session, id_nivel_educacion: int):
     return db.query(NivelEducacion).filter(
         NivelEducacion.id_nivel_educacion == id_nivel_educacion
     ).first()
+
+
+def get_niveles_educacion_con_paginacion(
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None
+) -> NivelEducacionPaginatedResponse:
+    query = db.query(NivelEducacion)
+
+    if search:
+        query = query.filter(NivelEducacion.descripcion_nivel.ilike(f"%{search}%"))
+
+    total = query.count()
+    resultados = query.order_by(NivelEducacion.descripcion_nivel.asc())\
+        .offset(skip).limit(limit).all()
+
+    page = (skip // limit) + 1 if limit > 0 else 1
+    total_pages = math.ceil(total / limit) if limit > 0 else 1
+
+    return NivelEducacionPaginatedResponse(
+        total=total,
+        page=page,
+        per_page=limit,
+        total_pages=total_pages,
+        resultados=resultados
+    )
+
 
 
 def create_nivel_educacion(db: Session, nivel_educacion_data: NivelEducacionCreate):

@@ -1,5 +1,6 @@
 """Esquemas Pydantic para la entidad Título Obtenido."""
 
+from typing import List
 from pydantic import BaseModel
 
 
@@ -43,3 +44,10 @@ class TituloObtenidoResponse(TituloObtenidoBase):
 
     class Config:
         from_attributes = True  # Permite usar modelos ORM directamente
+
+class TituloObtenidoPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[TituloObtenidoResponse]

@@ -3,12 +3,14 @@ Servicios para gestionar el catálogo de Motivos de Salida.
 Incluye funciones para listar, obtener, crear, actualizar y eliminar motivos.
 """
 
+import math
+from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
 
 from app.models.preferencias import MotivoSalida
-from app.schemas.catalogs.motivo_salida import MotivoSalidaCreate, MotivoSalidaUpdate
+from app.schemas.catalogs.motivo_salida import MotivoSalidaCreate, MotivoSalidaPaginatedResponse, MotivoSalidaUpdate
 from app.utils.orden_catalogos import ordenar_por_nombre
 
 
@@ -54,6 +56,38 @@ def get_motivo_salida(db: Session, motivo_id: int):
         return motivo
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener el motivo de salida: {str(e)}")
+
+def get_motivos_salida_con_paginacion(
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None
+) -> MotivoSalidaPaginatedResponse:
+    """
+    Retorna motivos de salida con búsqueda y paginación.
+    """
+    query = db.query(MotivoSalida)
+
+    if search:
+        query = query.filter(MotivoSalida.descripcion_motivo.ilike(f"%{search}%"))
+
+    total = query.count()
+
+    resultados = query.order_by(MotivoSalida.descripcion_motivo.asc())\
+        .offset(skip).limit(limit).all()
+
+    page = (skip // limit) + 1 if limit > 0 else 1
+    total_pages = math.ceil(total / limit) if limit > 0 else 1
+
+    return MotivoSalidaPaginatedResponse(
+        total=total,
+        page=page,
+        per_page=limit,
+        total_pages=total_pages,
+        resultados=resultados
+    )
+
+
 
 
 def create_motivo_salida(db: Session, motivo_data: MotivoSalidaCreate):

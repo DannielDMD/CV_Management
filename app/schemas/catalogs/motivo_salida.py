@@ -1,6 +1,6 @@
 """Esquemas Pydantic para la entidad Motivo de Salida."""
 
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -37,3 +37,10 @@ class MotivoSalidaUpdate(BaseModel):
         descripcion_motivo (Optional[str]): Nueva descripción, si se proporciona.
     """
     descripcion_motivo: Optional[str] = None
+    
+class MotivoSalidaPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[MotivoSalidaResponse]

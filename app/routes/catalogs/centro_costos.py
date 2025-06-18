@@ -1,14 +1,16 @@
 """Rutas para la gestión del catálogo de centros de costos."""
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.schemas.catalogs.centro_costos import CentroCostosCreate, CentroCostosResponse
+from app.schemas.catalogs.centro_costos import CentroCostosCreate, CentroCostosPaginatedResponse, CentroCostosResponse
 from app.services.catalogs.centro_costos_service import (
     get_centros_costos,
     get_centro_costos_by_id,
     create_centro_costos,
+    get_centros_costos_con_paginacion,
     update_centro_costos,
     delete_centro_costos,
 )
@@ -16,9 +18,22 @@ from app.services.catalogs.centro_costos_service import (
 router = APIRouter(prefix="/centros-costos", tags=["Centros de Costos"])
 
 
-@router.get("/", response_model=list[CentroCostosResponse])
-def listar_centros_costos(db: Session = Depends(get_db)):
-    return get_centros_costos(db)
+@router.get("/", response_model=CentroCostosPaginatedResponse)
+def listar_centros_costos_con_paginacion(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+    search: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Lista de centros de costos con búsqueda por nombre y paginación.
+    """
+    return get_centros_costos_con_paginacion(
+        db=db,
+        skip=skip,
+        limit=limit,
+        search=search
+    )
 
 
 @router.get("/{id_centro}", response_model=CentroCostosResponse)

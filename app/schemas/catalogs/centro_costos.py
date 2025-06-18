@@ -1,5 +1,6 @@
 """Esquemas Pydantic para la entidad CentroCostos."""
 
+from typing import List
 from pydantic import BaseModel
 
 
@@ -31,3 +32,10 @@ class CentroCostosResponse(CentroCostosBase):
 
     class Config:
         from_attributes = True
+        
+class CentroCostosPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[CentroCostosResponse]

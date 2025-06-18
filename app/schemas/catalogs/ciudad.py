@@ -45,6 +45,15 @@ class CiudadResponse(CiudadBase):
         from_attributes = True
 
 
+class CiudadPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[CiudadResponse]
+
+
+
 # ---------------------------
 # SCHEMAS DE DEPARTAMENTOS
 # ---------------------------
@@ -83,3 +92,10 @@ class DepartamentoResponse(DepartamentoBase):
 
     class Config:
         from_attributes = True
+        
+class DepartamentoPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[DepartamentoResponse]

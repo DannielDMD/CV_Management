@@ -1,16 +1,17 @@
 """Rutas para la gestión de departamentos."""
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from typing import List
+from typing import Optional
 
 from app.schemas.catalogs.ciudad import (
     DepartamentoCreate,
+    DepartamentoPaginatedResponse,
     DepartamentoResponse,
 )
 from app.services.catalogs.departamentos_service import (
     crear_departamento,
-    obtener_todos_departamentos,
+    get_departamentos_con_paginacion,
     obtener_departamento_por_id,
     actualizar_departamento,
     eliminar_departamento,
@@ -28,9 +29,22 @@ def crear_nuevo_departamento(data: DepartamentoCreate, db: Session = Depends(get
     return departamento
 
 
-@router.get("/", response_model=List[DepartamentoResponse])
-def listar_departamentos(db: Session = Depends(get_db)):
-    return obtener_todos_departamentos(db)
+@router.get("/", response_model=DepartamentoPaginatedResponse)
+def listar_departamentos_con_paginacion(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+    search: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Lista de departamentos con paginación y búsqueda opcional por nombre.
+    """
+    return get_departamentos_con_paginacion(
+        db=db,
+        skip=skip,
+        limit=limit,
+        search=search
+    )
 
 
 @router.get("/{id_departamento}", response_model=DepartamentoResponse)

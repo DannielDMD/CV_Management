@@ -1,19 +1,21 @@
 """Rutas para la gestión del catálogo de niveles de educación."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from app.core.database import get_db
 from app.schemas.catalogs.nivel_educacion import (
     NivelEducacionCreate,
+    NivelEducacionPaginatedResponse,
     NivelEducacionUpdate,
     NivelEducacionResponse
 )
 from app.services.catalogs.nivel_educacion_service import (
     get_niveles_educacion, 
     get_nivel_educacion, 
-    create_nivel_educacion, 
+    create_nivel_educacion,
+    get_niveles_educacion_con_paginacion, 
     update_nivel_educacion, 
     delete_nivel_educacion
 )
@@ -21,20 +23,22 @@ from app.services.catalogs.nivel_educacion_service import (
 router = APIRouter(prefix="/nivel-educacion", tags=["Nivel Educación"])
 
 
-@router.get("/", response_model=List[NivelEducacionResponse])
-def listar_niveles_educacion(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+@router.get("/", response_model=NivelEducacionPaginatedResponse)
+def listar_niveles_educacion_con_paginacion(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+    search: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
     """
-    Lista todos los niveles de educación registrados.
-
-    Args:
-        skip (int): Número de registros a omitir (paginación).
-        limit (int): Número máximo de registros a retornar.
-        db (Session): Sesión de base de datos inyectada.
-
-    Returns:
-        List[NivelEducacionResponse]: Lista de niveles de educación.
+    Lista niveles de educación con búsqueda por nombre y paginación.
     """
-    return get_niveles_educacion(db, skip, limit)
+    return get_niveles_educacion_con_paginacion(
+        db=db,
+        skip=skip,
+        limit=limit,
+        search=search
+    )
 
 
 @router.get("/{id_nivel_educacion}", response_model=NivelEducacionResponse)

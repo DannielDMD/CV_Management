@@ -3,10 +3,12 @@ Servicios para el catálogo de Títulos Obtenidos.
 Incluye funciones CRUD: listar, obtener por ID, filtrar por nivel, crear, actualizar y eliminar.
 """
 
+import math
+from typing import Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.catalogs.titulo import TituloObtenido
-from app.schemas.catalogs.titulo import TituloObtenidoCreate, TituloObtenidoUpdate
+from app.schemas.catalogs.titulo import TituloObtenidoCreate, TituloObtenidoPaginatedResponse, TituloObtenidoUpdate
 from app.utils.orden_catalogos import ordenar_por_nombre
 
 
@@ -38,6 +40,44 @@ def get_titulos_por_nivel(db: Session, id_nivel_educacion: int, skip: int = 0, l
     )
     ordenado = ordenar_por_nombre(query, "nombre_titulo")
     return ordenado.offset(skip).limit(limit).all()
+
+
+def get_titulos_con_filtros(
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    search: Optional[str] = None,
+    id_nivel_educacion: Optional[int] = None
+) -> TituloObtenidoPaginatedResponse:
+    """
+    Retorna títulos con búsqueda, paginación y filtro por nivel educativo.
+    """
+    query = db.query(TituloObtenido)
+
+    if search:
+        query = query.filter(TituloObtenido.nombre_titulo.ilike(f"%{search}%"))
+    
+    if id_nivel_educacion:
+        query = query.filter(TituloObtenido.id_nivel_educacion == id_nivel_educacion)
+
+    total = query.count()
+
+    resultados = query.order_by(TituloObtenido.nombre_titulo.asc())\
+        .offset(skip).limit(limit).all()
+
+    page = (skip // limit) + 1 if limit > 0 else 1
+    total_pages = math.ceil(total / limit) if limit > 0 else 1
+
+    return TituloObtenidoPaginatedResponse(
+        total=total,
+        page=page,
+        per_page=limit,
+        total_pages=total_pages,
+        resultados=resultados
+    )
+
+
+
 
 
 def create_titulo(db: Session, titulo: TituloObtenidoCreate):

@@ -1,5 +1,6 @@
 """Esquemas Pydantic para la entidad Cargo Ofrecido."""
 
+from typing import List
 from pydantic import BaseModel
 
 
@@ -32,3 +33,11 @@ class CargoOfrecidoResponse(CargoOfrecidoBase):
 
     class Config:
         from_attributes = True  # Habilita la conversión desde modelos ORM
+
+
+class CargoOfrecidoPaginatedResponse(BaseModel):
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+    resultados: List[CargoOfrecidoResponse]

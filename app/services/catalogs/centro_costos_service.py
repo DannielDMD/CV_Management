@@ -11,9 +11,6 @@ from app.utils.orden_catalogos import ordenar_por_nombre
 
 
 def get_centros_costos(db: Session) -> List[CentroCostos]:
-    """
-    Obtiene todos los centros de costos ordenados alfabéticamente.
-    """
     query = db.query(CentroCostos)
     return ordenar_por_nombre(query, "nombre_centro_costos").all()
 

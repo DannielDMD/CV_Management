@@ -7,6 +7,7 @@ from typing import List, Optional
 
 from app.core.database import get_db
 from app.services.catalogs.disponibilidad_service import (
+    get_all_disponibilidades,
     get_disponabilidad_con_paginacion,
     get_disponibilidad,
     create_disponibilidad,
@@ -22,6 +23,11 @@ from app.schemas.preferencias_schema import (
 
 router = APIRouter(prefix="/disponibilidades", tags=["Disponibilidad"])
 
+
+
+@router.get("/todas", response_model=List[DisponibilidadResponse])
+def listar_disponibilidades(db: Session = Depends(get_db)):
+    return get_all_disponibilidades(db)
 
 @router.get("/", response_model=DisponibilidadPaginatedResponse)
 def listar_disponabilidad_con_paginacion(

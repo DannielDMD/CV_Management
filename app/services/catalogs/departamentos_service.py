@@ -13,29 +13,10 @@ from typing import List, Optional
 
 
 
-def crear_departamento(db: Session, departamento_data: DepartamentoCreate) -> Optional[Departamento]:
-    nombre = departamento_data.nombre_departamento.strip()
-    existente = db.query(Departamento).filter(Departamento.nombre_departamento.ilike(nombre)).first()
-    if existente:
-        return None  # Ya existe, no se debe duplicar
 
-    nuevo_departamento = Departamento(nombre_departamento=nombre)
-    db.add(nuevo_departamento)
-    try:
-        db.commit()
-        db.refresh(nuevo_departamento)
-        return nuevo_departamento
-    except IntegrityError:
-        db.rollback()
-        return None
-
-
+# Para los selects en el frontend
 def obtener_todos_departamentos(db: Session) -> List[Departamento]:
     return db.query(Departamento).order_by(Departamento.nombre_departamento.asc()).all()
-
-
-def obtener_departamento_por_id(db: Session, id_departamento: int) -> Optional[Departamento]:
-    return db.query(Departamento).filter(Departamento.id_departamento == id_departamento).first()
 
 
 """
@@ -70,6 +51,25 @@ def get_departamentos_con_paginacion(
         total_pages=total_pages,
         resultados=resultados
     )
+
+
+def crear_departamento(db: Session, departamento_data: DepartamentoCreate) -> Optional[Departamento]:
+    nombre = departamento_data.nombre_departamento.strip()
+    existente = db.query(Departamento).filter(Departamento.nombre_departamento.ilike(nombre)).first()
+    if existente:
+        return None  # Ya existe, no se debe duplicar
+
+    nuevo_departamento = Departamento(nombre_departamento=nombre)
+    db.add(nuevo_departamento)
+    try:
+        db.commit()
+        db.refresh(nuevo_departamento)
+        return nuevo_departamento
+    except IntegrityError:
+        db.rollback()
+        return None
+def obtener_departamento_por_id(db: Session, id_departamento: int) -> Optional[Departamento]:
+    return db.query(Departamento).filter(Departamento.id_departamento == id_departamento).first()
 
 
 

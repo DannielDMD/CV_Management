@@ -38,6 +38,10 @@ def listar_ciudades_con_filtros(
         search=search,
         id_departamento=id_departamento
     )
+    
+@router.get("/todas", response_model=List[CiudadResponse])
+def listar_ciudades(db: Session = Depends(get_db)):
+    return get_ciudades(db)
 
 
 @router.get("/{ciudad_id}", response_model=CiudadResponse)

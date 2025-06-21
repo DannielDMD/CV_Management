@@ -11,6 +11,12 @@ from app.models.preferencias import RangoSalarial
 from app.schemas.preferencias_schema import RangoSalarialCreate, RangoSalarialPaginatedResponse, RangoSalarialUpdate
 
 
+
+def get_all_rangos_salariales(db: Session):
+    return db.query(RangoSalarial).all()
+
+
+
 def get_rango_salarial_con_paginacion(
     db: Session,
     skip: int = 0,

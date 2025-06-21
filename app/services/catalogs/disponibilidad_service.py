@@ -11,6 +11,12 @@ from app.models.preferencias import Disponibilidad
 from app.schemas.preferencias_schema import DisponibilidadCreate, DisponibilidadPaginatedResponse, DisponibilidadUpdate
 
 
+
+def get_all_disponibilidades(db: Session):
+    return db.query(Disponibilidad).all()
+
+
+
 def get_disponabilidad_con_paginacion(
     db: Session,
     skip: int = 0,

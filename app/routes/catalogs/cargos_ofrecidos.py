@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import List, Optional
 
 from app.core.database import get_db
 from app.schemas.catalogs.cargo_ofrecido import (
@@ -20,20 +20,9 @@ from app.services.catalogs.cargos_ofrecidos_service import (
 
 router = APIRouter(prefix="/cargo-ofrecido", tags=["Cargo Ofrecido"])
 
-
-@router.post("/", response_model=CargoOfrecidoResponse)
-def crear_cargo(cargo_data: CargoOfrecidoCreate, db: Session = Depends(get_db)):
-    """
-    Crea un nuevo cargo ofrecido.
-
-    Args:
-        cargo_data (CargoOfrecidoCreate): Datos del nuevo cargo.
-        db (Session): Sesión de base de datos inyectada.
-
-    Returns:
-        CargoOfrecidoResponse: Cargo creado.
-    """
-    return crear_cargo_ofrecido(db, cargo_data)
+@router.get("/todas", response_model=List[CargoOfrecidoResponse])
+def listar_cargos(db: Session = Depends(get_db)):
+    return obtener_cargos_ofrecidos(db)
 
 
 @router.get("/", response_model=CargoOfrecidoPaginatedResponse)
@@ -63,6 +52,19 @@ def obtener_cargo(id_cargo: int, db: Session = Depends(get_db)):
     """
     return obtener_cargo_ofrecido_por_id(db, id_cargo)
 
+@router.post("/", response_model=CargoOfrecidoResponse)
+def crear_cargo(cargo_data: CargoOfrecidoCreate, db: Session = Depends(get_db)):
+    """
+    Crea un nuevo cargo ofrecido.
+
+    Args:
+        cargo_data (CargoOfrecidoCreate): Datos del nuevo cargo.
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        CargoOfrecidoResponse: Cargo creado.
+    """
+    return crear_cargo_ofrecido(db, cargo_data)
 
 @router.delete("/{id_cargo}")
 def eliminar_cargo(id_cargo: int, db: Session = Depends(get_db)):

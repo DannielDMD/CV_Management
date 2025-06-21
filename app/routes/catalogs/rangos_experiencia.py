@@ -23,6 +23,21 @@ from app.services.catalogs.rango_experiencia_service import (
 router = APIRouter(prefix="/rangos-experiencia", tags=["Rangos de Experiencia"])
 
 
+
+@router.get("/todas", response_model=List[RangoExperienciaResponse])
+def listar_rangos_experiencia(db: Session = Depends(get_db)):
+    """
+    Lista todos los rangos de experiencia registrados.
+
+    Args:
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        List[RangoExperienciaResponse]: Lista de rangos de experiencia.
+    """
+    return get_rangos_experiencia(db)
+
+
 @router.get("/", response_model=RangoExperienciaPaginatedResponse)
 def listar_rango_experiencia_con_paginacion(
     skip: int = Query(0, ge=0),

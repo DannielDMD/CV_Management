@@ -5,13 +5,13 @@ Incluye operaciones CRUD con validaciones de duplicados y existencia.
 
 import math
 from typing import List, Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError
 from app.models.catalogs.ciudad import Ciudad
 from app.schemas.catalogs.ciudad import CiudadCreate, CiudadPaginatedResponse
 from app.utils.orden_catalogos import ordenar_por_nombre
 
-
+#Usdado para los selects en el frontend
 def get_ciudades(db: Session) -> List[Ciudad]:
     """
     Obtiene todas las ciudades ordenadas alfabéticamente.
@@ -43,24 +43,17 @@ def get_ciudades_con_paginacion(
     search: Optional[str] = None,
     id_departamento: Optional[int] = None
 ) -> CiudadPaginatedResponse:
-    """
-    Retorna ciudades con paginación, búsqueda y filtro por departamento.
-    Incluye metadatos: total, página, total_pages, per_page.
-    """
-    query = db.query(Ciudad)
+    query = db.query(Ciudad).options(joinedload(Ciudad.departamento))
 
-    # Filtros
     if search:
         query = query.filter(Ciudad.nombre_ciudad.ilike(f"%{search}%"))
     if id_departamento:
         query = query.filter(Ciudad.id_departamento == id_departamento)
 
-    total = query.count()  # total antes de paginar
+    total = query.count()
 
-    # Aplicar paginación
     resultados = query.order_by(Ciudad.nombre_ciudad.asc()).offset(skip).limit(limit).all()
 
-    # Calcular página actual (usando base 1)
     page = (skip // limit) + 1 if limit > 0 else 1
     total_pages = math.ceil(total / limit) if limit > 0 else 1
 

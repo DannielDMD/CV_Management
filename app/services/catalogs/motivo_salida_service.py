@@ -36,19 +36,6 @@ def get_motivos_salida(db: Session):
 
 
 def get_motivo_salida(db: Session, motivo_id: int):
-    """
-    Obtiene un motivo de salida por su ID.
-
-    Args:
-        db (Session): Sesión de base de datos.
-        motivo_id (int): ID del motivo.
-
-    Returns:
-        MotivoSalida: Objeto encontrado.
-
-    Raises:
-        HTTPException: Si no se encuentra o falla la consulta.
-    """
     try:
         motivo = db.query(MotivoSalida).filter(MotivoSalida.id_motivo_salida == motivo_id).first()
         if not motivo:

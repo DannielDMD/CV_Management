@@ -23,6 +23,11 @@ from app.services.catalogs.instituciones_service import (
 router = APIRouter(prefix="/instituciones", tags=["Instituciones Académicas"])
 
 
+@router.get("/todas", response_model=List[InstitucionAcademicaResponse])
+def read_instituciones(skip: int = 0, limit: int = 300, db: Session = Depends(get_db)):
+    return get_instituciones(db, skip, limit)
+
+
 @router.get("/", response_model=InstitucionAcademicaPaginatedResponse)
 def listar_instituciones_academicas_con_paginacion(
     skip: int = Query(0, ge=0),

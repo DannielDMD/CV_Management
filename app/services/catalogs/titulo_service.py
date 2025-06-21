@@ -12,6 +12,16 @@ from app.schemas.catalogs.titulo import TituloObtenidoCreate, TituloObtenidoPagi
 from app.utils.orden_catalogos import ordenar_por_nombre
 
 
+
+
+def get_titulos(db: Session, skip: int = 0, limit: int = 100):
+    """
+    Lista todos los títulos ordenados alfabéticamente.
+    """
+    query = db.query(TituloObtenido)
+    ordenado = ordenar_por_nombre(query, "nombre_titulo")
+    return ordenado.offset(skip).limit(limit).all()
+
 def get_titulo(db: Session, titulo_id: int):
     """
     Obtiene un título por su ID.
@@ -22,13 +32,6 @@ def get_titulo(db: Session, titulo_id: int):
     return titulo
 
 
-def get_titulos(db: Session, skip: int = 0, limit: int = 100):
-    """
-    Lista todos los títulos ordenados alfabéticamente.
-    """
-    query = db.query(TituloObtenido)
-    ordenado = ordenar_por_nombre(query, "nombre_titulo")
-    return ordenado.offset(skip).limit(limit).all()
 
 
 def get_titulos_por_nivel(db: Session, id_nivel_educacion: int, skip: int = 0, limit: int = 100):

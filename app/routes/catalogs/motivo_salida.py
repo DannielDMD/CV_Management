@@ -23,6 +23,11 @@ from app.services.catalogs.motivo_salida_service import (
 router = APIRouter(prefix="/motivos-salida", tags=["Motivos de Salida"])
 
 
+@router.get("/todas", response_model=List[MotivoSalidaResponse])
+def obtener_motivos_salida(db: Session = Depends(get_db)):
+    return get_motivos_salida(db)
+
+
 @router.get("/", response_model=MotivoSalidaPaginatedResponse)
 def obtener_motivos_salida_con_paginacion(
     skip: int = Query(0, ge=0),

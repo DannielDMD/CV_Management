@@ -22,6 +22,10 @@ from app.services.catalogs.nivel_educacion_service import (
 
 router = APIRouter(prefix="/nivel-educacion", tags=["Nivel Educación"])
 
+@router.get("/todas", response_model=List[NivelEducacionResponse])
+def listar_niveles_educacion(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    return get_niveles_educacion(db, skip, limit)
+
 
 @router.get("/", response_model=NivelEducacionPaginatedResponse)
 def listar_niveles_educacion_con_paginacion(

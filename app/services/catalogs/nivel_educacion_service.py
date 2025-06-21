@@ -11,31 +11,10 @@ from app.schemas.catalogs.nivel_educacion import NivelEducacionCreate, NivelEduc
 
 
 def get_niveles_educacion(db: Session, skip: int = 0, limit: int = 10):
-    """
-    Obtiene una lista paginada de niveles de educación.
-
-    Args:
-        db (Session): Sesión activa de la base de datos.
-        skip (int): Número de elementos a omitir (para paginación).
-        limit (int): Número máximo de elementos a retornar.
-
-    Returns:
-        List[NivelEducacion]: Lista de niveles de educación.
-    """
     return db.query(NivelEducacion).offset(skip).limit(limit).all()
 
 
 def get_nivel_educacion(db: Session, id_nivel_educacion: int):
-    """
-    Obtiene un nivel de educación por su ID.
-
-    Args:
-        db (Session): Sesión activa de la base de datos.
-        id_nivel_educacion (int): ID del nivel a consultar.
-
-    Returns:
-        NivelEducacion | None: Objeto encontrado o None si no existe.
-    """
     return db.query(NivelEducacion).filter(
         NivelEducacion.id_nivel_educacion == id_nivel_educacion
     ).first()

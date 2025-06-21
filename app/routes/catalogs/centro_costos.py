@@ -18,6 +18,12 @@ from app.services.catalogs.centro_costos_service import (
 router = APIRouter(prefix="/centros-costos", tags=["Centros de Costos"])
 
 
+
+@router.get("/todas", response_model=list[CentroCostosResponse])
+def listar_centros_costos(db: Session = Depends(get_db)):
+    return get_centros_costos(db)
+
+
 @router.get("/", response_model=CentroCostosPaginatedResponse)
 def listar_centros_costos_con_paginacion(
     skip: int = Query(0, ge=0),

@@ -12,8 +12,11 @@ from app.services.catalogs.conocimientos_service import (
     delete_habilidad_blanda,
     delete_habilidad_tecnica,
     delete_herramienta,
+    get_habilidades_blandas,
     get_habilidades_blandas_con_paginacion,
+    get_habilidades_tecnicas,
     get_habilidades_tecnicas_con_paginacion,
+    get_herramientas,
     get_herramientas_con_paginacion,
     update_habilidad_blanda,
     update_habilidad_tecnica,
@@ -36,6 +39,20 @@ router = APIRouter(prefix="/conocimientos", tags=["Conocimientos"])
 # ----------------------------
 # Habilidad Blanda
 # ----------------------------
+
+@router.get("/habilidades-blandas/todas", response_model=List[HabilidadBlandaResponse])
+def obtener_habilidades_blandas(db: Session = Depends(get_db)):
+    """
+    Lista todas las habilidades blandas disponibles.
+
+    Args:
+        db (Session): Sesión de base de datos inyectada.
+
+    Returns:
+        List[HabilidadBlandaResponse]: Lista de habilidades blandas.
+    """
+    return get_habilidades_blandas(db)
+
 
 @router.get("/habilidades-blandas", response_model=HabilidadBlandaPaginatedResponse)
 def listar_habilidades_blandas(
@@ -68,6 +85,10 @@ def eliminar_habilidad_blanda(id_habilidad: int, db: Session = Depends(get_db)):
 # Habilidad Técnica
 # ----------------------------
 
+@router.get("/habilidades-tecnicas/todas", response_model=List[HabilidadTecnicaResponse])
+def obtener_habilidades_tecnicas(db: Session = Depends(get_db)):
+    return get_habilidades_tecnicas(db)
+
 @router.get("/habilidades-tecnicas", response_model=HabilidadTecnicaPaginatedResponse)
 def listar_habilidades_tecnicas(
     skip: int = Query(0, ge=0),
@@ -96,6 +117,11 @@ def eliminar_habilidad_tecnica(id_habilidad: int, db: Session = Depends(get_db))
 # ----------------------------
 # Herramienta
 # ----------------------------
+
+
+@router.get("/herramientas/todas", response_model=List[HerramientaResponse])
+def obtener_herramientas(db: Session = Depends(get_db)):
+    return get_herramientas(db)
 
 @router.get("/herramientas", response_model=HerramientaPaginatedResponse)
 def listar_herramientas(

@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import List, Optional
 
 from app.schemas.catalogs.ciudad import (
     DepartamentoCreate,
@@ -15,10 +15,15 @@ from app.services.catalogs.departamentos_service import (
     obtener_departamento_por_id,
     actualizar_departamento,
     eliminar_departamento,
+    obtener_todos_departamentos,
 )
 from app.core.database import get_db
 
 router = APIRouter(prefix="/departamentos", tags=["Departamentos"])
+
+@router.get("/todas", response_model=List[DepartamentoResponse])
+def listar_departamentos(db: Session = Depends(get_db)):
+    return obtener_todos_departamentos(db)
 
 
 @router.post("/", response_model=DepartamentoResponse, status_code=status.HTTP_201_CREATED)

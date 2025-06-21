@@ -12,32 +12,10 @@ from app.schemas.catalogs.nivel_ingles import NivelInglesCreate, NivelInglesPagi
 
 
 def get_niveles_ingles(db: Session):
-    """
-    Lista todos los niveles de inglés.
-
-    Args:
-        db (Session): Sesión activa de la base de datos.
-
-    Returns:
-        List[NivelIngles]: Lista de niveles.
-    """
     return db.query(NivelIngles).all()
 
 
 def get_nivel_ingles(db: Session, nivel_ingles_id: int):
-    """
-    Obtiene un nivel de inglés por su ID.
-
-    Args:
-        db (Session): Sesión activa de la base de datos.
-        nivel_ingles_id (int): ID del nivel a consultar.
-
-    Returns:
-        NivelIngles: Objeto encontrado.
-
-    Raises:
-        HTTPException: Si no se encuentra el nivel.
-    """
     nivel_ingles = db.query(NivelIngles).filter(
         NivelIngles.id_nivel_ingles == nivel_ingles_id
     ).first()

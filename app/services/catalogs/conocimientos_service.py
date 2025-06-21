@@ -28,6 +28,22 @@ from app.utils.orden_catalogos import ordenar_por_nombre
 # ----------------------------
 # Habilidad Blanda
 # ----------------------------
+
+
+
+def get_habilidades_blandas(db: Session):
+    try:
+        query = db.query(HabilidadBlanda)
+        ordenado = ordenar_por_nombre(query, "nombre_habilidad_blanda").all()
+        if not ordenado:
+            raise HTTPException(status_code=404, detail="No se encontraron habilidades blandas")
+        return [HabilidadBlandaResponse.model_validate(h) for h in ordenado]
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener habilidades blandas: {str(e)}")
+
+
+
+
 def get_habilidades_blandas_con_paginacion(
     db: Session,
     skip: int = 0,
@@ -104,6 +120,17 @@ def delete_habilidad_blanda(db: Session, id_habilidad: int) -> bool:
 # Habilidad Técnica
 # ----------------------------
 
+def get_habilidades_tecnicas(db: Session):
+    try:
+        query = db.query(HabilidadTecnica)
+        ordenado = ordenar_por_nombre(query, "nombre_habilidad_tecnica").all()
+        if not ordenado:
+            raise HTTPException(status_code=404, detail="No se encontraron habilidades técnicas")
+        return [HabilidadTecnicaResponse.model_validate(h) for h in ordenado]
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener habilidades técnicas: {str(e)}")
+
+
 #Lectura
 def get_habilidades_tecnicas_con_paginacion(
     db: Session,
@@ -178,6 +205,17 @@ def delete_habilidad_tecnica(db: Session, id_habilidad: int) -> bool:
 # ----------------------------
 # Herramienta
 # ----------------------------
+def get_herramientas(db: Session):
+    try:
+        query = db.query(Herramienta)
+        ordenado = ordenar_por_nombre(query, "nombre_herramienta").all()
+        if not ordenado:
+            raise HTTPException(status_code=404, detail="No se encontraron herramientas")
+        return [HerramientaResponse.model_validate(h) for h in ordenado]
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener herramientas: {str(e)}")
+
+
 
 def get_herramientas_con_paginacion(
     db: Session,

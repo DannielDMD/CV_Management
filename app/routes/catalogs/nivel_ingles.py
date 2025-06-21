@@ -23,6 +23,12 @@ from app.services.catalogs.nivel_ingles_service import (
 router = APIRouter(prefix="/nivel-ingles", tags=["Nivel de Inglés"])
 
 
+
+@router.get("/todas", response_model=List[NivelInglesResponse])
+def listar_niveles_ingles(db: Session = Depends(get_db)):
+    return get_niveles_ingles(db)
+
+
 @router.get("/", response_model=NivelInglesPaginatedResponse)
 def listar_nivel_ingles_con_paginacion(
     skip: int = Query(0, ge=0),

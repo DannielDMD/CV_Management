@@ -13,15 +13,6 @@ from app.utils.orden_catalogos import ordenar_por_nombre
 
 
 def obtener_cargos_ofrecidos(db: Session):
-    """
-    Obtiene todos los cargos ofrecidos ordenados alfabéticamente por nombre.
-
-    Args:
-        db (Session): Sesión de base de datos.
-
-    Returns:
-        List[CargoOfrecido]: Lista de cargos ordenados.
-    """
     query = db.query(CargoOfrecido)
     return ordenar_por_nombre(query, "nombre_cargo").all()
 

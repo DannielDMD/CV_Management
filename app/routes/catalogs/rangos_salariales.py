@@ -13,6 +13,7 @@ from app.schemas.preferencias_schema import (
     RangoSalarialResponse
 )
 from app.services.catalogs.rangos_salariales_service import (
+    get_all_rangos_salariales,
     get_rango_salarial,
     create_rango_salarial,
     get_rango_salarial_con_paginacion,
@@ -21,6 +22,11 @@ from app.services.catalogs.rangos_salariales_service import (
 )
 
 router = APIRouter(prefix="/rangos-salariales", tags=["Rangos Salariales"])
+
+@router.get("/todas", response_model=List[RangoSalarialResponse])
+def listar_rangos_salariales(db: Session = Depends(get_db)):
+    return get_all_rangos_salariales(db)
+
 
 
 @router.get("/", response_model=RangoSalarialPaginatedResponse)

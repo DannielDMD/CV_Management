@@ -118,6 +118,38 @@ def crear_cargo_ofrecido(db: Session, cargo_data: CargoOfrecidoCreate):
     db.refresh(nuevo_cargo)
     return nuevo_cargo
 
+def actualizar_cargo_ofrecido(db: Session, id_cargo: int, cargo_data: CargoOfrecidoCreate):
+    """
+    Actualiza un cargo ofrecido existente.
+
+    Args:
+        db (Session): Sesión de base de datos.
+        id_cargo (int): ID del cargo a actualizar.
+        cargo_data (CargoOfrecidoCreate): Nuevos datos del cargo.
+
+    Returns:
+        CargoOfrecido: Cargo actualizado.
+
+    Raises:
+        HTTPException: Si el cargo no existe o el nuevo nombre ya está en uso por otro.
+    """
+    cargo = db.query(CargoOfrecido).filter(CargoOfrecido.id_cargo == id_cargo).first()
+    if not cargo:
+        raise HTTPException(status_code=404, detail="Cargo no encontrado")
+
+    # Verificar que no exista otro con ese nombre
+    existe = db.query(CargoOfrecido).filter(
+        CargoOfrecido.nombre_cargo == cargo_data.nombre_cargo,
+        CargoOfrecido.id_cargo != id_cargo
+    ).first()
+    if existe:
+        raise HTTPException(status_code=400, detail="Ya existe un cargo con ese nombre")
+
+    cargo.nombre_cargo = cargo_data.nombre_cargo
+    db.commit()
+    db.refresh(cargo)
+    return cargo
+
 
 def eliminar_cargo_ofrecido(db: Session, id_cargo: int):
     """

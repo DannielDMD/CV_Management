@@ -16,7 +16,7 @@ class Departamento(Base):
     __tablename__ = "departamentos"
 
     id_departamento = Column(Integer, primary_key=True, index=True)
-    nombre_departamento = Column(String(100), nullable=False, unique=True)
+    nombre_departamento = Column(String(100), nullable=False, unique=False)
 
     # Relación uno a muchos con Ciudad
     ciudades = relationship("Ciudad", back_populates="departamento")

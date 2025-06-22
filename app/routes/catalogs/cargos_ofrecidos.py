@@ -11,6 +11,7 @@ from app.schemas.catalogs.cargo_ofrecido import (
     CargoOfrecidoResponse,
 )
 from app.services.catalogs.cargos_ofrecidos_service import (
+    actualizar_cargo_ofrecido,
     crear_cargo_ofrecido,
     get_cargos_con_paginacion,
     obtener_cargos_ofrecidos, #Ver si eliminar
@@ -65,6 +66,24 @@ def crear_cargo(cargo_data: CargoOfrecidoCreate, db: Session = Depends(get_db)):
         CargoOfrecidoResponse: Cargo creado.
     """
     return crear_cargo_ofrecido(db, cargo_data)
+
+
+
+@router.put("/{id_cargo}", response_model=CargoOfrecidoResponse)
+def actualizar_cargo(id_cargo: int, cargo_data: CargoOfrecidoCreate, db: Session = Depends(get_db)):
+    """
+    Actualiza un cargo ofrecido por su ID.
+
+    Args:
+        id_cargo (int): ID del cargo a actualizar.
+        cargo_data (CargoOfrecidoCreate): Nuevos datos del cargo.
+        db (Session): Sesión de base de datos.
+
+    Returns:
+        CargoOfrecidoResponse: Cargo actualizado.
+    """
+    return actualizar_cargo_ofrecido(db, id_cargo, cargo_data)
+
 
 @router.delete("/{id_cargo}")
 def eliminar_cargo(id_cargo: int, db: Session = Depends(get_db)):

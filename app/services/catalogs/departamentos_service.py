@@ -1,6 +1,7 @@
 """Servicios para la gestión de departamentos."""
 
 import math
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from app.models.catalogs.ciudad import Departamento
@@ -55,9 +56,14 @@ def get_departamentos_con_paginacion(
 
 def crear_departamento(db: Session, departamento_data: DepartamentoCreate) -> Optional[Departamento]:
     nombre = departamento_data.nombre_departamento.strip()
-    existente = db.query(Departamento).filter(Departamento.nombre_departamento.ilike(nombre)).first()
+
+    existente = db.query(Departamento).filter(
+        func.lower(func.unaccent(func.trim(Departamento.nombre_departamento))) ==
+        func.lower(func.unaccent(func.trim(nombre)))
+    ).first()
+
     if existente:
-        return None  # Ya existe, no se debe duplicar
+        return None
 
     nuevo_departamento = Departamento(nombre_departamento=nombre)
     db.add(nuevo_departamento)
@@ -68,6 +74,11 @@ def crear_departamento(db: Session, departamento_data: DepartamentoCreate) -> Op
     except IntegrityError:
         db.rollback()
         return None
+
+
+
+    
+    
 def obtener_departamento_por_id(db: Session, id_departamento: int) -> Optional[Departamento]:
     return db.query(Departamento).filter(Departamento.id_departamento == id_departamento).first()
 

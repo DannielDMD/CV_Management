@@ -3,6 +3,8 @@
 from typing import List
 from pydantic import BaseModel
 
+from app.schemas.catalogs.nivel_educacion import NivelEducacionResponse
+
 
 class TituloObtenidoBase(BaseModel):
     """
@@ -44,6 +46,15 @@ class TituloObtenidoResponse(TituloObtenidoBase):
 
     class Config:
         from_attributes = True  # Permite usar modelos ORM directamente
+        
+        
+class TituloObtenidoResponse(TituloObtenidoBase):
+    id_titulo: int
+    nivel_educacion: NivelEducacionResponse  # 👈 usa el que ya tienes
+
+    class Config:
+        from_attributes = True
+
 
 class TituloObtenidoPaginatedResponse(BaseModel):
     total: int

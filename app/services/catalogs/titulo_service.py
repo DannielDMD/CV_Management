@@ -7,6 +7,7 @@ import math
 from typing import Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
+from sqlalchemy.orm import joinedload
 from app.models.catalogs.titulo import TituloObtenido
 from app.schemas.catalogs.titulo import TituloObtenidoCreate, TituloObtenidoPaginatedResponse, TituloObtenidoUpdate
 from app.utils.orden_catalogos import ordenar_por_nombre
@@ -15,10 +16,7 @@ from app.utils.orden_catalogos import ordenar_por_nombre
 
 
 def get_titulos(db: Session, skip: int = 0, limit: int = 100):
-    """
-    Lista todos los títulos ordenados alfabéticamente.
-    """
-    query = db.query(TituloObtenido)
+    query = db.query(TituloObtenido).options(joinedload(TituloObtenido.nivel_educacion))
     ordenado = ordenar_por_nombre(query, "nombre_titulo")
     return ordenado.offset(skip).limit(limit).all()
 
@@ -35,10 +33,7 @@ def get_titulo(db: Session, titulo_id: int):
 
 
 def get_titulos_por_nivel(db: Session, id_nivel_educacion: int, skip: int = 0, limit: int = 100):
-    """
-    Lista títulos filtrados por el ID del nivel educativo correspondiente.
-    """
-    query = db.query(TituloObtenido).filter(
+    query = db.query(TituloObtenido).options(joinedload(TituloObtenido.nivel_educacion)).filter(
         TituloObtenido.id_nivel_educacion == id_nivel_educacion
     )
     ordenado = ordenar_por_nombre(query, "nombre_titulo")
@@ -53,9 +48,9 @@ def get_titulos_con_filtros(
     id_nivel_educacion: Optional[int] = None
 ) -> TituloObtenidoPaginatedResponse:
     """
-    Retorna títulos con búsqueda, paginación y filtro por nivel educativo.
+    Retorna títulos con búsqueda, paginación y filtro por nivel educativo, incluyendo el nombre del nivel.
     """
-    query = db.query(TituloObtenido)
+    query = db.query(TituloObtenido).options(joinedload(TituloObtenido.nivel_educacion))
 
     if search:
         query = query.filter(TituloObtenido.nombre_titulo.ilike(f"%{search}%"))
@@ -78,7 +73,6 @@ def get_titulos_con_filtros(
         total_pages=total_pages,
         resultados=resultados
     )
-
 
 
 

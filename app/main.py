@@ -44,7 +44,8 @@ from app.routes.Dashboard import (
     stats_preferencias,
     stats_proceso,
     export_report,
-    export_pdf
+    export_pdf,
+    stats_routes
 )
 
 # Inicializar aplicación FastAPI
@@ -93,6 +94,7 @@ app.include_router(stats_preferencias.router)
 app.include_router(stats_proceso.router)
 app.include_router(export_report.router)
 app.include_router(export_pdf.router)
+app.include_router(stats_routes.router)
 
 
 print(f"🚀 BASE DE DATOS ACTUAL: {DATABASE_URL}")

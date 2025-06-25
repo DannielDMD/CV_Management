@@ -1,7 +1,7 @@
 """Rutas para la gestión de candidatos, incluyendo creación, actualización, consulta, eliminación y estadísticas."""
 
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db

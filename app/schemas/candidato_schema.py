@@ -192,7 +192,7 @@ class CandidatoDetalleResponse(BaseModel):
     cargo: str
     nombre_cargo_otro: Optional[str] = None
     trabaja_actualmente_joyco: bool
-    centro_costos: str
+    centro_costos: Optional[str] = None
     nombre_centro_costos_otro: Optional[str] = None
     ha_trabajado_joyco: bool
     motivo_salida: Optional[str] = None

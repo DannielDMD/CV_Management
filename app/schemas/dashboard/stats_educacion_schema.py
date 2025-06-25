@@ -28,6 +28,7 @@ class EstadisticasEducacionResponse(BaseModel):
     top_titulos_por_mes: List[MonthTopItem]
     top_instituciones_academicas_anual: List[CountItem]
     top_instituciones_por_mes: List[MonthTopItem]
-    distribucion_nivel_ingles_anual: List[CountItem]
+    distribucion_nivel_ingles_anual: List[CountItem] #Ver este schema
     distribucion_nivel_ingles_por_mes: List[MonthTopItem]
     distribucion_anio_graduacion: List[CountItem]
+    total_educaciones: int  # ✅ NUEVO CAMPO

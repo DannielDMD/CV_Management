@@ -351,19 +351,31 @@ def obtener_estadisticas_educacion(
             )
 
     # 10. Distribución año graduación (sin filtro)
+# 10. Distribución año graduación (con filtro por año de registro del candidato)
     anios_q = (
-        db.query(
-            Educacion.anio_graduacion.label("label"),
-            func.count(Educacion.id_educacion).label("count"),
+        año_filter(
+            db.query(
+                Educacion.anio_graduacion.label("label"),
+                func.count(Educacion.id_educacion).label("count"),
+            )
+            .join(Candidato, Educacion.id_candidato == Candidato.id_candidato)
+            .filter(Educacion.anio_graduacion.isnot(None))
         )
-        .filter(Educacion.anio_graduacion.isnot(None))
         .group_by(Educacion.anio_graduacion)
         .order_by(func.count(Educacion.id_educacion).desc())
         .all()
     )
+
     distribucion_anio_graduacion = [
         CountItem(label=str(r.label), count=r.count) for r in anios_q
     ]
+
+
+# Total de registros de educación
+    total_educaciones = año_filter(
+        db.query(func.count(Educacion.id_educacion))
+        .join(Candidato, Educacion.id_candidato == Candidato.id_candidato)
+    ).scalar()
 
     return EstadisticasEducacionResponse(
         educaciones_por_mes=educaciones_por_mes,
@@ -376,4 +388,5 @@ def obtener_estadisticas_educacion(
         distribucion_nivel_ingles_anual=distribucion_nivel_ingles_anual,
         distribucion_nivel_ingles_por_mes=distribucion_nivel_ingles_por_mes,
         distribucion_anio_graduacion=distribucion_anio_graduacion,
+        total_educaciones=total_educaciones  # ✅ INCLUIDO EN RESPUESTA
     )

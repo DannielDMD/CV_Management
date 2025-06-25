@@ -113,7 +113,10 @@ def exportar_estadisticas_pdf_reportlab(
     add_section("Top títulos obtenidos (anual)", [(i.label, i.count) for i in educacion.top_titulos_obtenidos_anual])
     add_section("Top instituciones académicas (anual)", [(i.label, i.count) for i in educacion.top_instituciones_academicas_anual])
     add_section("Distribución del nivel de inglés (anual)", [(i.label, i.count) for i in educacion.distribucion_nivel_ingles_anual])
-    add_section("Distribución por año de graduación", [(i.label, i.count) for i in educacion.distribucion_anio_graduacion])
+    """
+    This services isn't doing for the year
+    """
+    add_section("Distribución por año de graduación", [(i.label, i.count) for i in educacion.distribucion_anio_graduacion]) 
 
     # Mensuales
     add_section("Educaciones registradas por mes", [(f"Mes {i.month}", i.count) for i in educacion.educaciones_por_mes])

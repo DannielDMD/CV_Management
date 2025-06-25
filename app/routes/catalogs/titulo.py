@@ -24,8 +24,6 @@ from app.services.catalogs.titulo_service import (
 router = APIRouter(prefix="/titulos", tags=["Títulos Obtenidos"])
 
 
-
-
 @router.get("/todas", response_model=List[TituloObtenidoResponse])
 def read_titulos(skip: int = 0, limit: int = 300, db: Session = Depends(get_db)):
     return get_titulos(db, skip, limit)

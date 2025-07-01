@@ -48,16 +48,28 @@ def create_candidato_endpoint(
 def obtener_resumen_candidatos(
     db: Session = Depends(get_db),
     search: str = Query(None),
+    # Filtros para Infor Personal
     estado: str = Query(None),
-    id_disponibilidad: int = Query(None),
     id_cargo: int = Query(None),
     id_ciudad: int = Query(None),
-    id_herramienta: int = Query(None),
-    id_habilidad_tecnica: int = Query(None),
-    id_nivel_ingles: int = Query(None),
-    id_experiencia: int = Query(None),
-    id_titulo: int = Query(None),
     trabaja_joyco: bool = Query(None),
+    ha_trabajado_joyco: bool = Query(None),
+    tiene_referido: bool = Query(None),
+    # Filtros Para Educación
+    id_nivel_educacion: int = Query(None),
+    id_titulo: int = Query(None),
+    id_nivel_ingles: int = Query(None),
+    # Filtros Para Experiencia
+    id_experiencia: int = Query(None),
+    # Filtros Para Conocimientos
+    id_habilidad_blanda: int = Query(None),
+    id_habilidad_tecnica: int = Query(None),
+    id_herramienta: int = Query(None),
+    # Filtros Para Disponibilidad
+    id_disponibilidad: int = Query(None),
+    disponibilidad_viajar: bool = Query(None),
+    trabaja_actualmente: bool = Query(None),
+    id_rango_salarial: int = Query(None),
     ordenar_por_fecha: Optional[str] = Query(None),
     anio: Optional[int] = Query(None),
     mes: Optional[int] = Query(None, ge=1, le=12),
@@ -74,15 +86,27 @@ def obtener_resumen_candidatos(
         db=db,
         search=search,
         estado=estado,
-        id_disponibilidad=id_disponibilidad,
+        # Filtros por Info Personal}
         id_cargo=id_cargo,
         id_ciudad=id_ciudad,
-        id_herramienta=id_herramienta,
-        id_habilidad_tecnica=id_habilidad_tecnica,
-        id_nivel_ingles=id_nivel_ingles,
-        id_experiencia=id_experiencia,
-        id_titulo=id_titulo,
+        ha_trabajado_joyco=ha_trabajado_joyco,
+        tiene_referido=tiene_referido,
         trabaja_joyco=trabaja_joyco,
+        # Filtros por Educación
+        id_nivel_educacion=id_nivel_educacion,
+        id_titulo=id_titulo,
+        id_nivel_ingles=id_nivel_ingles,
+        # Filtros por Experiencia
+        id_experiencia=id_experiencia,
+        # Filtros por Conocimientos
+        id_habilidad_tecnica=id_habilidad_tecnica,
+        id_habilidad_blanda=id_habilidad_blanda,
+        id_herramienta=id_herramienta,
+        # Filtros por Disponibilidad
+        id_disponibilidad=id_disponibilidad,
+        id_rango_salarial=id_rango_salarial,
+        disponibilidad_viajar=disponibilidad_viajar,
+        trabaja_actualmente=trabaja_actualmente,
         ordenar_por_fecha=ordenar_por_fecha,
         anio=anio,
         mes=mes,
@@ -102,23 +126,32 @@ def obtener_candidato_detalle(id_candidato: int, db: Session = Depends(get_db)):
     return get_candidato_detalle(db, id_candidato)
 
 
-
-
-
 @router.get("/detalle-lista")
 def obtener_lista_detallada(
     db: Session = Depends(get_db),
     search: str = Query(None),
+    # Filtros para Infor Personal
     estado: str = Query(None),
-    id_disponibilidad: int = Query(None),
     id_cargo: int = Query(None),
     id_ciudad: int = Query(None),
-    id_herramienta: int = Query(None),
-    id_habilidad_tecnica: int = Query(None),
-    id_nivel_ingles: int = Query(None),
-    id_experiencia: int = Query(None),
-    id_titulo: int = Query(None),
     trabaja_joyco: bool = Query(None),
+    ha_trabajado_joyco: bool = Query(None),
+    tiene_referido: bool = Query(None),
+    # Filtros Para Educación
+    id_nivel_educacion: int = Query(None),
+    id_titulo: int = Query(None),
+    id_nivel_ingles: int = Query(None),
+    # Filtros Para Experiencia
+    id_experiencia: int = Query(None),
+    # Filtros Para Conocimientos
+    id_habilidad_blanda: int = Query(None),
+    id_habilidad_tecnica: int = Query(None),
+    id_herramienta: int = Query(None),
+    # Filtros Para Disponibilidad
+    id_disponibilidad: int = Query(None),
+    disponibilidad_viajar: bool = Query(None),
+    trabaja_actualmente: bool = Query(None),
+    id_rango_salarial: int = Query(None),
     ordenar_por_fecha: Optional[str] = Query(None),
     anio: Optional[int] = Query(None),
     mes: Optional[int] = Query(None, ge=1, le=12),
@@ -132,15 +165,27 @@ def obtener_lista_detallada(
         db=db,
         search=search,
         estado=estado,
-        id_disponibilidad=id_disponibilidad,
+        # Filtros por Info Personal}
         id_cargo=id_cargo,
         id_ciudad=id_ciudad,
-        id_herramienta=id_herramienta,
-        id_habilidad_tecnica=id_habilidad_tecnica,
-        id_nivel_ingles=id_nivel_ingles,
-        id_experiencia=id_experiencia,
-        id_titulo=id_titulo,
+        ha_trabajado_joyco=ha_trabajado_joyco,
+        tiene_referido=tiene_referido,
         trabaja_joyco=trabaja_joyco,
+        # Filtros por Educación
+        id_nivel_educacion=id_nivel_educacion,
+        id_titulo=id_titulo,
+        id_nivel_ingles=id_nivel_ingles,
+        # Filtros por Experiencia
+        id_experiencia=id_experiencia,
+        # Filtros por Conocimientos
+        id_habilidad_tecnica=id_habilidad_tecnica,
+        id_habilidad_blanda=id_habilidad_blanda,
+        id_herramienta=id_herramienta,
+        # Filtros por Disponibilidad
+        id_disponibilidad=id_disponibilidad,
+        id_rango_salarial=id_rango_salarial,
+        disponibilidad_viajar=disponibilidad_viajar,
+        trabaja_actualmente=trabaja_actualmente,
         ordenar_por_fecha=ordenar_por_fecha,
         anio=anio,
         mes=mes,
@@ -207,7 +252,9 @@ def delete_candidato_endpoint(id_candidato: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{id_candidato}/completar", response_model=CandidatoResponse)
-def marcar_formulario_completo_endpoint(id_candidato: int, db: Session = Depends(get_db)):
+def marcar_formulario_completo_endpoint(
+    id_candidato: int, db: Session = Depends(get_db)
+):
     """
     Marca el formulario de un candidato como completo.
 

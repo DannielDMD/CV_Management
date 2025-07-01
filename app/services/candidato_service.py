@@ -17,9 +17,10 @@ from app.models.experiencia_model import ExperienciaLaboral
 from app.models.conocimientos_model import CandidatoConocimiento
 from app.models.preferencias import PreferenciaDisponibilidad
 from app.models.catalogs.cargo_ofrecido import CargoOfrecido
-from app.services.mappers.candidato_mapper import mapear_candidato_detalle, mapear_candidato_resumen
-
-
+from app.services.mappers.candidato_mapper import (
+    mapear_candidato_detalle,
+    mapear_candidato_resumen,
+)
 
 
 # Configurar logging
@@ -52,14 +53,17 @@ def create_candidato(db: Session, candidato_data: CandidatoCreate):
             status_code=500, detail="Error al insertar el candidato en la base de datos"
         )
 
+
 def get_candidato_by_id(db: Session, id_candidato: int):
     candidato = db.get(Candidato, id_candidato)
     if not candidato:
         raise HTTPException(status_code=404, detail="Candidato no encontrado")
     return candidato
 
+
 def get_all_candidatos(db: Session):
     return db.query(Candidato).all()
+
 
 def update_candidato(db: Session, id_candidato: int, candidato_data: CandidatoUpdate):
     candidato = db.get(Candidato, id_candidato)
@@ -85,6 +89,7 @@ def update_candidato(db: Session, id_candidato: int, candidato_data: CandidatoUp
             detail="Error al actualizar el candidato en la base de datos",
         )
 
+
 def delete_candidato(db: Session, id_candidato: int):
     candidato = db.get(Candidato, id_candidato)
     if not candidato:
@@ -100,6 +105,7 @@ def delete_candidato(db: Session, id_candidato: int):
         logger.error(f"Error al eliminar candidato: {e}")
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al eliminar el candidato")
+
 
 def get_candidatos_resumen(
     db: Session,
@@ -119,6 +125,14 @@ def get_candidatos_resumen(
     mes: Optional[int] = None,
     skip: int = 0,
     limit: int = 10,
+    # Nuevos filtros
+    id_nivel_educacion: int = None,
+    id_habilidad_blanda: int = None,
+    id_rango_salarial: int = None,
+    ha_trabajado_joyco: bool = None,
+    tiene_referido: bool = None,
+    disponibilidad_viajar: bool = None,
+    trabaja_actualmente: bool = None,
 ):
     query = db.query(Candidato).options(
         joinedload(Candidato.ciudad),
@@ -153,10 +167,13 @@ def get_candidatos_resumen(
         )
     if estado:
         query = query.filter(Candidato.estado == estado)
+        
     if id_disponibilidad:
         query = query.join(Candidato.preferencias).filter(
-            PreferenciaDisponibilidad.id_disponibilidad == id_disponibilidad
+            PreferenciaDisponibilidad.id_disponibilidad_inicio == id_disponibilidad
         )
+
+        
     if id_cargo:
         query = query.filter(Candidato.id_cargo == id_cargo)
     if id_ciudad:
@@ -176,19 +193,55 @@ def get_candidatos_resumen(
             Educacion.id_titulo == id_titulo
         )
     if id_nivel_ingles:
-        query = query.join(Candidato.educaciones).filter(
-            Educacion.id_nivel_ingles == id_nivel_ingles
+        query = query.filter(
+            Candidato.educaciones.any(Educacion.id_nivel_ingles == id_nivel_ingles)
         )
+
     if id_experiencia:
         query = query.join(Candidato.experiencias).filter(
             ExperienciaLaboral.id_rango_experiencia == id_experiencia
         )
-    
+
+
+#Esto es lo nuevo hasta antes del total
     if anio:
         query = query.filter(extract("year", Candidato.fecha_registro) == anio)
 
     if mes:
         query = query.filter(extract("month", Candidato.fecha_registro) == mes)
+
+
+    if id_nivel_educacion:
+        query = query.join(Candidato.educaciones).filter(
+            Educacion.id_nivel_educacion == id_nivel_educacion
+        )
+
+    if id_habilidad_blanda:
+        query = query.join(Candidato.conocimientos).filter(
+            CandidatoConocimiento.id_habilidad_blanda == id_habilidad_blanda
+        )
+
+    if id_rango_salarial:
+        query = query.join(Candidato.preferencias).filter(
+            PreferenciaDisponibilidad.id_rango_salarial == id_rango_salarial
+        )
+
+    if ha_trabajado_joyco is not None:
+        query = query.filter(Candidato.ha_trabajado_joyco == ha_trabajado_joyco)
+
+    if tiene_referido is not None:
+        query = query.filter(Candidato.tiene_referido == tiene_referido)
+
+    if disponibilidad_viajar is not None:
+        query = query.join(Candidato.preferencias).filter(
+            PreferenciaDisponibilidad.disponibilidad_viajar == disponibilidad_viajar
+        )
+
+    if trabaja_actualmente is not None:
+        query = query.join(Candidato.preferencias).filter(
+            PreferenciaDisponibilidad.trabaja_actualmente == trabaja_actualmente
+        )
+
 
 
     # Cálculo antes del paginado
@@ -205,7 +258,6 @@ def get_candidatos_resumen(
 
     # Lógica para armar el resumen
     resumen = [mapear_candidato_resumen(c) for c in candidatos]
-
 
     # Retorno del total
     return {"data": resumen, "total": total}
@@ -258,6 +310,7 @@ def get_candidato_detalle(db: Session, id_candidato: int) -> CandidatoDetalleRes
         raise HTTPException(status_code=404, detail="Candidato no encontrado")
     return mapear_candidato_detalle(candidato)
 
+
 def get_candidatos_detalle_lista(
     db: Session,
     search: str = None,
@@ -276,6 +329,14 @@ def get_candidatos_detalle_lista(
     mes: Optional[int] = None,
     skip: int = 0,
     limit: int = 10,
+    # Nuevos filtros
+    id_nivel_educacion: int = None,
+    id_habilidad_blanda: int = None,
+    id_rango_salarial: int = None,
+    ha_trabajado_joyco: bool = None,
+    tiene_referido: bool = None,
+    disponibilidad_viajar: bool = None,
+    trabaja_actualmente: bool = None,
 ):
     query = db.query(Candidato).options(
         joinedload(Candidato.ciudad).joinedload(Ciudad.departamento),
@@ -286,13 +347,27 @@ def get_candidatos_detalle_lista(
         joinedload(Candidato.educaciones).joinedload(Educacion.titulo),
         joinedload(Candidato.educaciones).joinedload(Educacion.institucion),
         joinedload(Candidato.educaciones).joinedload(Educacion.nivel_ingles),
-        joinedload(Candidato.experiencias).joinedload(ExperienciaLaboral.rango_experiencia),
-        joinedload(Candidato.conocimientos).joinedload(CandidatoConocimiento.habilidad_blanda),
-        joinedload(Candidato.conocimientos).joinedload(CandidatoConocimiento.habilidad_tecnica),
-        joinedload(Candidato.conocimientos).joinedload(CandidatoConocimiento.herramienta),
-        joinedload(Candidato.preferencias).joinedload(PreferenciaDisponibilidad.disponibilidad),
-        joinedload(Candidato.preferencias).joinedload(PreferenciaDisponibilidad.rango_salarial),
-        joinedload(Candidato.preferencias).joinedload(PreferenciaDisponibilidad.motivo_salida),
+        joinedload(Candidato.experiencias).joinedload(
+            ExperienciaLaboral.rango_experiencia
+        ),
+        joinedload(Candidato.conocimientos).joinedload(
+            CandidatoConocimiento.habilidad_blanda
+        ),
+        joinedload(Candidato.conocimientos).joinedload(
+            CandidatoConocimiento.habilidad_tecnica
+        ),
+        joinedload(Candidato.conocimientos).joinedload(
+            CandidatoConocimiento.herramienta
+        ),
+        joinedload(Candidato.preferencias).joinedload(
+            PreferenciaDisponibilidad.disponibilidad
+        ),
+        joinedload(Candidato.preferencias).joinedload(
+            PreferenciaDisponibilidad.rango_salarial
+        ),
+        joinedload(Candidato.preferencias).joinedload(
+            PreferenciaDisponibilidad.motivo_salida
+        ),
     )
 
     # Filtros
@@ -306,10 +381,12 @@ def get_candidatos_detalle_lista(
         )
     if estado:
         query = query.filter(Candidato.estado == estado)
+        
     if id_disponibilidad:
         query = query.join(Candidato.preferencias).filter(
-            PreferenciaDisponibilidad.id_disponibilidad == id_disponibilidad
+            PreferenciaDisponibilidad.id_disponibilidad_inicio == id_disponibilidad
         )
+
     if id_cargo:
         query = query.filter(Candidato.id_cargo == id_cargo)
     if id_ciudad:
@@ -329,9 +406,10 @@ def get_candidatos_detalle_lista(
             Educacion.id_titulo == id_titulo
         )
     if id_nivel_ingles:
-        query = query.join(Candidato.educaciones).filter(
-            Educacion.id_nivel_ingles == id_nivel_ingles
+        query = query.filter(
+            Candidato.educaciones.any(Educacion.id_nivel_ingles == id_nivel_ingles)
         )
+
     if id_experiencia:
         query = query.join(Candidato.experiencias).filter(
             ExperienciaLaboral.id_rango_experiencia == id_experiencia
@@ -340,6 +418,55 @@ def get_candidatos_detalle_lista(
         query = query.filter(extract("year", Candidato.fecha_registro) == anio)
     if mes:
         query = query.filter(extract("month", Candidato.fecha_registro) == mes)
+
+
+
+#Esto es lo nuevo hasta antes del total
+    if anio:
+        query = query.filter(extract("year", Candidato.fecha_registro) == anio)
+
+    if mes:
+        query = query.filter(extract("month", Candidato.fecha_registro) == mes)
+
+
+    if id_nivel_educacion:
+        query = query.join(Candidato.educaciones).filter(
+            Educacion.id_nivel_educacion == id_nivel_educacion
+        )
+
+    if id_habilidad_blanda:
+        query = query.join(Candidato.conocimientos).filter(
+            CandidatoConocimiento.id_habilidad_blanda == id_habilidad_blanda
+        )
+
+    if id_rango_salarial:
+        query = query.join(Candidato.preferencias).filter(
+            PreferenciaDisponibilidad.id_rango_salarial == id_rango_salarial
+        )
+
+    if ha_trabajado_joyco is not None:
+        query = query.filter(Candidato.ha_trabajado_joyco == ha_trabajado_joyco)
+
+    if tiene_referido is not None:
+        query = query.filter(Candidato.tiene_referido == tiene_referido)
+
+    if disponibilidad_viajar is not None:
+        query = query.join(Candidato.preferencias).filter(
+            PreferenciaDisponibilidad.disponibilidad_viajar == disponibilidad_viajar
+        )
+
+    if trabaja_actualmente is not None:
+        query = query.join(Candidato.preferencias).filter(
+            PreferenciaDisponibilidad.trabaja_actualmente == trabaja_actualmente
+        )
+
+
+
+
+
+
+
+
 
     total = query.count()
 
@@ -350,8 +477,6 @@ def get_candidatos_detalle_lista(
 
     candidatos = query.offset(skip).limit(limit).all()
     data = [mapear_candidato_detalle(c) for c in candidatos]
-
-    
 
     return {"data": data, "total": total}
 
@@ -368,7 +493,9 @@ def obtener_estadisticas_candidatos(db: Session) -> dict:
 
 
 def marcar_formulario_completo(db: Session, id_candidato: int) -> Candidato:
-    candidato = db.query(Candidato).filter(Candidato.id_candidato == id_candidato).first()
+    candidato = (
+        db.query(Candidato).filter(Candidato.id_candidato == id_candidato).first()
+    )
     if not candidato:
         raise HTTPException(status_code=404, detail="Candidato no encontrado")
 
@@ -380,10 +507,13 @@ def marcar_formulario_completo(db: Session, id_candidato: int) -> Candidato:
 
 def eliminar_candidatos_incompletos(db: Session) -> dict:
     limite = datetime.now(timezone.utc) - timedelta(hours=6)
-    candidatos = db.query(Candidato).filter(
-        Candidato.formulario_completo == False,
-        Candidato.fecha_registro < limite
-    ).all()
+    candidatos = (
+        db.query(Candidato)
+        .filter(
+            Candidato.formulario_completo == False, Candidato.fecha_registro < limite
+        )
+        .all()
+    )
 
     eliminados = 0
     for candidato in candidatos:
@@ -391,4 +521,4 @@ def eliminar_candidatos_incompletos(db: Session) -> dict:
         eliminados += 1
 
     db.commit()
-    return {"eliminados": eliminados}   
+    return {"eliminados": eliminados}

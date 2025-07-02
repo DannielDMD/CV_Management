@@ -1,4 +1,5 @@
 """Módulo principal para levantar la API de Gestión de Candidatos."""
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -52,9 +53,12 @@ from app.routes.Dashboard import (
 app = FastAPI(title="Gestión de Candidatos - Backend")
 
 # Configuración CORS para permitir peticiones desde el frontend
+# Obtener origen frontend desde variable de entorno o usar comodín en desarrollo
+frontend_origin = os.getenv("FRONTEND_ORIGIN", "*")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Solo para desarrollo,  # Puedes usar ["*"] solo para desarrollo
+    allow_origins=[frontend_origin],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

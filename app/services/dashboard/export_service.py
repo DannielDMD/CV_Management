@@ -50,7 +50,8 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
 
     # 2. Construir registros
     registros = []
-    for c in candidatos:
+    for idx, c in enumerate(candidatos, start=1):
+
         educ = c.educaciones[0] if c.educaciones else None
         exp = c.experiencias[0] if c.experiencias else None
         pref = c.preferencias[0] if c.preferencias else None
@@ -60,57 +61,58 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
         hr = [ci.herramienta.nombre_herramienta for ci in c.conocimientos if ci.tipo_conocimiento == "herramienta" and ci.herramienta]
 
         registros.append({
-            "id_candidato": c.id_candidato,
-            "nombre_completo": c.nombre_completo,
-            "correo_electronico": c.correo_electronico,
-            "cc": c.cc,
-            "fecha_nacimiento": c.fecha_nacimiento,
-            "telefono": c.telefono,
-            "departamento": c.ciudad.departamento.nombre_departamento if c.ciudad and c.ciudad.departamento else None,
-            "ciudad": c.ciudad.nombre_ciudad if c.ciudad else None,
-            "descripcion_perfil": c.descripcion_perfil,
-            "cargo": c.cargo.nombre_cargo if c.cargo else None,
-            "nombre_cargo_otro": c.nombre_cargo_otro,
-            "trabaja_actualmente_joyco": c.trabaja_actualmente_joyco,
-            "centro_costos": c.centro_costos.nombre_centro_costos if c.centro_costos else None,
-            "nombre_centro_costos_otro": c.nombre_centro_costos_otro,
-            "ha_trabajado_joyco": c.ha_trabajado_joyco,
-            "motivo_salida": c.motivo_salida.descripcion_motivo if c.motivo_salida else None,
-            "otro_motivo_salida": c.otro_motivo_salida,
-            "tiene_referido": c.tiene_referido,
-            "nombre_referido": c.nombre_referido,
-            "estado": c.estado,
-            "formulario_completo": c.formulario_completo,
-            "acepta_politica_datos": c.acepta_politica_datos,
+            "#": idx,
+            "ID del Candidato": c.id_candidato,
+            "Nombre Completo": c.nombre_completo,
+            "Correo Electrónico": c.correo_electronico,
+            "CC": c.cc,
+            "Fecha de Nacimiento": c.fecha_nacimiento,
+            "Teléfono": c.telefono,
+            "Departamento de Residencia": c.ciudad.departamento.nombre_departamento if c.ciudad and c.ciudad.departamento else None,
+            "Ciudad/Municipio": c.ciudad.nombre_ciudad if c.ciudad else None,
+            "Descripción del Perfil": c.descripcion_perfil,
+            "Cargo de Interés": c.cargo.nombre_cargo if c.cargo else None,
+            "Nombre (Otro Cargo)": c.nombre_cargo_otro,
+            "¿Traba Actualemente en Joyco?": c.trabaja_actualmente_joyco,
+            "Centro de Costos": c.centro_costos.nombre_centro_costos if c.centro_costos else None,
+            "Nombre (Otro Centro de Costos)": c.nombre_centro_costos_otro,
+            "¿Ha Trabajado en Joyco?": c.ha_trabajado_joyco,
+            "Motivo de Salida": c.motivo_salida.descripcion_motivo if c.motivo_salida else None,
+            "Nombre (Otro Motivo de Salida)": c.otro_motivo_salida,
+            "Tiene Referido": c.tiene_referido,
+            "Nombre del Referido": c.nombre_referido,
+            "Estado": c.estado,
+            "¿Formulario Completo?": c.formulario_completo,
+            "¿Acpetó Política de Datos?": c.acepta_politica_datos,
             # Educación
-            "nivel_educacion": educ.nivel_educacion.descripcion_nivel if educ else None,
-            "titulo": educ.titulo.nombre_titulo if educ and educ.titulo else None,
-            "nombre_titulo_otro": educ.nombre_titulo_otro if educ else None,
-            "institucion": educ.institucion.nombre_institucion if educ and educ.institucion else None,
-            "nombre_institucion_otro": educ.nombre_institucion_otro if educ else None,
-            "anio_graduacion": educ.anio_graduacion if educ else None,
-            "nivel_ingles": educ.nivel_ingles.nivel if educ and educ.nivel_ingles else None,
+            "Ultimo Nivel Educativo": educ.nivel_educacion.descripcion_nivel if educ else None,
+            "Título Obtenido": educ.titulo.nombre_titulo if educ and educ.titulo else None,
+            "Nombre (Otro Título)": educ.nombre_titulo_otro if educ else None,
+            "Institución Académica": educ.institucion.nombre_institucion if educ and educ.institucion else None,
+            "Nombre (Otro Institución Académica)": educ.nombre_institucion_otro if educ else None,
+            "Año de Graduación": educ.anio_graduacion if educ else None,
+            "Nivel de Inglés": educ.nivel_ingles.nivel if educ and educ.nivel_ingles else None,
             # Experiencia
-            "rango_experiencia": exp.rango_experiencia.descripcion_rango if exp else None,
-            "ultima_empresa": exp.ultima_empresa if exp else None,
-            "ultimo_cargo": exp.ultimo_cargo if exp else None,
-            "funciones": exp.funciones if exp else None,
-            "fecha_inicio": exp.fecha_inicio if exp else None,
-            "fecha_fin": exp.fecha_fin if exp else None,
+            "Experiencia Laboral": exp.rango_experiencia.descripcion_rango if exp else None,
+            "Última Empresa": exp.ultima_empresa if exp else None,
+            "Último Cargo": exp.ultimo_cargo if exp else None,
+            "Funciones Relizadas": exp.funciones if exp else None,
+            "Desde": exp.fecha_inicio if exp else None,
+            "Hasta": exp.fecha_fin if exp else None,
             # Conocimientos
-            "habilidades_blandas": ", ".join(hb),
-            "habilidades_tecnicas": ", ".join(ht),
-            "herramientas": ", ".join(hr),
+            "Habilidades Blandas": ", ".join(hb),
+            "Habilidades Técnicas": ", ".join(ht),
+            "Herramientas": ", ".join(hr),
             # Preferencias
-            "disponibilidad_viajar": pref.disponibilidad_viajar if pref else None,
-            "disponibilidad_inicio": pref.disponibilidad.descripcion_disponibilidad if pref else None,
-            "rango_salarial": pref.rango_salarial.descripcion_rango if pref else None,
-            "trabaja_actualmente": pref.trabaja_actualmente if pref else None,
-            "motivo_salida_laboral": pref.motivo_salida.descripcion_motivo if pref and pref.motivo_salida else None,
-            "otro_motivo_salida_preferencia": pref.otro_motivo_salida if pref else None,
-            "razon_trabajar_joyco": pref.razon_trabajar_joyco if pref else None,
+            "¿Disponibilidad de Viajar?": pref.disponibilidad_viajar if pref else None,
+            "¿Disponibilidad de Inicio?": pref.disponibilidad.descripcion_disponibilidad if pref else None,
+            "Pretensión Salarial": pref.rango_salarial.descripcion_rango if pref else None,
+            "¿Trabaja Actualmente?": pref.trabaja_actualmente if pref else None,
+            "Motivo de Salida": pref.motivo_salida.descripcion_motivo if pref and pref.motivo_salida else None,
+            "Nombre (Otro Motivo de Salida (Preferencias))": pref.otro_motivo_salida if pref else None,
+            "Razón para Trabajar en Joyco": pref.razon_trabajar_joyco if pref else None,
             # Fecha al final
-            "fecha_registro": c.fecha_registro,
+            "Fecha de Registro": c.fecha_registro,
         })
 
     df = pd.DataFrame(registros)
@@ -122,8 +124,8 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
 
     if not df.empty:
         # Ordenar y mover columna
-        df.sort_values(by="fecha_registro", ascending=False, inplace=True)
-        columnas_ordenadas = [col for col in df.columns if col != "fecha_registro"] + ["fecha_registro"]
+        df.sort_values(by="Fecha de Registro", ascending=False, inplace=True)
+        columnas_ordenadas = [col for col in df.columns if col != "Fecha de Registro"] + ["Fecha de Registro"]
         df = df[columnas_ordenadas]
 
         # Escribir filas al worksheet

@@ -3,10 +3,11 @@
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
-from dotenv import load_dotenv
 
-# Cargar variables de entorno desde el archivo .env
-load_dotenv()
+# Solo cargar .env si estás en desarrollo local
+if os.getenv("ENV") != "production":
+    from dotenv import load_dotenv
+    load_dotenv()
 
 # URL de conexión a la base de datos (PostgreSQL)
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -14,8 +15,8 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 # Motor de conexión a la base de datos
 engine = create_engine(
     DATABASE_URL,
-    echo=True,           # Muestra las sentencias SQL en consola (útil en desarrollo)
-    pool_pre_ping=True   # Verifica conexión antes de usarla
+    echo=os.getenv("ENV") != "production",  # Mostrar SQL solo en desarrollo
+    pool_pre_ping=True
 )
 
 # Configuración de sesiones de base de datos
@@ -25,12 +26,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 def get_db():
-    """
-    Generador de sesión de base de datos para inyectar en rutas o servicios.
-
-    Yields:
-        Session: sesión activa de SQLAlchemy.
-    """
+    """Generador de sesión de base de datos para inyectar en rutas o servicios."""
     print(f"📡 Conectado a: {DATABASE_URL}") 
     db = SessionLocal()
     try:

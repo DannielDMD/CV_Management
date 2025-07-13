@@ -1,11 +1,14 @@
 """Módulo principal para levantar la API de Gestión de Candidatos."""
+
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
+
 # Jobs
 from app.core.database import DATABASE_URL
 from app.jobs.limpieza_candidatos import limpiar_candidatos_incompletos_job
+from app.core.init_db import init_db
 
 # Rutas generales
 from app.routes import (
@@ -15,7 +18,7 @@ from app.routes import (
     conocimientos_candidato_route,
     preferencias_route,
     solicitudes_eliminacion_route,
-    usuario_route
+    usuario_route,
 )
 
 # Rutas de catálogos
@@ -32,7 +35,7 @@ from app.routes.catalogs import (
     disponibilidad,
     rangos_salariales,
     motivo_salida,
-    conocimientos_routes
+    conocimientos_routes,
 )
 
 # Rutas de dashboard
@@ -46,14 +49,14 @@ from app.routes.Dashboard import (
     stats_proceso,
     export_report,
     export_pdf,
-    stats_routes
+    stats_routes,
 )
 
 # Inicializar aplicación FastAPI
 app = FastAPI(title="Gestión de Candidatos - Backend")
 
-# Configuración CORS para permitir peticiones desde el frontend
-# Obtener origen frontend desde variable de entorno o usar comodín en desarrollo
+init_db()  # Inicializa la Base de Datos
+
 frontend_origin = os.getenv("FRONTEND_ORIGIN", "*")
 
 app.add_middleware(

@@ -1,19 +1,22 @@
 """Rutas para la gestión y administración de solicitudes de eliminación de datos personales."""
 
-from fastapi import APIRouter, Depends, Query, Path
+from fastapi import APIRouter, Body, Depends, Query, Path
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import Optional
 
 from app.core.database import get_db
+from app.schemas.candidato_schema import EliminacionCandidatosResponse
 from app.schemas.solicitud_eliminacion_schema import (
     SolicitudEliminacionCreate,
+    SolicitudEliminacionLoteRequest,
     SolicitudEliminacionResponse,
     SolicitudesPaginadasResponse,
     ConteoSolicitudesEliminacion
 )
 from app.services.solicitudes_eliminacion_service import (
     crear_solicitud_eliminacion,
+    eliminar_solicitudes_por_lote,
     get_solicitudes_eliminacion,
     update_solicitud_eliminacion,
     eliminar_solicitud_eliminacion,
@@ -129,6 +132,23 @@ def eliminar_solicitud(
         dict: Resultado de la operación.
     """
     return eliminar_solicitud_eliminacion(db, id)
+
+@router.post("/eliminar-lote", response_model=EliminacionCandidatosResponse)
+def eliminar_solicitudes_lote_endpoint(
+    payload: SolicitudEliminacionLoteRequest = Body(...),
+    db: Session = Depends(get_db)
+):
+    """
+    Elimina varias solicitudes de eliminación por lote.
+
+    Args:
+        payload (SolicitudEliminacionLoteRequest): Lista de IDs.
+        db (Session): Sesión de base de datos.
+
+    Returns:
+        EliminacionCandidatosResponse: Total eliminados y sus IDs.
+    """
+    return eliminar_solicitudes_por_lote(db, payload)
 
 
 @router.get("/estadisticas", response_model=ConteoSolicitudesEliminacion)

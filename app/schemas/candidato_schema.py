@@ -236,6 +236,14 @@ class CandidatoDetalleResponse(BaseModel):
     class Config:
         orm_mode = True
 
+# app/schemas/candidatos.py
+
+class CandidatosEliminarRequest(BaseModel):
+    ids_candidatos: List[int]
+
+class EliminacionCandidatosResponse(BaseModel):
+    eliminados: int
+    detalles: Optional[List[int]] = None
 
 # ───────────── SCHEMA DE ESTADÍSTICAS GENERALES ─────────────
 

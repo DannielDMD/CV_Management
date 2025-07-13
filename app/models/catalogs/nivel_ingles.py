@@ -16,7 +16,7 @@ class NivelIngles(Base):
     __tablename__ = "nivel_ingles"
 
     id_nivel_ingles = Column(Integer, primary_key=True, index=True)
-    nivel = Column(String(20), nullable=False, unique=True)
+    nivel = Column(String(100), nullable=False, unique=True)
 
     # Relación con la tabla de educación
     educaciones = relationship("Educacion", back_populates="nivel_ingles")

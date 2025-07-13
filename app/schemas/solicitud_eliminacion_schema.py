@@ -68,6 +68,19 @@ class SolicitudesPaginadasResponse(BaseModel):
     total: int
 
 
+# ──────────────── ELIMINACIÓN POR LOTE ────────────────
+
+class SolicitudEliminacionLoteRequest(BaseModel):
+    """
+    Recibe una lista de IDs de solicitudes a eliminar.
+
+    Atributos:
+        ids (List[int]): Lista de IDs de solicitudes de eliminación.
+    """
+    ids: List[int] = Field(..., min_items=1, description="Lista de IDs de solicitudes a eliminar")
+
+
+
 # ──────────────── ESTADÍSTICAS DE SOLICITUDES ────────────────
 
 class ConteoSolicitudesEliminacion(BaseModel):
@@ -88,3 +101,5 @@ class ConteoSolicitudesEliminacion(BaseModel):
     aceptadas: int
     motivo_actualizar_datos: int
     motivo_eliminar_candidatura: int
+
+

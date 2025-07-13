@@ -11,6 +11,8 @@ from app.schemas.candidato_schema import (
     CandidatoCreate,
     CandidatoUpdate,
     CandidatoDetalleResponse,
+    CandidatosEliminarRequest,
+    EliminacionCandidatosResponse,
 )
 from app.models.educacion_model import Educacion
 from app.models.experiencia_model import ExperienciaLaboral
@@ -162,6 +164,7 @@ def get_candidatos_resumen(
             or_(
                 Candidato.nombre_completo.ilike(f"%{search}%"),
                 Candidato.correo_electronico.ilike(f"%{search}%"),
+                Candidato.cc.ilike(f"%{search}%"),
                 CargoOfrecido.nombre_cargo.ilike(f"%{search}%"),
             )
         )
@@ -376,6 +379,7 @@ def get_candidatos_detalle_lista(
             or_(
                 Candidato.nombre_completo.ilike(f"%{search}%"),
                 Candidato.correo_electronico.ilike(f"%{search}%"),
+                Candidato.cc.ilike(f"%{search}%"),
                 CargoOfrecido.nombre_cargo.ilike(f"%{search}%"),
             )
         )
@@ -522,3 +526,29 @@ def eliminar_candidatos_incompletos(db: Session) -> dict:
 
     db.commit()
     return {"eliminados": eliminados}
+
+
+
+def eliminar_candidatos_por_lote(
+    db: Session, payload: CandidatosEliminarRequest
+) -> EliminacionCandidatosResponse:
+    if not payload.ids_candidatos:
+        raise HTTPException(status_code=400, detail="La lista de candidatos está vacía.")
+
+    eliminados = []
+    for id_candidato in payload.ids_candidatos:
+        candidato = db.query(Candidato).filter(Candidato.id_candidato == id_candidato).first()
+        if candidato:
+            db.delete(candidato)
+            eliminados.append(id_candidato)
+
+    if not eliminados:
+        raise HTTPException(status_code=404, detail="No se encontró ningún candidato válido para eliminar.")
+
+    try:
+        db.commit()
+        return EliminacionCandidatosResponse(eliminados=len(eliminados), detalles=eliminados)
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Error al eliminar candidatos por lote: {e}")
+        raise HTTPException(status_code=500, detail="Error al eliminar los candidatos seleccionados.")

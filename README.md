@@ -121,3 +121,156 @@ http://localhost:8000/docs
 Las contribuciones son bienvenidas. Si tienes ideas para nuevas métricas, validaciones o endpoints, no dudes en proponerlas.
 
 ---
+
+```
+Cv_Managments_Backend
+├─ alembic
+│  ├─ env.py
+│  ├─ README
+│  └─ script.py.mako
+├─ alembic.ini
+├─ app
+│  ├─ core
+│  │  ├─ azure_auth.py
+│  │  ├─ database.py
+│  │  ├─ dependencies.py
+│  │  └─ __init__.py
+│  ├─ jobs
+│  │  ├─ limpieza_candidatos.py
+│  │  └─ _init__.py
+│  ├─ main.py
+│  ├─ models
+│  │  ├─ candidato_model.py
+│  │  ├─ catalogs
+│  │  │  ├─ cargo_ofrecido.py
+│  │  │  ├─ centro_costos.py
+│  │  │  ├─ ciudad.py
+│  │  │  ├─ instituciones.py
+│  │  │  ├─ nivel_educacion.py
+│  │  │  ├─ nivel_ingles.py
+│  │  │  ├─ rango_experiencia.py
+│  │  │  ├─ titulo.py
+│  │  │  └─ __init__.py
+│  │  ├─ conocimientos_model.py
+│  │  ├─ educacion_model.py
+│  │  ├─ experiencia_model.py
+│  │  ├─ preferencias.py
+│  │  ├─ solicitud_eliminacion_model.py
+│  │  ├─ usuario.py
+│  │  └─ __init__.py
+│  ├─ routes
+│  │  ├─ candidato_route.py
+│  │  ├─ catalogs
+│  │  │  ├─ cargos_ofrecidos.py
+│  │  │  ├─ centro_costos.py
+│  │  │  ├─ ciudades.py
+│  │  │  ├─ conocimientos_routes.py
+│  │  │  ├─ departamentos.py
+│  │  │  ├─ disponibilidad.py
+│  │  │  ├─ instituciones.py
+│  │  │  ├─ motivo_salida.py
+│  │  │  ├─ nivel_educacion.py
+│  │  │  ├─ nivel_ingles.py
+│  │  │  ├─ rangos_experiencia.py
+│  │  │  ├─ rangos_salariales.py
+│  │  │  ├─ titulo.py
+│  │  │  └─ __init__.py
+│  │  ├─ conocimientos_candidato_route.py
+│  │  ├─ Dashboard
+│  │  │  ├─ export_pdf.py
+│  │  │  ├─ export_report.py
+│  │  │  ├─ stats_conocimientos.py
+│  │  │  ├─ stats_educacion.py
+│  │  │  ├─ stats_experiencia.py
+│  │  │  ├─ stats_general.py
+│  │  │  ├─ stats_personal.py
+│  │  │  ├─ stats_preferencias.py
+│  │  │  ├─ stats_proceso.py
+│  │  │  ├─ stats_routes.py
+│  │  │  └─ __init__.py
+│  │  ├─ educacion_route.py
+│  │  ├─ experiencia_route.py
+│  │  ├─ preferencias_route.py
+│  │  ├─ solicitudes_eliminacion_route.py
+│  │  ├─ usuario_route.py
+│  │  └─ __init__.py
+│  ├─ schemas
+│  │  ├─ candidato_schema.py
+│  │  ├─ catalogs
+│  │  │  ├─ cargo_ofrecido.py
+│  │  │  ├─ centro_costos.py
+│  │  │  ├─ ciudad.py
+│  │  │  ├─ conocimientos_schema.py
+│  │  │  ├─ instituciones.py
+│  │  │  ├─ motivo_salida.py
+│  │  │  ├─ nivel_educacion.py
+│  │  │  ├─ nivel_ingles.py
+│  │  │  ├─ rango_experiencia.py
+│  │  │  ├─ titulo.py
+│  │  │  └─ __init__.py
+│  │  ├─ conocimientos_candidato_schema.py
+│  │  ├─ dashboard
+│  │  │  ├─ stats_conocimientos_schema.py
+│  │  │  ├─ stats_educacion_schema.py
+│  │  │  ├─ stats_experiencia_schema.py
+│  │  │  ├─ stats_general_schema.py
+│  │  │  ├─ stats_personal_schema.py
+│  │  │  ├─ stats_preferencias_schema.py
+│  │  │  └─ stats_proceso_schema.py
+│  │  ├─ educacion_schema.py
+│  │  ├─ experiencia_schema.py
+│  │  ├─ preferencias_schema.py
+│  │  ├─ solicitud_eliminacion_schema.py
+│  │  ├─ usuario_schema.py
+│  │  └─ __init__.py
+│  ├─ services
+│  │  ├─ candidato_service.py
+│  │  ├─ catalogs
+│  │  │  ├─ cargos_ofrecidos_service.py
+│  │  │  ├─ centro_costos_service.py
+│  │  │  ├─ ciudades_service.py
+│  │  │  ├─ conocimientos_service.py
+│  │  │  ├─ departamentos_service.py
+│  │  │  ├─ disponibilidad_service.py
+│  │  │  ├─ instituciones_service.py
+│  │  │  ├─ motivo_salida_service.py
+│  │  │  ├─ nivel_educacion_service.py
+│  │  │  ├─ nivel_ingles_service.py
+│  │  │  ├─ rangos_salariales_service.py
+│  │  │  ├─ rango_experiencia_service.py
+│  │  │  ├─ titulo_service.py
+│  │  │  └─ __init__.py
+│  │  ├─ conocimientos_candidato_service.py
+│  │  ├─ dashboard
+│  │  │  ├─ export_pdf_service.py
+│  │  │  ├─ export_service.py
+│  │  │  ├─ stats_conocimientos_service.py
+│  │  │  ├─ stats_educacion_service.py
+│  │  │  ├─ stats_experiencia_service.py
+│  │  │  ├─ stats_general_service.py
+│  │  │  ├─ stats_personal_service.py
+│  │  │  ├─ stats_preferencias_service.py
+│  │  │  ├─ stats_proceso_service.py
+│  │  │  └─ stats_service.py
+│  │  ├─ educacion_service.py
+│  │  ├─ experiencia_service.py
+│  │  ├─ mappers
+│  │  │  ├─ candidato_mapper.py
+│  │  │  └─ __init__.py
+│  │  ├─ preferencias_service.py
+│  │  ├─ solicitudes_eliminacion_service.py
+│  │  ├─ usuario_service.py
+│  │  └─ __init__.py
+│  ├─ static
+│  │  └─ LogoJoyco.png
+│  ├─ utils
+│  │  ├─ orden_catalogos.py
+│  │  └─ __init__.py
+│  └─ __init__.py
+├─ docs
+├─ README.md
+├─ requirements.txt
+└─ test
+   └─ __init__.py
+
+```

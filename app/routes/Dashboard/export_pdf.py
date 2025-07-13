@@ -9,6 +9,8 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
 from app.core.database import get_db
+from app.core.dependencies import obtener_usuario_actual
+
 from app.services.dashboard.export_pdf_service import exportar_estadisticas_pdf_reportlab
 
 router = APIRouter(
@@ -32,7 +34,8 @@ class PDFExportRequest(BaseModel):
 )
 def exportar_estadisticas_pdf_endpoint(
     request: PDFExportRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    usuario = Depends(obtener_usuario_actual)
 ):
     """
     Genera un informe PDF con todas las estadísticas del sistema.

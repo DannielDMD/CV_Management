@@ -1,13 +1,14 @@
 """Rutas para la gestión de candidatos, incluyendo creación, actualización, consulta, eliminación y estadísticas."""
 
 from typing import Optional
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Body, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.services.candidato_service import (
     create_candidato,
     eliminar_candidatos_incompletos,
+    eliminar_candidatos_por_lote,
     get_candidato_by_id,
     get_all_candidatos,
     get_candidato_detalle,
@@ -24,6 +25,8 @@ from app.schemas.candidato_schema import (
     CandidatoDetalleResponse,
     CandidatoUpdate,
     CandidatoResponse,
+    CandidatosEliminarRequest,
+    EliminacionCandidatosResponse,
     EstadisticasCandidatosResponse,
     CandidatoResumenPaginatedResponse,
 )
@@ -273,3 +276,11 @@ def limpiar_candidatos_incompletos(db: Session = Depends(get_db)):
         dict: Resultado de la operación (cantidad eliminada).
     """
     return eliminar_candidatos_incompletos(db)
+
+
+@router.post("/eliminar-lote", response_model=EliminacionCandidatosResponse)
+def eliminar_candidatos_lote_endpoint(
+    payload: CandidatosEliminarRequest = Body(...),
+    db: Session = Depends(get_db),
+):
+    return eliminar_candidatos_por_lote(db, payload)

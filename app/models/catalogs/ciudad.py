@@ -36,7 +36,7 @@ class Ciudad(Base):
     __tablename__ = "ciudades"
 
     id_ciudad = Column(Integer, primary_key=True, index=True)
-    nombre_ciudad = Column(String(100), nullable=False, unique=True)
+    nombre_ciudad = Column(String(100), nullable=False)
 
     # FK hacia Departamento
     id_departamento = Column(Integer, ForeignKey("departamentos.id_departamento"), nullable=False)

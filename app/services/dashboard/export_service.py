@@ -50,6 +50,7 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
 
     # 2. Construir registros
     registros = []
+    candidatos.sort(key=lambda c: c.fecha_registro)
     for idx, c in enumerate(candidatos, start=1):
 
         educ = c.educaciones[0] if c.educaciones else None
@@ -124,7 +125,7 @@ def exportar_candidatos_detallados_excel(db: Session, año: Optional[int] = None
 
     if not df.empty:
         # Ordenar y mover columna
-        df.sort_values(by="Fecha de Registro", ascending=False, inplace=True)
+        df.sort_values(by="Fecha de Registro", ascending=True, inplace=True)
         columnas_ordenadas = [col for col in df.columns if col != "Fecha de Registro"] + ["Fecha de Registro"]
         df = df[columnas_ordenadas]
 

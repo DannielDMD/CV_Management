@@ -3,9 +3,11 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, func, extract, desc
 from app.models.solicitud_eliminacion_model import SolicitudEliminacion
+from app.schemas.candidato_schema import EliminacionCandidatosResponse
 from app.schemas.solicitud_eliminacion_schema import (
     ConteoSolicitudesEliminacion,
     SolicitudEliminacionCreate,
+    SolicitudEliminacionLoteRequest,
     SolicitudesPaginadasResponse,
     SolicitudEliminacionResponse,
 )
@@ -147,7 +149,29 @@ def eliminar_solicitud_eliminacion(db: Session, id: int):
     except Exception:
         db.rollback()
         raise HTTPException(status_code=500, detail="Error al eliminar la solicitud")
+    
+def eliminar_solicitudes_por_lote(
+    db: Session, payload: SolicitudEliminacionLoteRequest
+) -> EliminacionCandidatosResponse:
+    if not payload.ids:
+        raise HTTPException(status_code=400, detail="La lista de solicitudes está vacía.")
 
+    eliminados = []
+    for id_solicitud in payload.ids:
+        solicitud = db.query(SolicitudEliminacion).filter(SolicitudEliminacion.id == id_solicitud).first()
+        if solicitud:
+            db.delete(solicitud)
+            eliminados.append(id_solicitud)
+
+    if not eliminados:
+        raise HTTPException(status_code=404, detail="No se encontró ninguna solicitud válida para eliminar.")
+
+    try:
+        db.commit()
+        return EliminacionCandidatosResponse(eliminados=len(eliminados), detalles=eliminados)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Error al eliminar las solicitudes.")
 
 def get_estadisticas_solicitudes_eliminacion(
     db: Session,

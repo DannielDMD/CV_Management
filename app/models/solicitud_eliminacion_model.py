@@ -24,7 +24,7 @@ class SolicitudEliminacion(Base):
     cc = Column(String(20), nullable=False)
     correo = Column(String(150), nullable=False)
     motivo = Column(String(50), nullable=False)  # 'Actualizar datos' o 'Eliminar candidatura'
-    estado = Column(String(20), nullable=False, default="pendiente")  # pendiente, atendida, eliminada
+    estado = Column(String(20), nullable=False, default="Pendiente")  # pendiente, atendida, eliminada
     descripcion_motivo = Column(Text, nullable=True)  # Descripción opcional del motivo
     observacion_admin = Column(Text, nullable=True)
     fecha_solicitud = Column(TIMESTAMP, server_default=func.current_timestamp())

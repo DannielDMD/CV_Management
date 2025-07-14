@@ -58,9 +58,10 @@ def crear_departamento(db: Session, departamento_data: DepartamentoCreate) -> Op
     nombre = departamento_data.nombre_departamento.strip()
 
     existente = db.query(Departamento).filter(
-        func.lower(func.unaccent(func.trim(Departamento.nombre_departamento))) ==
-        func.lower(func.unaccent(func.trim(nombre)))
+        func.lower(func.trim(Departamento.nombre_departamento)) ==
+        func.lower(func.trim(nombre))
     ).first()
+
 
     if existente:
         return None

@@ -15,6 +15,7 @@ Este es el backend del sistema de **Gestión de Candidatos**, una aplicación di
 - Uvicorn
 - APScheduler (Automatizaciones de Instrucciones)
 - openpyxslx (Excels)
+- Pdoc (Documentación de la Aplicación)
 
 ## 📦 Estructura del proyecto
 
